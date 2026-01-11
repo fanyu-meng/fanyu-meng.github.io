@@ -23,15 +23,17 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
         </clipPath>
       </defs>
       {/* 小宇宙官方logo - 带环的行星设计，使用currentColor保持与其他icon风格一致 */}
-      {/* 环的后半部分（在行星后面，下半部分可见，倾斜角度） */}
-      <ellipse 
-        cx="12" 
-        cy="12.5" 
-        rx="8.5" 
-        ry="2" 
-        fill="currentColor"
-        clipPath="url(#ringBackClip)"
-      />
+      {/* 完整的环（椭圆，有倾斜角度）- 后半部分（在行星后面，下半部分可见） */}
+      <g clipPath="url(#ringBackClip)">
+        <ellipse 
+          cx="12" 
+          cy="12" 
+          rx="8.5" 
+          ry="2" 
+          fill="currentColor"
+          transform="rotate(-15 12 12)"
+        />
+      </g>
       {/* 行星主体 - 圆形 */}
       <circle 
         cx="12" 
@@ -39,15 +41,17 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
         r="5.5" 
         fill="currentColor"
       />
-      {/* 环的前半部分（在行星前面，上半部分可见，倾斜角度） */}
-      <ellipse 
-        cx="12" 
-        cy="11.5" 
-        rx="8.5" 
-        ry="2" 
-        fill="currentColor"
-        clipPath="url(#ringFrontClip)"
-      />
+      {/* 完整的环（椭圆，有倾斜角度）- 前半部分（在行星前面，上半部分可见） */}
+      <g clipPath="url(#ringFrontClip)">
+        <ellipse 
+          cx="12" 
+          cy="12" 
+          rx="8.5" 
+          ry="2" 
+          fill="currentColor"
+          transform="rotate(-15 12 12)"
+        />
+      </g>
     </svg>
   );
 };
