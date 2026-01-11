@@ -22,9 +22,16 @@ const AboutSection: React.FC = () => {
               {t('about.title')}
             </h2>
             
-            <p className="text-base text-muted-foreground leading-relaxed mb-8">
-              {t('about.description')}
-            </p>
+            <div className="space-y-4 mb-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="flex items-start gap-3 group">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary/60 group-hover:bg-primary transition-colors flex-shrink-0" />
+                  <p className="text-base text-muted-foreground leading-relaxed">
+                    {t(`about.item.${i}`)}
+                  </p>
+                </div>
+              ))}
+            </div>
 
             {/* Highlights */}
             <div className="flex flex-wrap gap-4">

@@ -19,13 +19,17 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.greeting': '你好，我是',
     'hero.name': '孟凡雨',
-    'hero.title': '创作者 / 开发者 / 探索者',
-    'hero.description': '专注于技术创新与内容创作，用代码和文字连接想法与现实。',
+    'hero.description': '一个想表达的nerdy音频算法工程师',
     'hero.cta': '了解更多',
     
     // About
     'about.title': '关于我',
-    'about.description': '一个想表达的nerdy音频算法工程师',
+    'about.item.1': '上过8次中文开放麦的脱口秀演员',
+    'about.item.2': '做过16期播客的播客主播',
+    'about.item.3': '退过3个乐队的三品战士',
+    'about.item.4': '9万粉丝的声学科普博主（公众号+知乎）',
+    'about.item.5': '音频算法工程师',
+    'about.item.6': '哈尔滨工业大学，慕尼黑工业大学，亚琛工业大学，埃因霍温理工大学',
     'about.highlight.audio': '音频算法',
     'about.highlight.comedy': '脱口秀',
     'about.highlight.guitar': '吉他',
@@ -69,13 +73,17 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.greeting': "Hi, I'm",
     'hero.name': 'Fanyu Meng',
-    'hero.title': 'Creator / Developer / Explorer',
-    'hero.description': 'Focused on tech innovation and content creation, connecting ideas with reality through code and words.',
+    'hero.description': 'A nerdy audio engineer who wants to express himself',
     'hero.cta': 'Learn More',
     
     // About
     'about.title': 'About Me',
-    'about.description': 'A nerdy audio engineer who wants to express himself',
+    'about.item.1': 'Stand-up comedian with 8 open mic performances',
+    'about.item.2': 'Podcast host with 16 episodes produced',
+    'about.item.3': 'Guitarist who has "retired" from 3 bands',
+    'about.item.4': 'Acoustics science blogger with 90k followers (WeChat + Zhihu)',
+    'about.item.5': 'Audio Algorithm Engineer',
+    'about.item.6': 'HIT, TUM, RWTH Aachen, TU Eindhoven',
     'about.highlight.audio': 'Audio',
     'about.highlight.comedy': 'Stand-up',
     'about.highlight.guitar': 'Guitar',
