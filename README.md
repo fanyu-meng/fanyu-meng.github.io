@@ -8,7 +8,7 @@ There are several ways of editing your application.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will automatically trigger deployments on Vercel.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will automatically trigger deployments on GitHub Pages.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -54,34 +54,40 @@ This project is built with:
 
 ## How can I deploy this project?
 
-This project is configured for deployment on [Vercel](https://vercel.com) with automatic deployments via Git integration.
+This project is configured for deployment on [GitHub Pages](https://pages.github.com/) with automatic deployments via GitHub Actions.
 
-### Deploying to Vercel
+### Deploying to GitHub Pages
 
-1. **Connect your repository to Vercel:**
-   - Sign in to [Vercel](https://vercel.com)
-   - Click "Add New Project" in your dashboard
-   - Import your GitHub repository
-   - Vercel will automatically detect the Vite framework
+1. **Enable GitHub Pages:**
+   - Go to your repository settings on GitHub
+   - Navigate to "Pages" in the left sidebar
+   - Under "Source", select "GitHub Actions" as the source
+   - The workflow will automatically deploy when you push to the `main` branch
 
 2. **Automatic deployments:**
-   - Every push to your main/master branch will trigger a production deployment
-   - Pull requests will get preview deployments automatically
-   - Builds use the configuration in `vercel.json`
+   - Every push to your `main` branch will trigger a production deployment
+   - The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
+     - Install dependencies
+     - Build the project
+     - Deploy to GitHub Pages
 
 3. **Manual deployment:**
-   - You can also deploy manually using the Vercel CLI:
-     ```sh
-     npm i -g vercel
-     vercel
-     ```
+   - You can also trigger a manual deployment:
+     - Go to the "Actions" tab in your repository
+     - Select "Deploy to GitHub Pages" workflow
+     - Click "Run workflow"
+
+4. **Access your site:**
+   - Your site will be available at: `https://fanyu-meng.github.io/`
+   - (Replace `fanyu-meng` with your GitHub username if different)
 
 ### Custom Domain
 
-Yes, you can connect a custom domain to your Vercel project!
+Yes, you can connect a custom domain to your GitHub Pages site!
 
-- Navigate to your project settings in Vercel dashboard
-- Go to the "Domains" section
-- Add your custom domain and follow the DNS configuration instructions
+- In your repository settings, go to "Pages"
+- Under "Custom domain", enter your domain name
+- Follow the DNS configuration instructions provided by GitHub
+- GitHub will automatically create a `CNAME` file in your repository
 
-Read more: [Vercel Custom Domains](https://vercel.com/docs/concepts/projects/domains)
+Read more: [GitHub Pages Custom Domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
