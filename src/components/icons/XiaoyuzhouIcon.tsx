@@ -9,49 +9,57 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
     <svg
       className={className}
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* 
+        设计思路：
+        1. 环是一个倾斜的椭圆描边 (stroke)
+        2. 行星是一个实心圆 (fill)
+        3. 为了实现环绕效果，将环分为后半部分和前半部分
+      */}
+      
+      {/* 定义遮罩，用于分割环的前后部分 */}
       <defs>
-        {/* 遮罩：用于让环的后半部分只显示在行星下方 */}
-        <clipPath id="ringBackClip">
-          <rect x="0" y="12" width="24" height="12" />
+        <clipPath id="xiaoyuzhou-clip-back">
+          <rect x="0" y="0" width="24" height="12" transform="rotate(-25 12 12)" />
         </clipPath>
-        {/* 遮罩：用于让环的前半部分只显示在行星上方 */}
-        <clipPath id="ringFrontClip">
-          <rect x="0" y="0" width="24" height="12" />
+        <clipPath id="xiaoyuzhou-clip-front">
+          <rect x="0" y="12" width="24" height="12" transform="rotate(-25 12 12)" />
         </clipPath>
       </defs>
-      {/* 小宇宙官方logo - 带环的行星设计，使用currentColor保持与其他icon风格一致 */}
-      {/* 完整的环（椭圆，有倾斜角度）- 后半部分（在行星后面，下半部分可见） */}
-      <g clipPath="url(#ringBackClip)">
-        <ellipse 
-          cx="12" 
-          cy="12" 
-          rx="8.5" 
-          ry="2" 
-          fill="currentColor"
-          transform="rotate(-15 12 12)"
-        />
-      </g>
-      {/* 行星主体 - 圆形 */}
+
+      {/* 1. 后半部分的环（在行星后面） */}
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9"
+        ry="3.2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        transform="rotate(-25 12 12)"
+        clipPath="url(#xiaoyuzhou-clip-back)"
+      />
+
+      {/* 2. 行星主体 */}
       <circle 
         cx="12" 
         cy="12" 
-        r="5.5" 
-        fill="currentColor"
+        r="5.8" 
+        fill="currentColor" 
       />
-      {/* 完整的环（椭圆，有倾斜角度）- 前半部分（在行星前面，上半部分可见） */}
-      <g clipPath="url(#ringFrontClip)">
-        <ellipse 
-          cx="12" 
-          cy="12" 
-          rx="8.5" 
-          ry="2" 
-          fill="currentColor"
-          transform="rotate(-15 12 12)"
-        />
-      </g>
+
+      {/* 3. 前半部分的环（在行星前面） */}
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9"
+        ry="3.2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        transform="rotate(-25 12 12)"
+        clipPath="url(#xiaoyuzhou-clip-front)"
+      />
     </svg>
   );
 };
