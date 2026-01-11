@@ -3,6 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { EmailIcon } from '@/components/icons/EmailIcon';
 import { YoutubeIcon } from '@/components/icons/YoutubeIcon';
 import { BilibiliIcon } from '@/components/icons/BilibiliIcon';
 import { XiaohongshuIcon } from '@/components/icons/XiaohongshuIcon';
@@ -72,6 +73,13 @@ const HeroSection: React.FC = () => {
 
               {/* Social Links */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-8 md:mb-12 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+                <a
+                  href="mailto:mengfanyuhit@gmail.com"
+                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+                  title="Email"
+                >
+                  <EmailIcon className="w-5 h-5" />
+                </a>
                 <a
                   href="https://github.com/fanyu-meng"
                   target="_blank"

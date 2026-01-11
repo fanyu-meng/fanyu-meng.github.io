@@ -5,7 +5,6 @@ import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
 import ArticlesSection from '@/components/ArticlesSection';
 import SideProjectsSection from '@/components/SideProjectsSection';
-import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 
 const Index: React.FC = () => {
@@ -18,7 +17,6 @@ const Index: React.FC = () => {
           <AboutSection />
           <ArticlesSection />
           <SideProjectsSection />
-          <ContactSection />
         </main>
         <Footer />
       </div>
