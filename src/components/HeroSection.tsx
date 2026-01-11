@@ -1,20 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
 const HeroSection: React.FC = () => {
   const { t } = useLanguage();
-  const [qrCodeOpen, setQrCodeOpen] = useState(false);
-  const [qrCodeError, setQrCodeError] = useState(false);
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative gradient-hero">
@@ -113,43 +104,6 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* QR Code Dialog */}
-      <Dialog open={qrCodeOpen} onOpenChange={setQrCodeOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>公众号二维码</DialogTitle>
-            <DialogDescription>
-              扫描二维码关注我的公众号
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center justify-center py-4">
-            {qrCodeError ? (
-              <div className="text-center p-8 border border-border rounded-lg bg-secondary/50 w-64">
-                <div className="text-muted-foreground mb-4">
-                  <svg className="w-24 h-24 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <p className="text-sm font-medium mb-2">二维码图片未找到</p>
-                <p className="text-xs text-muted-foreground">
-                  请将二维码图片保存为 <code className="px-1 py-0.5 bg-background rounded text-xs">public/wechat-qrcode.jpg</code>
-                </p>
-              </div>
-            ) : (
-              <img
-                src="/wechat-qrcode.jpg"
-                alt="微信公众号二维码"
-                className="w-64 h-64 object-contain border border-border rounded-lg mb-4"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  setQrCodeError(true);
-                }}
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 };
