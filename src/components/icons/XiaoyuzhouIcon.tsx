@@ -12,10 +12,10 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* 小宇宙logo - 两个连接的圆点 */}
-      <circle cx="9" cy="12" r="3" fill="currentColor"/>
-      <circle cx="15" cy="12" r="3" fill="currentColor"/>
-      <path d="M12 12h0" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      {/* 小宇宙官方logo - 两个连接的圆点 */}
+      <circle cx="9" cy="12" r="2.5" fill="currentColor"/>
+      <circle cx="15" cy="12" r="2.5" fill="currentColor"/>
+      <rect x="11.5" y="11.5" width="1" height="1" fill="currentColor"/>
     </svg>
   );
 };
