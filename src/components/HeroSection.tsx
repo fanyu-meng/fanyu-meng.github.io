@@ -74,15 +74,6 @@ const HeroSection: React.FC = () => {
               {/* Social Links */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-8 md:mb-12 animate-fade-up" style={{ animationDelay: '0.3s' }}>
                 <a
-                  href="https://www.xiaoyuzhoufm.com/podcast/67cdacc32deb5237c648049f"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-                  title="小宇宙"
-                >
-                  <XiaoyuzhouIcon className="w-5 h-5" />
-                </a>
-                <a
                   href="mailto:mengfanyuhit@gmail.com"
                   className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
                   title="Email"
@@ -142,6 +133,15 @@ const HeroSection: React.FC = () => {
                   title="Bilibili"
                 >
                   <BilibiliIcon className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://www.xiaoyuzhoufm.com/podcast/67cdacc32deb5237c648049f"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+                  title="小宇宙"
+                >
+                  <XiaoyuzhouIcon className="w-5 h-5" />
                 </a>
                 <a
                   href="https://open.spotify.com/show/6YfmptM1qzz9bmc7HLrzVQ?si=e8cc4a6a48c3483d"

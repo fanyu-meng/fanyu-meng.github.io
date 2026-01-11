@@ -20,7 +20,6 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
         rx="8" 
         ry="1.8" 
         fill="currentColor"
-        opacity="0.85"
       />
       {/* 行星主体 - 圆形 */}
       <circle 
