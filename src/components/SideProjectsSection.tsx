@@ -142,12 +142,12 @@ const ProjectCard: React.FC<{ project: SideProject }> = ({ project }) => {
                 </div>
                 <p className="text-sm font-medium mb-2">二维码图片未找到</p>
                 <p className="text-xs text-muted-foreground">
-                  请将二维码图片保存为 <code className="px-1 py-0.5 bg-background rounded text-xs">public/wechat-qrcode.png</code>
+                  请将二维码图片保存为 <code className="px-1 py-0.5 bg-background rounded text-xs">public/wechat-qrcode.jpg</code>
                 </p>
               </div>
             ) : (
               <img
-                src="/wechat-qrcode.png"
+                src="/wechat-qrcode.jpg"
                 alt="微信公众号二维码"
                 className="w-64 h-64 object-contain border border-border rounded-lg"
                 onError={() => setQrCodeError(true)}
