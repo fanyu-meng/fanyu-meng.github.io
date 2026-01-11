@@ -9,11 +9,6 @@ const Footer: React.FC = () => {
     <footer className="py-8 border-t border-border/50">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Logo */}
-          <a href="#home" className="text-lg font-bold gradient-text">
-            Portfolio
-          </a>
-
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">
             © {currentYear} {t('hero.name')}. {t('footer.rights')}.

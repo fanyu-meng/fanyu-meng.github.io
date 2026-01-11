@@ -16,20 +16,10 @@ const HeroSection: React.FC = () => {
 
       <div className="container mx-auto pt-20">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Greeting */}
-          <p className="text-muted-foreground text-lg mb-4 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            {t('hero.greeting')}
-          </p>
-
           {/* Name */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 animate-fade-up" style={{ animationDelay: '0.2s' }}>
             <span className="gradient-text">{t('hero.name')}</span>
           </h1>
-
-          {/* Title */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            {t('hero.title')}
-          </p>
 
           {/* Description */}
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{ animationDelay: '0.4s' }}>

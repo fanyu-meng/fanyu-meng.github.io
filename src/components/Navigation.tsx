@@ -22,13 +22,8 @@ const Navigation: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#home" className="text-xl font-bold gradient-text">
-            Portfolio
-          </a>
-
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 ml-auto">
             {navItems.map((item) => (
               <a
                 key={item.key}
