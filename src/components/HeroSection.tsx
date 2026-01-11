@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ArrowDown, Github, Linkedin, Twitter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Github, Linkedin, Twitter } from 'lucide-react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { EmailIcon } from '@/components/icons/EmailIcon';
 import { YoutubeIcon } from '@/components/icons/YoutubeIcon';
@@ -177,20 +176,6 @@ const HeroSection: React.FC = () => {
                 >
                   <ZhihuIcon className="w-5 h-5" />
                 </a>
-              </div>
-
-              {/* CTA Button */}
-              <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
-                >
-                  <a href="#projects" className="flex items-center gap-2">
-                    {t('hero.cta')}
-                    <ArrowDown className="w-4 h-4" />
-                  </a>
-                </Button>
               </div>
             </div>
           </div>
