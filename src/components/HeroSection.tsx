@@ -39,26 +39,29 @@ const HeroSection: React.FC = () => {
           {/* Social Links */}
           <div className="flex items-center justify-center gap-4 mb-16 animate-fade-up" style={{ animationDelay: '0.5s' }}>
             <a
-              href="https://github.com"
+              href="https://github.com/fanyu-meng"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+              title="GitHub"
             >
               <Github className="w-5 h-5" />
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/fanyu-meng-9332b489/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+              title="LinkedIn"
             >
               <Linkedin className="w-5 h-5" />
             </a>
             <a
-              href="https://twitter.com"
+              href="https://x.com/fanyu_meng"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+              title="Twitter/X"
             >
               <Twitter className="w-5 h-5" />
             </a>

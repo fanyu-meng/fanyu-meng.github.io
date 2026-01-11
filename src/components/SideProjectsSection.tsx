@@ -18,7 +18,7 @@ const sideProjects: SideProject[] = [
     titleKey: 'projects.standup',
     descKey: 'projects.standup.desc',
     links: [
-      { name: '小红书', url: 'https://xiaohongshu.com' },
+      { name: '小红书', url: 'https://www.xiaohongshu.com/user/profile/629325e80000000021027f9b' },
     ],
     gradient: 'from-red-500/20 to-pink-500/20',
   },
@@ -28,8 +28,8 @@ const sideProjects: SideProject[] = [
     titleKey: 'projects.guitar',
     descKey: 'projects.guitar.desc',
     links: [
-      { name: 'YouTube', url: 'https://youtube.com' },
-      { name: 'Bilibili', url: 'https://bilibili.com' },
+      { name: 'YouTube', url: 'https://www.youtube.com/@florence_fernandez' },
+      { name: 'Bilibili', url: 'https://b23.tv/gkxZqiT' },
     ],
     gradient: 'from-blue-500/20 to-cyan-500/20',
   },

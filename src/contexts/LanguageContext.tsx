@@ -18,7 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Hero
     'hero.greeting': '你好，我是',
-    'hero.name': '你的名字',
+    'hero.name': '孟凡雨',
     'hero.title': '创作者 / 开发者 / 探索者',
     'hero.description': '专注于技术创新与内容创作，用代码和文字连接想法与现实。',
     'hero.cta': '了解更多',
@@ -63,7 +63,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Hero
     'hero.greeting': "Hi, I'm",
-    'hero.name': 'Your Name',
+    'hero.name': 'Fanyu Meng',
     'hero.title': 'Creator / Developer / Explorer',
     'hero.description': 'Focused on tech innovation and content creation, connecting ideas with reality through code and words.',
     'hero.cta': 'Learn More',

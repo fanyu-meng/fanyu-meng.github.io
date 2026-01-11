@@ -7,10 +7,9 @@ const ContactSection: React.FC = () => {
   const { t } = useLanguage();
 
   const socialLinks = [
-    { icon: Github, name: 'GitHub', url: 'https://github.com' },
-    { icon: Linkedin, name: 'LinkedIn', url: 'https://linkedin.com' },
-    { icon: Twitter, name: 'Twitter', url: 'https://twitter.com' },
-    { icon: MessageCircle, name: 'WeChat', url: '#' },
+    { icon: Github, name: 'GitHub', url: 'https://github.com/fanyu-meng' },
+    { icon: Linkedin, name: 'LinkedIn', url: 'https://www.linkedin.com/in/fanyu-meng-9332b489/' },
+    { icon: Twitter, name: 'Twitter/X', url: 'https://x.com/fanyu_meng' },
   ];
 
   return (
@@ -32,9 +31,9 @@ const ContactSection: React.FC = () => {
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
             >
-              <a href="mailto:hello@example.com" className="flex items-center gap-2">
+              <a href="mailto:fanyu.meng@example.com" className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
-                hello@example.com
+                fanyu.meng@example.com
               </a>
             </Button>
           </div>
