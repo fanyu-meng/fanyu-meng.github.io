@@ -25,7 +25,12 @@ const translations: Record<Language, Record<string, string>> = {
     
     // About
     'about.title': '关于我',
-    'about.description': '热爱技术、音乐和表达。白天写代码，晚上讲脱口秀，周末弹吉他。相信持续学习和分享的力量。',
+    'about.description': '一个想表达的nerdy音频算法工程师',
+    'about.highlight.audio': '音频算法',
+    'about.highlight.comedy': '脱口秀',
+    'about.highlight.guitar': '吉他',
+    'about.highlight.podcast': '播客',
+    'about.highlight.articles': '文章',
     
     // Articles
     'articles.title': '原创文章',
@@ -34,16 +39,16 @@ const translations: Record<Language, Record<string, string>> = {
     'articles.viewAll': '查看全部',
     
     // Side Projects
-    'projects.title': '副业空间',
-    'projects.subtitle': '工作之外的精彩',
+    'projects.title': '那些我干的事',
+    'projects.subtitle': '现实世界的出口，1、2、3、4……',
     'projects.standup': '脱口秀',
-    'projects.standup.desc': '小红书上的段子和表演',
-    'projects.guitar': '吉他演奏',
-    'projects.guitar.desc': 'YouTube / Bilibili 视频',
-    'projects.podcast': '个人播客',
-    'projects.podcast.desc': '小宇宙 / Spotify / Apple',
-    'projects.science': '科普文章',
-    'projects.science.desc': '公众号 / 知乎专栏',
+    'projects.standup.desc': '喜欢你的幽默，再见',
+    'projects.guitar': '吉他',
+    'projects.guitar.desc': 'Pink Floyd，Beyond，Fingerstyle, and more…',
+    'projects.podcast': '播客：破壁圆桌',
+    'projects.podcast.desc': '不打针，不吃药，坐那就是跟你唠',
+    'projects.science': '科普文章：子鱼说声学',
+    'projects.science.desc': '和声音有关的一切',
     
     // Contact
     'contact.title': '联系我',
@@ -70,7 +75,12 @@ const translations: Record<Language, Record<string, string>> = {
     
     // About
     'about.title': 'About Me',
-    'about.description': 'Passionate about technology, music, and expression. Coding by day, stand-up comedy by night, guitar on weekends. Believer in continuous learning and sharing.',
+    'about.description': 'A nerdy audio engineer who wants to express himself',
+    'about.highlight.audio': 'Audio',
+    'about.highlight.comedy': 'Stand-up',
+    'about.highlight.guitar': 'Guitar',
+    'about.highlight.podcast': 'Podcast',
+    'about.highlight.articles': 'Articles',
     
     // Articles
     'articles.title': 'Original Articles',
@@ -79,16 +89,16 @@ const translations: Record<Language, Record<string, string>> = {
     'articles.viewAll': 'View All',
     
     // Side Projects
-    'projects.title': 'Side Projects',
-    'projects.subtitle': 'Beyond the day job',
+    'projects.title': 'Things I do',
+    'projects.subtitle': 'Exit of reality, 1, 2,3,4,…',
     'projects.standup': 'Stand-up Comedy',
-    'projects.standup.desc': 'Jokes and performances on Xiaohongshu',
-    'projects.guitar': 'Guitar Performance',
-    'projects.guitar.desc': 'YouTube / Bilibili videos',
-    'projects.podcast': 'Personal Podcast',
-    'projects.podcast.desc': 'Xiaoyuzhou / Spotify / Apple',
-    'projects.science': 'Science Articles',
-    'projects.science.desc': 'WeChat / Zhihu columns',
+    'projects.standup.desc': 'I love your humor, goodbye',
+    'projects.guitar': 'Guitar',
+    'projects.guitar.desc': 'Pink Floyd, Beyond, Fingerstyle, and more…',
+    'projects.podcast': 'Pobicast',
+    'projects.podcast.desc': 'Sit back, relax, and talk',
+    'projects.science': 'ZiYu Acoustics',
+    'projects.science.desc': 'Everything about sound',
     
     // Contact
     'contact.title': 'Get in Touch',
