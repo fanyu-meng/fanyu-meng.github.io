@@ -2,6 +2,7 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 const HeroSection: React.FC = () => {
   const { t } = useLanguage();
@@ -16,18 +17,36 @@ const HeroSection: React.FC = () => {
 
       <div className="container mx-auto pt-20">
         <div className="max-w-4xl mx-auto text-center">
+          {/* Avatar */}
+          <div className="flex justify-center mb-8 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse-glow" />
+              {/* Avatar with border */}
+              <div className="relative rounded-full p-1 bg-gradient-to-br from-primary/50 to-primary/30 shadow-glow">
+                <Avatar className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 border-4 border-background">
+                  <AvatarImage 
+                    src="/ProfilePhoto.png" 
+                    alt={t('hero.name')}
+                    className="object-cover"
+                  />
+                </Avatar>
+              </div>
+            </div>
+          </div>
+
           {/* Name */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 animate-fade-up" style={{ animationDelay: '0.2s' }}>
             <span className="gradient-text">{t('hero.name')}</span>
           </h1>
 
           {/* Description */}
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{ animationDelay: '0.4s' }}>
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{ animationDelay: '0.3s' }}>
             {t('hero.description')}
           </p>
 
           {/* Social Links */}
-          <div className="flex items-center justify-center gap-4 mb-16 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+          <div className="flex items-center justify-center gap-4 mb-16 animate-fade-up" style={{ animationDelay: '0.4s' }}>
             <a
               href="https://github.com/fanyu-meng"
               target="_blank"
@@ -58,7 +77,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="animate-fade-up" style={{ animationDelay: '0.6s' }}>
+          <div className="animate-fade-up" style={{ animationDelay: '0.5s' }}>
             <Button
               asChild
               size="lg"
