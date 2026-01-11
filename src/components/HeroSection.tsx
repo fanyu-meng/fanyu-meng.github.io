@@ -10,8 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { XiaoyuzhouIcon } from '@/components/icons/XiaoyuzhouIcon';
-import { WeChatIcon } from '@/components/icons/WeChatIcon';
 
 const HeroSection: React.FC = () => {
   const { t } = useLanguage();
@@ -88,25 +86,6 @@ const HeroSection: React.FC = () => {
                 >
                   <Twitter className="w-5 h-5" />
                 </a>
-                <a
-                  href="https://www.xiaoyuzhoufm.com/podcast/67cdacc32deb5237c648049f"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-                  title="小宇宙"
-                >
-                  <XiaoyuzhouIcon className="w-5 h-5" />
-                </a>
-                <button
-                  onClick={() => {
-                    setQrCodeOpen(true);
-                    setQrCodeError(false);
-                  }}
-                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-                  title="微信公众号"
-                >
-                  <WeChatIcon className="w-5 h-5" />
-                </button>
               </div>
 
               {/* CTA Button */}
