@@ -46,9 +46,9 @@ const sideProjects: SideProject[] = [
     titleKey: 'projects.podcast',
     descKey: 'projects.podcast.desc',
     links: [
-      { name: '小宇宙', url: 'https://xiaoyuzhoufm.com' },
-      { name: 'Spotify', url: 'https://spotify.com' },
-      { name: 'Apple', url: 'https://podcasts.apple.com' },
+      { name: '小宇宙', url: 'https://www.xiaoyuzhoufm.com/podcast/67cdacc32deb5237c648049f' },
+      { name: 'Spotify', url: 'https://open.spotify.com/show/6YfmptM1qzz9bmc7HLrzVQ?si=e8cc4a6a48c3483d' },
+      { name: 'Apple Podcast', url: 'https://podcasts.apple.com/de/podcast/%E7%A0%B4%E5%A3%81%E5%9C%86%E6%A1%8C/id1719475456?l=en-GB' },
     ],
     gradient: 'from-green-500/20 to-emerald-500/20',
   },
