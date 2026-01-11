@@ -1,16 +1,10 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Mail, Github, Linkedin, Twitter, MessageCircle } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ContactSection: React.FC = () => {
   const { t } = useLanguage();
-
-  const socialLinks = [
-    { icon: Github, name: 'GitHub', url: 'https://github.com/fanyu-meng' },
-    { icon: Linkedin, name: 'LinkedIn', url: 'https://www.linkedin.com/in/fanyu-meng-9332b489/' },
-    { icon: Twitter, name: 'Twitter/X', url: 'https://x.com/fanyu_meng' },
-  ];
 
   return (
     <section id="contact" className="py-24 relative">
@@ -38,26 +32,6 @@ const ContactSection: React.FC = () => {
             </Button>
           </div>
 
-          {/* Social Links */}
-          <div>
-            <p className="text-sm text-muted-foreground mb-6">
-              {t('contact.social')}
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              {socialLinks.map(({ icon: Icon, name, url }) => (
-                <a
-                  key={name}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-4 rounded-xl bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-                  title={name}
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>
