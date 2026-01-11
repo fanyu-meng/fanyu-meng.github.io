@@ -16,78 +16,83 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div className="container mx-auto pt-20">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Avatar */}
-          <div className="flex justify-center mb-8 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            <div className="relative">
-              {/* Glow effect */}
-              <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse-glow" />
-              {/* Avatar with border */}
-              <div className="relative rounded-full p-1 bg-gradient-to-br from-primary/50 to-primary/30 shadow-glow">
-                <Avatar className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 border-4 border-background">
-                  <AvatarImage 
-                    src="/ProfilePhoto.png" 
-                    alt={t('hero.name')}
-                    className="object-cover"
-                  />
-                </Avatar>
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 lg:gap-12">
+            {/* Avatar */}
+            <div className="flex-shrink-0 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+              <div className="relative">
+                {/* Glow effect */}
+                <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse-glow" />
+                {/* Avatar with border */}
+                <div className="relative rounded-full p-1 bg-gradient-to-br from-primary/50 to-primary/30 shadow-glow">
+                  <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-background">
+                    <AvatarImage 
+                      src="/ProfilePhoto.png" 
+                      alt={t('hero.name')}
+                      className="object-cover"
+                    />
+                  </Avatar>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Name */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            <span className="gradient-text">{t('hero.name')}</span>
-          </h1>
+            {/* Content */}
+            <div className="flex-1 text-center md:text-left animate-fade-up" style={{ animationDelay: '0.2s' }}>
+              {/* Name */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                <span className="gradient-text">{t('hero.name')}</span>
+              </h1>
 
-          {/* Description */}
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            {t('hero.description')}
-          </p>
+              {/* Description */}
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl md:max-w-none mb-8 md:mb-12 leading-relaxed">
+                {t('hero.description')}
+              </p>
 
-          {/* Social Links */}
-          <div className="flex items-center justify-center gap-4 mb-16 animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <a
-              href="https://github.com/fanyu-meng"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-              title="GitHub"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/fanyu-meng-9332b489/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-              title="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a
-              href="https://x.com/fanyu_meng"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
-              title="Twitter/X"
-            >
-              <Twitter className="w-5 h-5" />
-            </a>
-          </div>
+              {/* Social Links */}
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-8 md:mb-12 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+                <a
+                  href="https://github.com/fanyu-meng"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+                  title="GitHub"
+                >
+                  <Github className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/fanyu-meng-9332b489/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://x.com/fanyu_meng"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 hover:shadow-glow hover:scale-110"
+                  title="Twitter/X"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              </div>
 
-          {/* CTA Button */}
-          <div className="animate-fade-up" style={{ animationDelay: '0.5s' }}>
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
-            >
-              <a href="#articles" className="flex items-center gap-2">
-                {t('hero.cta')}
-                <ArrowDown className="w-4 h-4" />
-              </a>
-            </Button>
+              {/* CTA Button */}
+              <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
+                >
+                  <a href="#articles" className="flex items-center gap-2">
+                    {t('hero.cta')}
+                    <ArrowDown className="w-4 h-4" />
+                  </a>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
