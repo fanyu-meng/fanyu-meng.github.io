@@ -33,10 +33,10 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
       <ellipse
         cx="12"
         cy="12"
-        rx="9"
-        ry="3.2"
+        rx="10.5"
+        ry="3.8"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.4"
         transform="rotate(-25 12 12)"
         clipPath="url(#xiaoyuzhou-clip-back)"
       />
@@ -45,7 +45,7 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
       <circle 
         cx="12" 
         cy="12" 
-        r="5.8" 
+        r="6.8" 
         fill="currentColor" 
       />
 
@@ -53,10 +53,10 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
       <ellipse
         cx="12"
         cy="12"
-        rx="9"
-        ry="3.2"
+        rx="10.5"
+        ry="3.8"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.4"
         transform="rotate(-25 12 12)"
         clipPath="url(#xiaoyuzhou-clip-front)"
       />
