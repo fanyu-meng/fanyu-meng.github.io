@@ -87,7 +87,7 @@ const ProjectCard: React.FC<{ project: SideProject }> = ({ project }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl font-semibold mb-2">
+        <h3 className="text-lg font-semibold mb-2">
           {t(project.titleKey)}
         </h3>
 
@@ -168,10 +168,10 @@ const SideProjectsSection: React.FC = () => {
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl font-bold mb-4">
             {t('projects.title')}
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base">
             {t('projects.subtitle')}
           </p>
         </div>

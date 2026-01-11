@@ -39,12 +39,12 @@ const HeroSection: React.FC = () => {
             {/* Content */}
             <div className="flex-1 text-center md:text-left animate-fade-up" style={{ animationDelay: '0.2s' }}>
               {/* Name */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+              <h1 className="text-3xl font-bold mb-4">
                 <span className="gradient-text">{t('hero.name')}</span>
               </h1>
 
               {/* Description */}
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl md:max-w-none mb-8 md:mb-12 leading-relaxed">
+              <p className="text-base text-muted-foreground max-w-2xl md:max-w-none mb-8 md:mb-12 leading-relaxed">
                 {t('hero.description')}
               </p>
 

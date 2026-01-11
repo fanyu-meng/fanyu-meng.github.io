@@ -17,10 +17,10 @@ const ContactSection: React.FC = () => {
       <div className="container mx-auto">
         <div className="max-w-2xl mx-auto text-center">
           {/* Section Header */}
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl font-bold mb-4">
             {t('contact.title')}
           </h2>
-          <p className="text-muted-foreground text-lg mb-12">
+          <p className="text-muted-foreground text-base mb-12">
             {t('contact.subtitle')}
           </p>
 

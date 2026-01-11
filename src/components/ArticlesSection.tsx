@@ -72,7 +72,7 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
           </span>
 
           {/* Title */}
-          <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+          <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors">
             {title}
           </h3>
 
@@ -106,7 +106,7 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
           <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-2 w-fit">
             {article.category}
           </span>
-          <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
           <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
             <span className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
@@ -138,10 +138,10 @@ const ArticlesSection: React.FC = () => {
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl font-bold mb-4">
             {t('articles.title')}
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base">
             {t('articles.subtitle')}
           </p>
         </div>
