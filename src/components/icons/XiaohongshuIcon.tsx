@@ -1,10 +1,10 @@
 import React from 'react';
 
-interface XiaoyuzhouIconProps {
+interface XiaohongshuIconProps {
   className?: string;
 }
 
-export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => {
+export const XiaohongshuIcon: React.FC<XiaohongshuIconProps> = ({ className }) => {
   return (
     <svg
       className={className}
@@ -13,7 +13,7 @@ export const XiaoyuzhouIcon: React.FC<XiaoyuzhouIconProps> = ({ className }) => 
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-      <circle cx="12" cy="12" r="1.5"/>
+      <path d="M9 7h6v2H9zm0 4h6v2H9zm0 4h4v2H9z"/>
     </svg>
   );
 };
