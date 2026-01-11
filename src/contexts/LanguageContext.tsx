@@ -24,11 +24,11 @@ const translations: Record<Language, Record<string, string>> = {
     
     // About
     'about.title': '关于我',
-    'about.item.1': '上过8次中文开放麦的脱口秀演员',
-    'about.item.2': '做过16期播客的播客主播',
-    'about.item.3': '退过3个乐队的三品战士',
-    'about.item.4': '9万粉丝的声学科普博主（公众号+知乎）',
-    'about.item.5': '音频算法工程师',
+    'about.item.1': '音频算法工程师',
+    'about.item.2': '上过8次中文开放麦的脱口秀演员',
+    'about.item.3': '做过16期播客的播客主播',
+    'about.item.4': '退过3个乐队的三品战士',
+    'about.item.5': '9万粉丝的声学科普博主（公众号+知乎）',
     'about.item.6': '哈尔滨工业大学，慕尼黑工业大学，亚琛工业大学，埃因霍温理工大学',
     'about.highlight.audio': '音频算法',
     'about.highlight.comedy': '脱口秀',
@@ -78,11 +78,11 @@ const translations: Record<Language, Record<string, string>> = {
     
     // About
     'about.title': 'About Me',
-    'about.item.1': 'Stand-up comedian with 8 open mic performances',
-    'about.item.2': 'Podcast host with 16 episodes produced',
-    'about.item.3': 'Guitarist who has "retired" from 3 bands',
-    'about.item.4': 'Acoustics science blogger with 90k followers (WeChat + Zhihu)',
-    'about.item.5': 'Audio Algorithm Engineer',
+    'about.item.1': 'Audio Algorithm Engineer',
+    'about.item.2': 'Stand-up comedian with 8 open mic performances',
+    'about.item.3': 'Podcast host with 16 episodes produced',
+    'about.item.4': 'Guitarist who has "retired" from 3 bands',
+    'about.item.5': 'Acoustics science blogger with 90k followers (WeChat + Zhihu)',
     'about.item.6': 'HIT, TUM, RWTH Aachen, TU Eindhoven',
     'about.highlight.audio': 'Audio',
     'about.highlight.comedy': 'Stand-up',
