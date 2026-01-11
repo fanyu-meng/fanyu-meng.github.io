@@ -9,7 +9,7 @@ const Navigation: React.FC = () => {
 
   const navItems = [
     { key: 'nav.home', href: '#home' },
-    { key: 'nav.articles', href: '#articles' },
+    // { key: 'nav.articles', href: '#articles' },
     { key: 'nav.projects', href: '#projects' },
     { key: 'nav.contact', href: '#contact' },
   ];

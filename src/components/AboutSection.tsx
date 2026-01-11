@@ -1,14 +1,16 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Code, Music, Mic } from 'lucide-react';
+import { Waves, Mic, Guitar, Headphones, FileText } from 'lucide-react';
 
 const AboutSection: React.FC = () => {
   const { t } = useLanguage();
 
   const highlights = [
-    { icon: Code, label: 'Code' },
-    { icon: Mic, label: 'Voice' },
-    { icon: Music, label: 'Music' },
+    { icon: Waves, labelKey: 'about.highlight.audio' },
+    { icon: Mic, labelKey: 'about.highlight.comedy' },
+    { icon: Guitar, labelKey: 'about.highlight.guitar' },
+    { icon: Headphones, labelKey: 'about.highlight.podcast' },
+    { icon: FileText, labelKey: 'about.highlight.articles' },
   ];
 
   return (
@@ -26,13 +28,13 @@ const AboutSection: React.FC = () => {
 
             {/* Highlights */}
             <div className="flex flex-wrap gap-4">
-              {highlights.map(({ icon: Icon, label }) => (
+              {highlights.map(({ icon: Icon, labelKey }) => (
                 <div
-                  key={label}
+                  key={labelKey}
                   className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border/50"
                 >
                   <Icon className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{label}</span>
+                  <span className="text-sm font-medium">{t(labelKey)}</span>
                 </div>
               ))}
             </div>

@@ -186,7 +186,7 @@ const HeroSection: React.FC = () => {
                   size="lg"
                   className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
                 >
-                  <a href="#articles" className="flex items-center gap-2">
+                  <a href="#projects" className="flex items-center gap-2">
                     {t('hero.cta')}
                     <ArrowDown className="w-4 h-4" />
                   </a>
