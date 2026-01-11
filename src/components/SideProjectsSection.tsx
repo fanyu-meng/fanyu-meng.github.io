@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Mic, Guitar, Headphones, BookOpen, ExternalLink } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface SideProject {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
   titleKey: string;
   descKey: string;
-  links: { name: string; url: string }[];
+  links: { name: string; url: string; isQRCode?: boolean }[];
   gradient: string;
 }
 
@@ -51,8 +58,8 @@ const sideProjects: SideProject[] = [
     titleKey: 'projects.science',
     descKey: 'projects.science.desc',
     links: [
-      { name: '公众号', url: 'https://mp.weixin.qq.com' },
-      { name: '知乎', url: 'https://zhihu.com' },
+      { name: '公众号', url: '#', isQRCode: true },
+      { name: '知乎', url: 'https://www.zhihu.com/column/c_165545415' },
     ],
     gradient: 'from-amber-500/20 to-orange-500/20',
   },
@@ -61,40 +68,84 @@ const sideProjects: SideProject[] = [
 const ProjectCard: React.FC<{ project: SideProject }> = ({ project }) => {
   const { t } = useLanguage();
   const Icon = project.icon;
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+
+  const handleLinkClick = (link: { name: string; url: string; isQRCode?: boolean }) => {
+    if (link.isQRCode) {
+      setQrCodeOpen(true);
+    }
+  };
 
   return (
-    <div className="group gradient-card rounded-xl p-6 shadow-card border border-border/50 transition-all duration-300 hover:shadow-card-hover hover:border-primary/30">
-      {/* Icon with gradient background */}
-      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${project.gradient} flex items-center justify-center mb-5`}>
-        <Icon className="w-7 h-7 text-foreground" />
+    <>
+      <div className="group gradient-card rounded-xl p-6 shadow-card border border-border/50 transition-all duration-300 hover:shadow-card-hover hover:border-primary/30">
+        {/* Icon with gradient background */}
+        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${project.gradient} flex items-center justify-center mb-5`}>
+          <Icon className="w-7 h-7 text-foreground" />
+        </div>
+
+        {/* Title */}
+        <h3 className="text-xl font-semibold mb-2">
+          {t(project.titleKey)}
+        </h3>
+
+        {/* Description */}
+        <p className="text-muted-foreground text-sm mb-5">
+          {t(project.descKey)}
+        </p>
+
+        {/* Links */}
+        <div className="flex flex-wrap gap-2">
+          {project.links.map((link) => (
+            link.isQRCode ? (
+              <button
+                key={link.name}
+                onClick={() => handleLinkClick(link)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-secondary hover:bg-secondary/80 rounded-full transition-colors cursor-pointer"
+              >
+                {link.name}
+              </button>
+            ) : (
+              <a
+                key={link.name}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-secondary hover:bg-secondary/80 rounded-full transition-colors"
+              >
+                {link.name}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )
+          ))}
+        </div>
       </div>
 
-      {/* Title */}
-      <h3 className="text-xl font-semibold mb-2">
-        {t(project.titleKey)}
-      </h3>
-
-      {/* Description */}
-      <p className="text-muted-foreground text-sm mb-5">
-        {t(project.descKey)}
-      </p>
-
-      {/* Links */}
-      <div className="flex flex-wrap gap-2">
-        {project.links.map((link) => (
-          <a
-            key={link.name}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-secondary hover:bg-secondary/80 rounded-full transition-colors"
-          >
-            {link.name}
-            <ExternalLink className="w-3 h-3" />
-          </a>
-        ))}
-      </div>
-    </div>
+      {/* QR Code Dialog */}
+      <Dialog open={qrCodeOpen} onOpenChange={setQrCodeOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>公众号二维码</DialogTitle>
+            <DialogDescription>
+              扫描二维码关注我的公众号
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center py-4">
+            <img
+              src="/wechat-qrcode.png"
+              alt="微信公众号二维码"
+              className="w-64 h-64 object-contain border border-border rounded-lg"
+              onError={(e) => {
+                // 如果图片不存在，显示占位符
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+                target.alt = '请将二维码图片保存为 public/wechat-qrcode.png';
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

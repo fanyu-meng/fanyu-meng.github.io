@@ -31,9 +31,9 @@ const ContactSection: React.FC = () => {
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"
             >
-              <a href="mailto:fanyu.meng@example.com" className="flex items-center gap-2">
+              <a href="mailto:mengfanyuhit@gmail.com" className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
-                fanyu.meng@example.com
+                mengfanyuhit@gmail.com
               </a>
             </Button>
           </div>
