@@ -1,0 +1,302 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { BookOpen, Code2, Guitar, Headphones, Mic, Search, Ticket } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import './works-explorer.css';
+
+const categories = {
+  all: ['全部', 'All'],
+  reviews: ['脱口秀', 'Stand-up'],
+  podcast: ['播客', 'Podcast'],
+  articles: ['声学科普', 'Acoustics'],
+  video: ['吉他🎸&音乐🎵', 'Guitar 🎸 & music 🎵'],
+  github: ['我开发的项目', 'Projects I built'],
+} as const;
+
+type Category = keyof typeof categories;
+type Kind = Exclude<Category, 'all'> | 'club';
+type Link = { url: string; label: string };
+type Entry = {
+  id: string;
+  title: string;
+  meta?: string;
+  topic?: string;
+  summary?: string;
+  url?: string;
+  links?: Link[];
+  body?: string[];
+  contentPath?: string;
+  audio?: string;
+  embed?: string;
+  chapters?: { seconds: number; title: string }[];
+};
+type Work = Entry & { kind: Kind };
+type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>>;
+type Article = { body?: string[]; html?: string };
+type Address = { type: Category; item: string; q: string };
+
+const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
+const iconByKind = { reviews: Mic, podcast: Headphones, articles: BookOpen, video: Guitar, github: Code2, club: Ticket };
+const artwork: Partial<Record<Kind, string>> = { podcast: 'pobicast.webp', club: 'leslam.webp' };
+const categoryOf = (kind: Kind): Category => kind === 'club' ? 'reviews' : kind;
+
+async function loadJSON<T>(url: URL, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error('HTTP ' + response.status);
+  return response.json();
+}
+
+function articleURL(path: string) {
+  // Index-relative body paths and site-root paths are both supported.
+  const url = new URL(path, dataRoot);
+  if (url.origin !== dataRoot.origin || !url.pathname.startsWith(dataRoot.pathname)) throw new Error('Invalid article URL');
+  return url;
+}
+
+function webURL(raw?: string, base = location.href) {
+  if (!raw?.trim()) return undefined;
+  try {
+    const url = new URL(raw, base);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : undefined;
+  } catch { return undefined; }
+}
+
+const safeTags = new Set('p br b strong em i del s sub sup u ol ul li blockquote pre code h1 h2 h3 h4 h5 h6 hr figure figcaption img a table thead tbody tfoot tr td th'.split(' '));
+const omitTags = new Set('script style template iframe object embed svg math noscript form video audio'.split(' '));
+
+function articleMarkup(html: string, base: string) {
+  // Read into an inert template; only create approved markup in the resulting document fragment.
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  const result = document.createElement('div');
+  function copy(source: Node, parent: Node) {
+    if (source.nodeType === Node.TEXT_NODE) {
+      parent.appendChild(document.createTextNode(source.textContent || ''));
+      return;
+    }
+    if (!(source instanceof Element)) return;
+    const tag = source.localName;
+    if (omitTags.has(tag)) return;
+    const el = safeTags.has(tag) ? document.createElement(tag) : null;
+    if (el) {
+      const url = webURL(source.getAttribute(tag === 'img' ? 'src' : 'href'), base);
+      if (tag === 'img') {
+        if (!url) return;
+        el.setAttribute('src', url);
+        el.setAttribute('alt', source.getAttribute('alt') || '');
+        el.setAttribute('loading', 'lazy');
+        el.setAttribute('referrerpolicy', 'no-referrer');
+      } else if (tag === 'a' && url) {
+        el.setAttribute('href', url);
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener noreferrer');
+      }
+      parent.appendChild(el);
+    }
+    for (const child of source.childNodes) copy(child, el || parent);
+  }
+  for (const child of template.content.childNodes) copy(child, result);
+  const first = Array.from(result.childNodes).find(el => el.textContent?.trim() || el instanceof Element);
+  if (!first) return { head: '', rest: '' };
+  const head = document.createElement('div');
+  head.append(first);
+  return { head: head.innerHTML, rest: result.innerHTML.trim() };
+}
+
+function readAddress(): Address {
+  const [path, query] = location.hash.replace(/^#\/?/, '').split('?');
+  const [legacy, id = ''] = path.split('/');
+  const params = new URLSearchParams(query);
+  const rawType = params.get('type') || legacy;
+  const type = rawType === 'leslam' || rawType === 'club' ? 'reviews' :
+    Object.prototype.hasOwnProperty.call(categories, rawType) ? rawType as Category : 'all';
+  const item = params.get('item') || (rawType === 'leslam' || rawType === 'club' ? 'leslam-club' : id);
+  return { type, item, q: params.get('q') || '' };
+}
+
+function hrefFor(address: Address) {
+  const params = new URLSearchParams();
+  if (address.type !== 'all') params.set('type', address.type);
+  if (address.item) params.set('item', address.item);
+  if (address.q) params.set('q', address.q);
+  const query = params.toString();
+  return '#/works' + (query ? '?' + query : '');
+}
+
+function orderWorks(works: WorksFile, articles: Entry[]) {
+  const groups: Record<Kind, Work[]> = { reviews: [], podcast: [], articles: [], video: [], github: [], club: [] };
+  for (const kind of Object.keys(groups) as Kind[]) {
+    groups[kind] = (kind === 'articles' ? articles : works[kind] || []).map(entry => ({ ...entry, kind }));
+  }
+  // Show each pursuit in the first few rows, and keep each source's ordering within its category.
+  const keys = Object.keys(groups) as Kind[];
+  return [...keys.flatMap(k => groups[k].slice(0, 1)), ...keys.flatMap(k => groups[k].slice(1))];
+}
+
+function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
+  const { language } = useLanguage();
+  const en = language === 'en';
+  const article = useQuery({
+    queryKey: ['acoustics-body', item.contentPath],
+    queryFn: ({ signal }) => loadJSON<Article>(articleURL(item.contentPath!), signal),
+    enabled: Boolean(item.contentPath),
+    staleTime: Infinity,
+  });
+  const richText = useMemo(() => article.data?.html && item.contentPath
+    ? articleMarkup(article.data.html, articleURL(item.contentPath).href) : undefined, [article.data, item.contentPath]);
+  const Icon = iconByKind[item.kind];
+  const paragraphs = article.data?.body || (item.body?.length ? item.body : item.summary ? [item.summary] : []);
+  const text = paragraphs.map((p, index) => <p key={index}>{p}</p>);
+  const intro = richText ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.head }} /> : text[0];
+  const rest = richText?.rest ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.rest }} /> :
+    !richText && text.length > 1 ? text.slice(1) : null;
+  const links = item.links?.length ? item.links : item.url ? [{ url: item.url, label: en ? 'Original' : '原文' }] : [];
+  const audio = webURL(item.audio);
+  const embed = webURL(item.embed);
+  const provider = embed && new URL(embed).hostname;
+  const embedAllowed = ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(provider);
+  return (
+    <article id="ex-reader" className="ex-reader" aria-label={item.title}>
+      <div className="ex-reading">
+        <div className="ex-kicker"><Icon aria-hidden="true" />{categories[categoryOf(item.kind)][Number(en)]}</div>
+        <h3>{item.title}</h3>
+        {item.meta && <p className="ex-meta">{item.meta}</p>}
+        {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
+          embedAllowed && <div className="ex-media"><iframe title={item.title} src={embed} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
+        <div className="ex-body">
+          {intro}
+          {rest && (small ? <details className="ex-more"><summary>{en ? 'Continue reading' : '继续阅读'}</summary>{rest}</details> : rest)}
+          {item.contentPath && article.isPending && <p role="status">{en ? 'Loading article…' : '正在加载正文…'}</p>}
+          {item.contentPath && article.isError && <div className="ex-status" role="status">{en ? 'The article could not be loaded. ' : '正文暂未载入。'}<button onClick={() => article.refetch()}>{en ? 'Retry' : '重新加载'}</button></div>}
+        </div>
+        {links.length > 0 && <div className="ex-actions">{links.map(link => {
+          const url = webURL(link.url);
+          return url && <a key={url} href={url} target="_blank" rel="noopener noreferrer">{link.label}</a>;
+        })}</div>}
+        {!!item.chapters?.length && <section className="ex-chapters">
+          <h4>{en ? 'Episode chapters' : '本期时间轴'}</h4>
+          {item.chapters.map((chapter, i) => <p key={i}><time>{Math.floor(chapter.seconds / 60)}:{String(chapter.seconds % 60).padStart(2, '0')}</time>{chapter.title}</p>)}
+        </section>}
+        {children}
+      </div>
+    </article>
+  );
+}
+
+export default function WorksExplorer() {
+  const { language, t } = useLanguage();
+  const en = language === 'en';
+  const [address, setAddress] = useState(readAddress);
+  const [folded, setFolded] = useState(false);
+  const [small, setSmall] = useState(() => window.matchMedia('(max-width: 759px)').matches);
+  const list = useRef<HTMLDivElement>(null);
+  const section = useRef<HTMLElement>(null);
+  const requestedScroll = useRef(Boolean(location.hash.match(/^#\/?works\?/)));
+  const labels = (type: Category) => categories[type][Number(en)];
+  const works = useQuery({ queryKey: ['work-index'], queryFn: ({ signal }) => loadJSON<WorksFile>(new URL('works.json', dataRoot), signal), staleTime: Infinity });
+  const articles = useQuery({ queryKey: ['acoustics-index'], queryFn: ({ signal }) => loadJSON<Entry[]>(new URL('acoustics-index.json', dataRoot), signal), staleTime: Infinity });
+  const entries = useMemo(() => orderWorks(works.data || {}, articles.data || []), [works.data, articles.data]);
+  const terms = address.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const visible = entries.filter(item => {
+    const kind = categoryOf(item.kind);
+    if (address.type !== 'all' && kind !== address.type) return false;
+    const searchable = [item.id,item.title,item.meta,item.topic,item.summary,...categories[kind]].join(' ').toLowerCase();
+    return terms.every(term => searchable.includes(term));
+  });
+  const current = visible.find(item => item.id === address.item) || visible[0];
+
+  useEffect(() => {
+    const breakpoint = window.matchMedia('(max-width: 759px)');
+    const resize = () => { setSmall(breakpoint.matches); setFolded(false); };
+    const restore = () => { setFolded(false); setAddress(readAddress()); };
+    breakpoint.addEventListener('change', resize);
+    window.addEventListener('popstate', restore);
+    window.addEventListener('hashchange', restore);
+    return () => {
+      breakpoint.removeEventListener('change', resize);
+      window.removeEventListener('popstate', restore);
+      window.removeEventListener('hashchange', restore);
+    };
+  }, []);
+
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type]);
+  useEffect(() => {
+    if (works.isPending || articles.isPending || !requestedScroll.current) return;
+    requestedScroll.current = false;
+    section.current?.scrollIntoView({ block: 'start' });
+    const chosen = list.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (chosen && list.current && !small) {
+      const delta = chosen.getBoundingClientRect().top - list.current.getBoundingClientRect().top;
+      if (delta > list.current.clientHeight) list.current.scrollTop += delta;
+    }
+    if (chosen && small) chosen.scrollIntoView({ block: 'start' });
+  }, [works.isPending, articles.isPending, small]);
+
+  function navigate(next: Address, replace = false) {
+    setFolded(false);
+    setAddress(next);
+    const href = hrefFor(next);
+    if (href !== location.hash) history[replace ? 'replaceState' : 'pushState'](history.state, '', href);
+  }
+  function choose(item: Work) {
+    if (small && current?.id === item.id) { setFolded(!folded); return; }
+    navigate({ ...address, item: item.id });
+    requestAnimationFrame(() => {
+      if (small) {
+        const selected = list.current?.querySelector<HTMLElement>('[aria-expanded="true"]');
+        if (selected && selected.getBoundingClientRect().top < 65) selected.scrollIntoView({ block: 'start' });
+      } else if ((list.current?.parentElement?.getBoundingClientRect().top ?? 0) < -65) {
+        section.current?.scrollIntoView({ block: 'start' });
+      }
+    });
+  }
+  const loading = works.isPending || articles.isPending;
+  const errored = works.isError || articles.isError;
+  const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
+    current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
+  const reader = current && <Reader key={current.id} item={current} small={small}>
+    {related.length > 0 && <div className="ex-related">{related.map(row => <button type="button" key={row.id}
+      onClick={() => navigate({ type: 'reviews', item: row.id, q: '' })}>{row.title}</button>)}</div>}
+  </Reader>;
+
+  return <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
+    <div className="ex-wrap">
+      <div className="ex-heading">
+        <h2 id="ex-heading">{t('projects.title')}</h2>
+        <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
+          placeholder={en ? 'Search work' : '搜索作品'} aria-label={en ? 'Search work' : '搜索作品'}
+          value={address.q} onChange={e => navigate({ ...address, item: '', q: e.target.value }, true)} /></label>
+      </div>
+      <nav className="ex-filters" aria-label={en ? 'Filter by type' : '按栏目筛选'}>
+        {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
+          aria-pressed={address.type === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
+      </nav>
+      <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>
+      {errored && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
+        <button type="button" onClick={() => { if (works.isError) works.refetch(); if (articles.isError) articles.refetch(); }}>{en ? 'Retry' : '重新加载'}</button>
+      </div>}
+      {!visible.length ? <div className="ex-empty">{loading ? (en ? 'Loading works…' : '正在载入作品…') :
+        <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}</div> :
+        <div className="ex-split">
+          <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
+            {visible.map(item => {
+              const active = current.id === item.id, Icon = iconByKind[item.kind], cover = artwork[item.kind];
+              const category = labels(categoryOf(item.kind));
+              const extra = item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
+                item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] : item.topic;
+              return <div className="ex-row" key={item.kind + ':' + item.id}>
+                <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
+                  aria-expanded={small ? active && !folded : undefined} aria-controls={active && (!small || !folded) ? 'ex-reader' : undefined} onClick={() => choose(item)}>
+                  <span className={'ex-row-icon tone-' + item.kind}>{cover ? <img alt="" src={import.meta.env.BASE_URL + cover} /> : <Icon aria-hidden="true" />}</span>
+                  <span className="ex-row-text"><small>{[category, extra].filter(Boolean).join(' · ')}</small>
+                    <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
+                </button>
+                {small && active && !folded && reader}
+              </div>;
+            })}
+          </div>
+          {!small && <div id="ex-pane" className="ex-pane">{reader}</div>}
+        </div>}
+    </div>
+  </section>;
+}

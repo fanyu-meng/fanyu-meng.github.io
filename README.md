@@ -91,3 +91,14 @@ Yes, you can connect a custom domain to your GitHub Pages site!
 - GitHub will automatically create a `CNAME` file in your repository
 
 Read more: [GitHub Pages Custom Domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
+
+### 关于我里的数字
+
+安装依赖时，`npm install` 或 `npm ci` 会在这个克隆中启用 `.githooks/pre-commit`。已有自定义钩子的克隆可从自己的 pre-commit 调用这个脚本。每次提交会尝试刷新并暂存 `public/content/profile-stats.json`；每次生产构建也会为部署产物独立刷新，覆盖网页端提交和多人协作。可用 `npm run stats` 单独刷新。需要 Python 3，无第三方 Python 依赖。
+
+- 脱口秀次数取个人**已写复盘**的最大累计场次编号。线上使用 `public/content/works.json` 中的复盘；本机还读取 Obsidian 的「我的复盘」目录。可用 `STANDUP_REVIEWS_DIR` 指定另一目录。
+- 播客期数取《破壁圆桌》正式 RSS 中去重的单集总数。
+- 知乎粉丝数取专栏作者的个人主页关注者。刷新器从一篇已核对的原创文章解析作者，可用 GitHub Actions 仓库变量 `ZHIHU_PROFILE_HANDLE` 指定该个人主页 URL 中的账号标识。
+- 公众号粉丝数取微信公众平台官方用户列表接口的 `total`。在仓库的 **Settings → Secrets and variables → Actions** 中提供 `WECHAT_APP_ID` 和 `WECHAT_APP_SECRET` 两个 secrets，运行环境需符合公众号的 API 权限和 IP 白名单要求。本地可用同名环境变量。只保存人数；密钥和关注者 ID 不进入网站。
+
+来源不可用时保留上次成功记录和日期。公众号与知乎都有人数记录时才显示合计。

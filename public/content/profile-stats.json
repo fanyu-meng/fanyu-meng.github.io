@@ -1,0 +1,29 @@
+{
+  "standupShows": {
+    "value": 20,
+    "asOf": "2026-11-23",
+    "status": "verified",
+    "source": "numbered-show-notes"
+  },
+  "podcastEpisodes": {
+    "value": 30,
+    "asOf": "2026-11-23",
+    "status": "last-known",
+    "source": "https://podcasts.apple.com/us/podcast/id1719475456"
+  },
+  "zhihuFollowers": {
+    "value": null,
+    "asOf": null,
+    "status": "unavailable"
+  },
+  "wechatFollowers": {
+    "value": null,
+    "asOf": null,
+    "status": "unavailable"
+  },
+  "followers": {
+    "value": null,
+    "asOf": null,
+    "status": "unavailable"
+  }
+}

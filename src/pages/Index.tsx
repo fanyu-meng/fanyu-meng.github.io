@@ -1,27 +1,20 @@
-import React from 'react';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
-import AboutSection from '@/components/AboutSection';
-import ArticlesSection from '@/components/ArticlesSection';
-import SideProjectsSection from '@/components/SideProjectsSection';
+import WorksExplorer from '@/components/WorksExplorer';
 import Footer from '@/components/Footer';
 
-const Index: React.FC = () => {
+export default function Index() {
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-background text-foreground">
         <Navigation />
         <main>
           <HeroSection />
-          <AboutSection />
-          {/* <ArticlesSection /> */}
-          <SideProjectsSection />
+          <WorksExplorer />
         </main>
         <Footer />
       </div>
     </LanguageProvider>
   );
-};
-
-export default Index;
+}

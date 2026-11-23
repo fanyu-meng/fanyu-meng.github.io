@@ -11,11 +11,12 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-      <div className="container mx-auto">
-        <div className="flex items-center justify-end h-16">
-          {/* Language Toggle */}
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-8">
+        <div className="flex h-14 items-center justify-between">
+          <a href="#home" className="font-semibold">{t('hero.name')}</a>
           <div className="flex items-center gap-4">
+            <a href="#works" className="text-sm text-muted-foreground hover:text-foreground">{language === 'zh' ? '作品' : 'Work'}</a>
             <Button
               variant="ghost"
               size="sm"

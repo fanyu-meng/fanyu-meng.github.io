@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+file=public/content/profile-stats.json
+# The snapshot is generated; preserve unrelated unstaged changes or a hand-edited snapshot.
+if git diff --quiet -- "$file"; then
+  python3 scripts/profile-stats.py --staged
+  git add -- "$file"
+else
+  echo "Profile snapshot has unstaged edits; leaving them intact. Metrics also refresh at build time." >&2
+fi

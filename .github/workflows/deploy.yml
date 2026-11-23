@@ -32,6 +32,10 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          WECHAT_APP_ID: ${{ secrets.WECHAT_APP_ID }}
+          WECHAT_APP_SECRET: ${{ secrets.WECHAT_APP_SECRET }}
+          ZHIHU_PROFILE_HANDLE: ${{ vars.ZHIHU_PROFILE_HANDLE }}
         run: npm run build
 
       - name: Setup Pages

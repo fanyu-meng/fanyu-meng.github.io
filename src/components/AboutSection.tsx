@@ -1,55 +1,40 @@
-import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Waves, Mic, Guitar, Headphones, FileText } from 'lucide-react';
 
-const AboutSection: React.FC = () => {
-  const { t } = useLanguage();
+type Metric = { value: number | null; asOf: string | null; status: string };
+type ProfileStats = Record<'standupShows' | 'podcastEpisodes' | 'followers' | 'wechatFollowers' | 'zhihuFollowers', Metric>;
 
-  const highlights = [
-    { icon: Waves, labelKey: 'about.highlight.audio' },
-    { icon: Mic, labelKey: 'about.highlight.comedy' },
-    { icon: Guitar, labelKey: 'about.highlight.guitar' },
-    { icon: Headphones, labelKey: 'about.highlight.podcast' },
-    { icon: FileText, labelKey: 'about.highlight.articles' },
-  ];
+async function getStats(): Promise<ProfileStats> {
+  const response = await fetch('/content/profile-stats.json', { cache: 'no-cache' });
+  if (!response.ok) throw new Error('Profile statistics unavailable');
+  return response.json();
+}
 
+export default function AboutSection() {
+  const { language, t } = useLanguage();
+  const { data } = useQuery({ queryKey: ['profile-stats'], queryFn: getStats, staleTime: 300_000, retry: 1 });
+  const zh = language === 'zh';
+  const number = new Intl.NumberFormat(zh ? 'zh-CN' : 'en');
+  function count(metric: Metric | undefined) {
+    return typeof metric?.value === 'number' && Number.isSafeInteger(metric.value) && metric.value >= 0 ? number.format(metric.value) : '';
+  }
+  function line(metric: Metric | undefined, label: string, formatted: (value: string) => string) {
+    const value = count(metric);
+    return <li>{value ? formatted(value) : label}
+      {value && metric?.asOf && <span className="ml-2 text-xs text-muted-foreground">{zh ? '截至 ' : 'as of '}<time dateTime={metric.asOf}>{metric.asOf.slice(0, 10)}</time></span>}</li>;
+  }
+  const followers = data?.followers;
   return (
-    <section className="py-24 relative">
-      <div className="container mx-auto">
-        <div className="max-w-4xl mx-auto">
-          <div className="gradient-card rounded-2xl p-8 md:p-12 shadow-card border border-border/50">
-            <h2 className="text-2xl font-bold mb-6">
-              {t('about.title')}
-            </h2>
-            
-            <div className="space-y-4 mb-8">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="flex items-start gap-3 group">
-                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary/60 group-hover:bg-primary transition-colors flex-shrink-0" />
-                  <p className="text-base text-muted-foreground leading-relaxed">
-                    {t(`about.item.${i}`)}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Highlights */}
-            <div className="flex flex-wrap gap-4">
-              {highlights.map(({ icon: Icon, labelKey }) => (
-                <div
-                  key={labelKey}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border/50"
-                >
-                  <Icon className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{t(labelKey)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <ul className="mt-6 list-disc space-y-2 border-t border-border/60 pl-5 pt-5 text-sm leading-relaxed marker:text-primary sm:text-base">
+      <li>{t('about.item.1')}</li>
+      {line(data?.standupShows, zh ? '脱口秀演员' : 'Stand-up comedian', n => zh ? `脱口秀已记录上台 ${n} 次` : `Stand-up comedian · ${n} documented performances`)}
+      {line(data?.podcastEpisodes, zh ? '《破壁圆桌》播客主播' : 'Host of Pobicast', n => zh ? `《破壁圆桌》已发布 ${n} 期播客` : `Host of Pobicast · ${n} published episodes`)}
+      <li>{t('about.item.4')}</li>
+      {line(followers, zh ? '声学科普博主（公众号和知乎）' : 'Acoustics writer on WeChat and Zhihu',
+        n => zh ? `公众号和知乎合计 ${n} 位关注者` : `${n} followers across WeChat and Zhihu`)}
+      {!count(followers) && count(data?.zhihuFollowers) && line(data?.zhihuFollowers, '', n => zh ? `知乎关注者 ${n}` : `${n} followers on Zhihu`)}
+      {!count(followers) && count(data?.wechatFollowers) && line(data?.wechatFollowers, '', n => zh ? `公众号关注者 ${n}` : `${n} followers on WeChat`)}
+      <li>{t('about.item.6')}</li>
+    </ul>
   );
-};
-
-export default AboutSection;
+}

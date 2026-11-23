@@ -8,7 +8,10 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "node scripts/install-stats-hook.mjs",
+    "stats": "python3 scripts/profile-stats.py",
+    "postbuild": "python3 scripts/profile-stats.py --output dist/content/profile-stats.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
