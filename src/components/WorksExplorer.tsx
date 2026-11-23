@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import './works-explorer.css';
 
@@ -20,6 +21,11 @@ type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
 const articleFormats = { article: ['文章', 'Articles'], answer: ['知乎回答', 'Zhihu answers'] } as const;
 type ArticleFormat = keyof typeof articleFormats;
 type WritingTab = 'writing' | 'zhihu' | 'douban';
+const doubanGroups = {
+  northeast: ['东北回家过年', 'New Year in Northeast China'],
+  'book-reviews': ['书评', 'Book reviews'],
+} as const;
+type DoubanGroup = keyof typeof doubanGroups;
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -45,7 +51,10 @@ type Entry = {
 type Work = Entry & { kind: Kind };
 type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoChannels?: Link[] };
 type Article = { body?: string[]; html?: string };
-type Address = { type: Category; item: string; q: string; format?: ArticleFormat; writingTab?: WritingTab };
+type Address = {
+  type: Category; item: string; q: string;
+  format?: ArticleFormat; writingTab?: WritingTab; doubanGroup?: DoubanGroup;
+};
 
 // Curated writing selection. Other non-acoustics entries appear under 知乎创作.
 const writingIds = new Set([
@@ -59,6 +68,16 @@ const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Z
 function writingTabFor(item: Work): WritingTab {
   if (item.id.startsWith('douban-')) return 'douban';
   return writingIds.has(item.id) ? 'writing' : 'zhihu';
+}
+
+function doubanGroupFor(item: Entry): DoubanGroup {
+  return /^东北(?:回家|老家)过年/.test(item.title) ? 'northeast' : 'book-reviews';
+}
+
+function writingLabel(item: Work, en: boolean) {
+  const tab = writingTabFor(item);
+  const label = writingTabs[tab][Number(en)];
+  return tab === 'douban' ? label + ' · ' + doubanGroups[doubanGroupFor(item)][Number(en)] : label;
 }
 
 const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
@@ -82,7 +101,7 @@ function iconFor(item: Work) {
   return categoryOf(item) === 'writing' ? PenLine : iconByKind[item.kind];
 }
 
-async function loadJSON<T>(url: URL, signal?: AbortSignal): Promise<T> {
+async function loadJSON<T>(url: URL | string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal });
   if (!response.ok) throw new Error('HTTP ' + response.status);
   return response.json();
@@ -174,8 +193,10 @@ function readAddress(): Address {
   const item = params.get('item') || (rawType === 'leslam' || rawType === 'club' ? 'leslam-club' : id);
   const format = params.get('format');
   const tab = params.get('tab');
+  const group = params.get('group');
   return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined,
-    writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined };
+    writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined,
+    doubanGroup: tab === 'douban' && (group === 'northeast' || group === 'book-reviews') ? group : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -184,7 +205,10 @@ function hrefFor(address: Address) {
   if (address.item) params.set('item', address.item);
   if (address.q) params.set('q', address.q);
   if (address.format) params.set('format', address.format);
-  if (address.type === 'writing' && address.writingTab) params.set('tab', address.writingTab);
+  if (address.type === 'writing' && address.writingTab) {
+    params.set('tab', address.writingTab);
+    if (address.writingTab === 'douban' && address.doubanGroup) params.set('group', address.doubanGroup);
+  }
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -229,7 +253,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
     <article id="ex-reader" className="ex-reader" aria-label={item.title}>
       <div className="ex-reading">
         <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{categoryOf(item) === 'writing'
-          ? ' · ' + writingTabs[writingTabFor(item)][Number(en)]
+          ? ' · ' + writingLabel(item, en)
           : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
         <h3>{item.title}</h3>
         {meta && <p className="ex-meta">{meta}</p>}
@@ -268,7 +292,11 @@ export default function WorksExplorer() {
   const requestedScroll = useRef(Boolean(location.hash.match(/^#\/?works\?/)));
   const labels = (type: Category) => categories[type][Number(en)];
   const works = useQuery({ queryKey: ['work-index'], queryFn: async ({ signal }) => withPublishedVideos(await loadJSON<WorksFile>(new URL('works.json', dataRoot), signal), dataRoot, signal), staleTime: Infinity });
-  const articles = useQuery({ queryKey: ['acoustics-index'], queryFn: ({ signal }) => loadJSON<Entry[]>(new URL('acoustics-index.json', dataRoot), signal), staleTime: Infinity });
+  const articles = useQuery({
+    queryKey: ['acoustics-index', articleIndexUrl],
+    queryFn: ({ signal }) => loadJSON<Entry[]>(articleIndexUrl, signal),
+    staleTime: Infinity,
+  });
   const entries = useMemo(() => orderWorks(works.data || {}, articles.data || []), [works.data, articles.data]);
   const terms = address.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   // Preserve published article links whose topic now belongs in another section.
@@ -277,14 +305,21 @@ export default function WorksExplorer() {
   const browsingArticles = activeType === 'articles';
   const activeWritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
     ? writingTabFor(linkedArticle) : address.writingTab || 'writing';
+  const browsingDouban = activeType === 'writing' && activeWritingTab === 'douban';
+  const activeDoubanGroup = browsingDouban && address.doubanGroup
+    ? (linkedArticle ? doubanGroupFor(linkedArticle) : address.doubanGroup) : undefined;
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
     if (browsingArticles && address.format && (item.format || 'article') !== address.format) return false;
-    if (activeType === 'writing' && writingTabFor(item) !== activeWritingTab) return false;
+    const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
+    if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
+    const group = writingTab === 'douban' ? doubanGroupFor(item) : undefined;
+    if (activeDoubanGroup && group !== activeDoubanGroup) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
     const searchable = [item.id, item.title, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
-      category === 'writing' ? writingTabs[writingTabFor(item)].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
+      writingTab ? writingTabs[writingTab].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
+      group && doubanGroups[group].join(' '),
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
@@ -311,7 +346,7 @@ export default function WorksExplorer() {
     };
   }, []);
 
-  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format, address.writingTab]);
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format, address.writingTab, address.doubanGroup]);
   useEffect(() => {
     if (works.isPending || articles.isPending || !requestedScroll.current) return;
     requestedScroll.current = false;
@@ -330,6 +365,13 @@ export default function WorksExplorer() {
     const href = hrefFor(next);
     if (href !== location.hash) history[replace ? 'replaceState' : 'pushState'](history.state, '', href);
   }
+  function search(q: string, replace = false) {
+    navigate({
+      type: activeType, item: '', q, doubanGroup: activeDoubanGroup,
+      writingTab: activeType === 'writing' ? activeWritingTab : undefined,
+      format: browsingArticles ? address.format : undefined,
+    }, replace);
+  }
   function choose(item: Work) {
     if (small && current?.id === item.id) { setFolded(!folded); return; }
     navigate({ ...address, type: activeType, item: item.id });
@@ -342,8 +384,12 @@ export default function WorksExplorer() {
       }
     });
   }
-  const loading = works.isPending || articles.isPending;
-  const errored = works.isError || articles.isError;
+  const needsArticles = activeType === 'writing' || browsingArticles;
+  const indexes = activeType === 'all' ? [articles, works] : [needsArticles ? articles : works];
+  const loading = indexes.some(index => index.isPending);
+  const failedIndexes = indexes.filter(index => index.isError);
+  const writingCount = !loading && !failedIndexes.length &&
+    <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>;
   const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
     current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
   const reader = current && <Reader key={current.id} item={current} small={small}>
@@ -357,7 +403,7 @@ export default function WorksExplorer() {
         <h2 id="ex-heading">{t('projects.title')}</h2>
         <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
           placeholder={en ? 'Search work' : '搜索作品'} aria-label={en ? 'Search work' : '搜索作品'}
-          value={address.q} onChange={e => navigate({ ...address, type: activeType, item: '', q: e.target.value }, true)} /></label>
+          value={address.q} onChange={e => search(e.target.value, true)} /></label>
       </div>
       <nav className="ex-filters" aria-label={en ? 'Filter by type' : '按栏目筛选'}>
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
@@ -366,10 +412,19 @@ export default function WorksExplorer() {
       {activeType === 'writing' && <div className="ex-subfilters" role="group" aria-label={en ? 'Writing categories' : '文字分类'}>
         {(Object.keys(writingTabs) as WritingTab[]).map(tab => <button key={tab} type="button"
           aria-pressed={activeWritingTab === tab}
-          onClick={() => navigate({ type: 'writing', item: '', q: address.q, writingTab: tab })}>
+          onClick={() => navigate({ type: 'writing', item: '', q: '', writingTab: tab })}>
           {writingTabs[tab][Number(en)]}
         </button>)}
-        <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
+        {!browsingDouban && writingCount}
+      </div>}
+      {browsingDouban && <div className="ex-subfilters flex-wrap border-l-2 border-border pl-3" role="group" aria-label={en ? 'Douban categories' : '豆瓣分类'}>
+        {(Object.keys(doubanGroups) as DoubanGroup[]).map(group => <button key={group} type="button"
+          aria-pressed={activeDoubanGroup === group}
+          onClick={() => navigate({ type: 'writing', writingTab: 'douban', item: '', q: '',
+            doubanGroup: group === activeDoubanGroup ? undefined : group })}>
+          {doubanGroups[group][Number(en)]}
+        </button>)}
+        {writingCount}
       </div>}
       {browsingArticles && <div className="ex-subfilters" role="group" aria-label={en ? 'Filter by format' : '按作品形式筛选'}>
         {(Object.keys(articleFormats) as ArticleFormat[]).map(format => {
@@ -386,12 +441,17 @@ export default function WorksExplorer() {
           className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
         <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
       </div>}
-      {!browsingArticles && activeType !== 'video' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
-      {errored && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
-        <button type="button" onClick={() => { if (works.isError) works.refetch(); if (articles.isError) articles.refetch(); }}>{en ? 'Retry' : '重新加载'}</button>
+      {!browsingArticles && activeType !== 'writing' && activeType !== 'video' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
+      {failedIndexes.length > 0 && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
+        <button type="button" onClick={() => failedIndexes.forEach(index => { void index.refetch(); })}>{en ? 'Retry' : '重新加载'}</button>
       </div>}
-      {!visible.length ? <div className="ex-empty">{loading ? (en ? 'Loading works…' : '正在载入作品…') :
-        <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}</div> :
+      {!visible.length && loading && <p className="ex-empty" role="status">{en ? 'Loading works…' : '正在载入作品…'}</p>}
+      {!visible.length && !loading && !failedIndexes.length && <div className="ex-empty">
+        {address.q.trim() ? <>{en ? `No works match “${address.q.trim()}”. ` : `没有与“${address.q.trim()}”匹配的作品。`}
+          <button type="button" onClick={() => search('')}>{en ? 'Clear search' : '清除搜索'}</button></>
+          : <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}
+      </div>}
+      {visible.length > 0 &&
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {
@@ -401,7 +461,7 @@ export default function WorksExplorer() {
               const extra = item.kind === 'video' ? videoMetadata(item) :
                 item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
                 item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] :
-                item.kind === 'articles' ? (categoryOf(item) === 'writing' ? writingTabs[writingTabFor(item)][Number(en)]
+                item.kind === 'articles' ? (categoryOf(item) === 'writing' ? writingLabel(item, en)
                   : item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
               return <div className="ex-row" key={item.kind + ':' + item.id}>
                 <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
