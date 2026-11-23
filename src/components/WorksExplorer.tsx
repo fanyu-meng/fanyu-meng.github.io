@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Play, Search, Ticket } from 'lucide-react';
+import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import './works-explorer.css';
@@ -27,8 +27,6 @@ type Entry = {
   section?: 'articles' | 'writing';
   format?: ArticleFormat;
   featured?: boolean;
-  cover?: string;
-  duration?: string;
   summary?: string;
   url?: string;
   links?: Link[];
@@ -175,7 +173,7 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
   return [...keys.flatMap(k => groups[k].slice(0, 1)), ...keys.flatMap(k => groups[k].slice(1))];
 }
 
-function Reader({ item, small, playVideo, children }: { item: Work; small: boolean; playVideo: boolean; children?: React.ReactNode }) {
+function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
   const { language } = useLanguage();
   const en = language === 'en';
   const article = useQuery({
@@ -199,7 +197,7 @@ function Reader({ item, small, playVideo, children }: { item: Work; small: boole
   const sources = item.kind === 'video' ? videoSources(item) : [];
   const player = embed ? new URL(embed) : undefined;
   const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
-  if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', playVideo ? '1' : '0');
+  if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', '0');
   return (
     <article id="ex-reader" className="ex-reader" aria-label={item.title}>
       <div className="ex-reading">
@@ -207,7 +205,7 @@ function Reader({ item, small, playVideo, children }: { item: Work; small: boole
         <h3>{item.title}</h3>
         {item.meta && <p className="ex-meta">{item.meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
-          (sources.length > 1 || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} autoplay={playVideo} /> :
+          (sources.length > 1 || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} /> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body">
@@ -235,7 +233,6 @@ export default function WorksExplorer() {
   const en = language === 'en';
   const [address, setAddress] = useState(readAddress);
   const [folded, setFolded] = useState(false);
-  const [playingVideo, setPlayingVideo] = useState('');
   const [small, setSmall] = useState(() => window.matchMedia('(max-width: 759px)').matches);
   const list = useRef<HTMLDivElement>(null);
   const section = useRef<HTMLElement>(null);
@@ -264,7 +261,6 @@ export default function WorksExplorer() {
     const resize = () => { setSmall(breakpoint.matches); setFolded(false); };
     const restore = () => {
       requestedScroll.current = /^#\/?works\?/.test(location.hash);
-      setPlayingVideo('');
       setFolded(false);
       setAddress(readAddress());
     };
@@ -292,7 +288,6 @@ export default function WorksExplorer() {
   }, [works.isPending, articles.isPending, small, address]);
 
   function navigate(next: Address, replace = false) {
-    setPlayingVideo('');
     setFolded(false);
     setAddress(next);
     const href = hrefFor(next);
@@ -314,35 +309,12 @@ export default function WorksExplorer() {
   const errored = works.isError || articles.isError;
   const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
     current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
-  const reader = current && <Reader key={current.id} item={current} small={small} playVideo={playingVideo === current.id}>
+  const reader = current && <Reader key={current.id} item={current} small={small}>
     {related.length > 0 && <div className="ex-related">{related.map(row => <button type="button" key={row.id}
       onClick={() => navigate({ type: 'reviews', item: row.id, q: '' })}>{row.title}</button>)}</div>}
   </Reader>;
 
-  const featured = works.data?.video?.filter(video => video.featured) || [];
-  return <>
-    {featured.length > 0 && <section className="ex-featured" aria-labelledby="featured-heading">
-      <div className="ex-wrap">
-        <h2 id="featured-heading">{en ? 'Featured videos' : '视频代表作'}</h2>
-        <div className="ex-films">{featured.map(video => {
-          const next = { type: 'video', item: video.id, q: '' } as const;
-          return <a className="ex-film" key={video.id} href={hrefFor(next)} onClick={event => {
-            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-            event.preventDefault();
-            requestedScroll.current = true;
-            navigate(next);
-            setPlayingVideo(video.id);
-          }}>
-            <span className="ex-film-cover"><img src={video.cover} alt="" referrerPolicy="no-referrer" />
-              <span className="ex-play"><Play aria-hidden="true" /></span>
-              {video.duration && <span className="ex-duration">{video.duration}</span>}
-            </span>
-            <strong>{video.title}</strong>
-          </a>;
-        })}</div>
-      </div>
-    </section>}
-    <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
+  return <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
     <div className="ex-wrap">
       <div className="ex-heading">
         <h2 id="ex-heading">{t('projects.title')}</h2>
@@ -393,5 +365,5 @@ export default function WorksExplorer() {
           {!small && <div id="ex-pane" className="ex-pane">{reader}</div>}
         </div>}
     </div>
-  </section></>;
+  </section>;
 }

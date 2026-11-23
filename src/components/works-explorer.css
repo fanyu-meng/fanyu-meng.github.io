@@ -4,53 +4,10 @@
   padding: clamp(26px, 3.6vw, 46px) 0 clamp(45px, 6vw, 80px);
   background: radial-gradient(ellipse at 90% 0, #64351f0c, transparent 48%), #0d1014;
 }
-.ex-featured {
-  padding: 24px 0 22px;
-  background: #111419;
-  border-bottom: 1px solid #292d34;
-}
-.ex-featured h2 {
-  margin-bottom: 12px;
-  color: #edf0f4;
-  font-size: 1.15rem;
-  font-weight: 650;
-}
-.ex-films { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 26px); }
-.ex-film { display: grid; gap: 8px; align-content: start; border-radius: 8px; }
-.ex-film:focus-visible { outline: 2px solid #f3ae89; outline-offset: 4px; }
-.ex-film-cover {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 2.65;
-  background: #20242a;
-  border-radius: 8px;
-}
-.ex-film-cover img { width: 100%; height: 100%; object-fit: cover; }
-.ex-play, .ex-duration {
-  position: absolute;
-  bottom: 7px;
-  color: white;
-  background: #0b0c0edb;
-}
-.ex-play { left: 7px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; }
-.ex-play svg { width: 12px; height: 12px; fill: currentColor; }
-.ex-duration { right: 7px; padding: 1px 5px; border-radius: 4px; font-size: .75rem; font-variant-numeric: tabular-nums; }
-.ex-film strong { color: #e5e8ee; font-size: .95rem; line-height: 1.45; font-weight: 600; }
-.ex-film:hover strong { color: #ffbd98; }
 .ex-formats { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -5px 0 14px; }
 .ex-formats label { display: inline-flex; align-items: center; gap: 8px; }
 .ex-formats { color: #b7bfcb; font-size: .875rem; }
 .ex-formats select { border-radius: 6px; padding: 4px 8px; border: 1px solid #393d46; color: #e3e6eb; background: #171b21; }
-@media (max-width: 600px) {
-  .ex-featured { padding-block: 16px; }
-  .ex-films { grid-template-columns: 1fr; gap: 9px; }
-  .ex-film { grid-template-columns: 94px minmax(0, 1fr); align-items: center; gap: 12px; }
-  .ex-film-cover { aspect-ratio: 16/9; border-radius: 5px; }
-  .ex-film strong { font-size: .9rem; }
-  .ex-play { width: 19px; height: 19px; bottom: 4px; left: 4px; }
-  .ex-duration { right: 3px; bottom: 3px; }
-}
 .ex-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .ex-heading h2 {
   font-size: clamp(1.45rem, 2.65vw, 2rem);

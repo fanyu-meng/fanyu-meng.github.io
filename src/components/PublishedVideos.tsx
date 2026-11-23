@@ -55,11 +55,9 @@ export async function withPublishedVideos<T extends { video?: VideoEntry[] }>(wo
   }
   return { ...works, video: [...curated.filter(i => i.featured), ...fresh, ...curated.filter(i => !i.featured)] };
 }
-export function VideoPlayer({ sources, title, en, autoplay }: { sources: VideoSource[]; title: string; en: boolean; autoplay: boolean }) {
+export function VideoPlayer({ sources, title, en }: { sources: VideoSource[]; title: string; en: boolean }) {
   const [selected, setSelected] = useState(sources[0].label);
   const active = sources.find(s => s.label === selected) || sources[0];
-  const player = new URL(active.embed);
-  if (autoplay) player.searchParams.set('autoplay', '1');
-  return <><div className="ex-media"><iframe src={player.href} title={title + ' · ' + active.label} allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>
+  return <><div className="ex-media"><iframe src={active.embed} title={title + ' · ' + active.label} allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>
     {sources.length > 1 && <div className="ex-actions" role="group" aria-label={en ? 'Video player' : '播放平台'}>{sources.map(s => <button type="button" key={s.label} aria-pressed={s.label === active.label} className="rounded border px-3 py-1 text-sm aria-pressed:bg-muted" onClick={() => setSelected(s.label)}>{en && s.label === 'B 站' ? 'Bilibili' : s.label}</button>)}</div>}</>;
 }
