@@ -17,7 +17,8 @@ const categories = {
 
 type Category = keyof typeof categories;
 type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
-type ArticleFormat = 'article' | 'answer';
+const articleFormats = { article: ['文章', 'Articles'], answer: ['知乎回答', 'Zhihu answers'] } as const;
+type ArticleFormat = keyof typeof articleFormats;
 type WritingTab = 'writing' | 'zhihu';
 type Link = { url: string; label: string };
 type Entry = {
@@ -350,7 +351,7 @@ export default function WorksExplorer() {
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
           aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
       </nav>
-      {activeType === 'writing' && <div className="ex-writing-tabs" role="group" aria-label={en ? 'Writing categories' : '文字分类'}>
+      {activeType === 'writing' && <div className="ex-subfilters" role="group" aria-label={en ? 'Writing categories' : '文字分类'}>
         {(Object.keys(writingTabs) as WritingTab[]).map(tab => <button key={tab} type="button"
           aria-pressed={activeWritingTab === tab}
           onClick={() => navigate({ type: 'writing', item: '', q: address.q, writingTab: tab })}>
@@ -358,15 +359,14 @@ export default function WorksExplorer() {
         </button>)}
         <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
       </div>}
-      {browsingArticles && <div className="ex-formats">
-        <label>{en ? 'Show' : '查看'}
-          <select value={address.format || ''} onChange={event =>
-            navigate({ ...address, type: activeType, item: '', format: event.target.value as ArticleFormat || undefined })}>
-            <option value="">{en ? 'Articles and answers' : '文章和回答'}</option>
-            <option value="article">{en ? 'Articles' : '文章'}</option>
-            <option value="answer">{en ? 'Zhihu answers' : '知乎回答'}</option>
-          </select>
-        </label>
+      {browsingArticles && <div className="ex-subfilters" role="group" aria-label={en ? 'Filter by format' : '按作品形式筛选'}>
+        {(Object.keys(articleFormats) as ArticleFormat[]).map(format => {
+          const selected = address.format === format;
+          return <button key={format} type="button" aria-pressed={selected}
+            onClick={() => navigate({ ...address, type: activeType, item: '', format: selected ? undefined : format })}>
+            {articleFormats[format][Number(en)]}
+          </button>;
+        })}
         <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
       </div>}
       {!browsingArticles && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}

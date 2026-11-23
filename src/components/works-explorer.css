@@ -4,15 +4,11 @@
   padding: clamp(26px, 3.6vw, 46px) 0 clamp(45px, 6vw, 80px);
   background: radial-gradient(ellipse at 90% 0, #64351f0c, transparent 48%), #0d1014;
 }
-.ex-formats { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -5px 0 14px; }
-.ex-formats label { display: inline-flex; align-items: center; gap: 8px; }
-.ex-formats { color: #b7bfcb; font-size: .875rem; }
-.ex-formats select { border-radius: 6px; padding: 4px 8px; border: 1px solid #393d46; color: #e3e6eb; background: #171b21; }
-.ex-writing-tabs { display: flex; align-items: center; gap: 8px; margin: -5px 0 14px; color: #b7bfcb; font-size: .875rem; }
-.ex-writing-tabs button { padding: 6px 12px; border: 1px solid #393d46; border-radius: 7px; background: #171b21; color: #c4c9d1; }
-.ex-writing-tabs button:hover { color: #fff; background: #24272d; }
-.ex-writing-tabs button[aria-pressed="true"] { background: #392720; border-color: #89533d; color: #ffc2a4; }
-.ex-writing-tabs span { margin-left: auto; white-space: nowrap; }
+.ex-subfilters { display: flex; align-items: center; gap: 8px; margin: -5px 0 14px; color: #b7bfcb; font-size: .875rem; }
+.ex-subfilters button { padding: 6px 12px; border: 1px solid #393d46; border-radius: 7px; background: #171b21; color: #c4c9d1; }
+.ex-subfilters button:hover { color: #fff; background: #24272d; }
+.ex-subfilters button[aria-pressed="true"] { background: #392720; border-color: #89533d; color: #ffc2a4; }
+.ex-subfilters span { margin-left: auto; white-space: nowrap; }
 .ex-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .ex-heading h2 {
   font-size: clamp(1.45rem, 2.65vw, 2rem);
