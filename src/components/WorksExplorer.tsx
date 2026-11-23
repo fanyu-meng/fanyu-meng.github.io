@@ -286,6 +286,35 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   );
 }
 
+function ProjectGallery({ projects, address, en }: { projects: Work[]; address: Address; en: boolean }) {
+  const selected = projects.find(project => project.id === address.item);
+  if (selected) {
+    return <div className="ex-project-detail">
+      <a className="ex-project-back" href={hrefFor({ ...address, item: '' })}>
+        {en ? 'Back to all projects' : '返回项目网格'}
+      </a>
+      <Reader key={selected.id} item={selected} small={false} />
+    </div>;
+  }
+
+  return <div className="ex-project-grid" role="group" aria-label={categories.github[Number(en)]}>
+    {projects.map(project => {
+      const cover = project.projectCover;
+      const base = import.meta.env.BASE_URL;
+      return <a key={project.id} className="ex-project-card" href={hrefFor({ ...address, item: project.id })}>
+        <span className="ex-project-art">
+          {cover ? <img alt="" src={base + cover.src}
+            srcSet={`${base + cover.thumbnail} 256w, ${base + cover.src} 832w`}
+            sizes="(min-width: 1248px) 285px, (min-width: 960px) 24vw, 48vw"
+            width={832} height={468} decoding="async" /> : <Code2 aria-hidden="true" />}
+        </span>
+        <h3>{project.title}</h3>
+        {project.summary && <p>{project.summary}</p>}
+      </a>;
+    })}
+  </div>;
+}
+
 export default function WorksExplorer() {
   const { language, t } = useLanguage();
   const en = language === 'en';
@@ -460,7 +489,8 @@ export default function WorksExplorer() {
           <button type="button" onClick={() => search('')}>{en ? 'Clear search' : '清除搜索'}</button></>
           : <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}
       </div>}
-      {visible.length > 0 &&
+      {activeType === 'github' && visible.length > 0 && <ProjectGallery projects={visible} address={address} en={en} />}
+      {activeType !== 'github' && visible.length > 0 &&
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {

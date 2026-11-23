@@ -176,6 +176,51 @@
   margin-bottom: clamp(12px, 1.5vw, 20px);
   border-radius: 10px;
 }
+.ex-project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(22px, 2.5vw, 34px) clamp(12px, 1.6vw, 22px);
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .ex-project-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.ex-project-card { display: block; min-width: 0; border-radius: 12px; }
+.ex-project-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #20252d;
+  color: #a8aeb9;
+}
+.ex-project-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ex-project-card h3 {
+  margin: .65rem 0 0;
+  color: #eef0f3;
+  font-size: clamp(.96rem, 1.3vw, 1.1rem);
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.ex-project-card p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: .25rem 0 0;
+  color: #a8aeb9;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+.ex-project-card:hover h3, .ex-project-back:hover { text-decoration: underline; text-underline-offset: .18em; }
+.explorer .ex-project-card:focus-visible { outline-offset: 3px; }
+.ex-project-detail { width: min(100%, 790px); margin-inline: auto; }
+.ex-project-back { display: inline-block; padding: .5rem 0; margin-bottom: .4rem; color: #efb598; }
+.ex-project-detail .ex-reader { border: 0; background: transparent; }
+.ex-project-detail .ex-reading { padding: 0; }
+.ex-project-detail .ex-reading > h3 { display: block; }
 .ex-kicker {
   display: flex;
   align-items: center;
