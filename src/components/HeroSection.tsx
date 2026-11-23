@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AboutSection from './AboutSection';
-import CreationStats from './CreationStats';
+import { Button } from './ui/button';
 import { EmailIcon } from './icons/EmailIcon';
 import { YoutubeIcon } from './icons/YoutubeIcon';
 import { BilibiliIcon } from './icons/BilibiliIcon';
@@ -29,22 +29,28 @@ const social = [
 ];
 
 export default function HeroSection() {
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [showQR, setShowQR] = useState(false);
   const socialClass = 'inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary hover:text-primary';
   const qrTitle = language === 'zh' ? '微信公众号' : 'WeChat';
   return (
     <section id="home" className="gradient-hero border-b border-border/50">
-      <div className="container mx-auto max-w-7xl px-4 py-6 sm:px-8 sm:py-8">
+      <div className="container mx-auto max-w-7xl px-4 py-5 sm:px-8 sm:py-6">
         <div className="relative">
-          <div className="flex items-center gap-3 pr-20 sm:gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <img src="/ProfilePhoto.png" width="64" height="64" alt="" className="h-12 w-12 shrink-0 rounded-full border-2 border-primary/60 object-cover sm:h-16 sm:w-16" />
-            <div><h1 className="gradient-text text-2xl font-bold sm:text-3xl">{t('hero.name')}</h1>
+            <div><h1 className="gradient-text pr-32 text-2xl font-bold sm:text-3xl">{t('hero.name')}</h1>
               <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('hero.description')}</p></div>
           </div>
-          <CreationStats />
+          <Button type="button" variant="ghost" size="sm"
+            className="absolute right-0 top-0 h-8 px-2 text-muted-foreground"
+            aria-label={language === 'zh' ? 'Switch to English' : '切换到中文'}
+            lang={language === 'zh' ? 'en' : 'zh-CN'}
+            onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}>
+            {language === 'zh' ? 'EN' : '中文'}
+          </Button>
           <details className="group" id="about">
-            <summary className="absolute right-0 top-3 flex cursor-pointer list-none items-center gap-2 text-sm text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
+            <summary className="absolute right-12 top-0 flex min-h-8 cursor-pointer list-none items-center gap-2 text-sm text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
               {t('about.title')}<ChevronDown aria-hidden="true" className="h-4 w-4 group-open:rotate-180" />
             </summary>
             <AboutSection />

@@ -1,7 +1,7 @@
 .explorer {
-  scroll-margin-top: 60px;
+  scroll-margin-top: 12px;
   min-height: 65vh;
-  padding: clamp(26px, 3.6vw, 46px) 0 clamp(45px, 6vw, 80px);
+  padding: clamp(16px, 2.6vw, 28px) 0 clamp(45px, 6vw, 80px);
   background: radial-gradient(ellipse at 90% 0, #64351f0c, transparent 48%), #0d1014;
 }
 .ex-subfilters { display: flex; align-items: center; gap: 8px; margin: -5px 0 14px; color: #b7bfcb; font-size: .875rem; }
@@ -10,6 +10,7 @@
 .ex-subfilters button[aria-pressed="true"] { background: #392720; border-color: #89533d; color: #ffc2a4; }
 .ex-subfilters span { margin-left: auto; white-space: nowrap; }
 .ex-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.ex-tools { position: relative; display: flex; align-items: center; gap: 10px; min-width: 0; }
 .ex-heading h2 {
   font-size: clamp(1.45rem, 2.65vw, 2rem);
   line-height: 1.3;
@@ -19,7 +20,8 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  width: min(235px, 40%);
+  width: min(34vw, 235px);
+  min-width: 0;
   height: 37px;
   padding-inline: 12px;
   border: 1px solid #30353c;
@@ -70,13 +72,13 @@
 }
 .ex-list {
   position: sticky;
-  top: 72px;
+  top: 16px;
   min-width: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #3d424a transparent;
   max-height: min(78vh, 840px);
-  max-height: min(calc(100dvh - 92px), 840px);
+  max-height: min(calc(100dvh - 32px), 840px);
   background: #11151a;
   border-radius: 14px 0 0 14px;
 }
@@ -271,7 +273,7 @@
   .ex-reading { padding: 22px; }
 }
 @media (max-width: 759px) {
-  .explorer { scroll-margin-top: 54px; padding-top: 23px; }
+  .explorer { padding-top: 16px; }
   .ex-heading { gap: 12px; }
   .ex-heading h2 { font-size: 1.4rem; }
   .ex-search { height: 35px; padding-inline: 9px; gap: 6px; }

@@ -6,6 +6,7 @@ import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
+import CreationStats from './CreationStats';
 import MobileVideoPlayer, { useMobileVideoPlayback } from './MobileVideoPlayer';
 import './works-explorer.css';
 
@@ -322,7 +323,7 @@ function ProjectGallery({ projects, address, en }: { projects: Work[]; address: 
 }
 
 export default function WorksExplorer() {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const en = language === 'en';
   const [address, setAddress] = useState(readAddress);
   const mobilePlayback = useMobileVideoPlayback();
@@ -447,10 +448,13 @@ export default function WorksExplorer() {
   return <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
     <div className="ex-wrap">
       <div className="ex-heading">
-        <h2 id="ex-heading">{t('projects.title')}</h2>
-        <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
-          placeholder={en ? 'Search work' : '搜索作品'} aria-label={en ? 'Search work' : '搜索作品'}
-          value={address.q} onChange={e => search(e.target.value, true)} /></label>
+        <h2 id="ex-heading">{en ? 'Works' : '作品'}</h2>
+        <div className="ex-tools">
+          <CreationStats />
+          <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
+            placeholder={en ? 'Search works' : '搜索作品'} aria-label={en ? 'Search works' : '搜索作品'}
+            value={address.q} onChange={e => search(e.target.value, true)} /></label>
+        </div>
       </div>
       <nav className="ex-filters" aria-label={en ? 'Filter by type' : '按栏目筛选'}>
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
