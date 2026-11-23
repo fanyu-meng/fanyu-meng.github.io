@@ -6,6 +6,7 @@ import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
+import MobileVideoPlayer, { useMobileVideoPlayback } from './MobileVideoPlayer';
 import './works-explorer.css';
 
 const categories = {
@@ -226,7 +227,7 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
   return [...keys.flatMap(k => groups[k].slice(0, 1)), ...keys.flatMap(k => groups[k].slice(1))];
 }
 
-function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
+function Reader({ item, small, mobilePlayback = false, children }: { item: Work; small: boolean; mobilePlayback?: boolean; children?: React.ReactNode }) {
   const { language } = useLanguage();
   const en = language === 'en';
   const article = useQuery({
@@ -243,11 +244,14 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   const intro = richText ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.head }} /> : text[0];
   const rest = richText?.rest ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.rest }} /> :
     !richText && text.length > 1 ? text.slice(1) : null;
-  const links = item.links?.length ? item.links : item.url ? [{ url: item.url, label: en ? 'Original' : '原文' }] : [];
+  const originalLinks = item.links?.length ? item.links : item.url ? [{ url: item.url, label: en ? 'Original' : '原文' }] : [];
   const audio = webURL(item.audio);
   const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
   const sources = item.kind === 'video' ? videoSources(item) : [];
+  const mobilePlayer = mobilePlayback && sources.length > 0 && !videoFile && !audio;
+  const links = mobilePlayer ? originalLinks.filter(link =>
+    !videoSources({ id: item.id, title: item.title, url: link.url }).length) : originalLinks;
   const cover = item.projectCover;
   const meta = item.kind === 'video' ? videoMetadata(item) : item.meta;
   const player = embed ? new URL(embed) : undefined;
@@ -264,7 +268,8 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
         <h3>{item.title}</h3>
         {meta && <p className="ex-meta">{meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
-          (sources.length > 1 || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} /> :
+          mobilePlayer ? <MobileVideoPlayer video={item} sources={sources} en={en} /> :
+          ((!mobilePlayback && sources.length > 1) || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} /> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body empty:hidden">
@@ -320,6 +325,7 @@ export default function WorksExplorer() {
   const { language, t } = useLanguage();
   const en = language === 'en';
   const [address, setAddress] = useState(readAddress);
+  const mobilePlayback = useMobileVideoPlayback();
   const [folded, setFolded] = useState(false);
   const [small, setSmall] = useState(() => window.matchMedia('(max-width: 759px)').matches);
   const list = useRef<HTMLDivElement>(null);
@@ -433,7 +439,7 @@ export default function WorksExplorer() {
     <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>;
   const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
     current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
-  const reader = current && <Reader key={current.id} item={current} small={small}>
+  const reader = current && <Reader key={current.id} item={current} small={small} mobilePlayback={mobilePlayback}>
     {related.length > 0 && <div className="ex-related">{related.map(row => <button type="button" key={row.id}
       onClick={() => navigate({ type: 'reviews', item: row.id, q: '' })}>{row.title}</button>)}</div>}
   </Reader>;
@@ -493,7 +499,7 @@ export default function WorksExplorer() {
           : <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}
       </div>}
       {activeType === 'github' && visible.length > 0 && <ProjectGallery projects={visible} address={address} en={en} />}
-      {activeType === 'video' && visible.length > 0 && <VideoGallery videos={visible} en={en} selectedId={address.item}
+      {activeType === 'video' && visible.length > 0 && <VideoGallery videos={visible} en={en} selectedId={address.item} mobilePlayback={mobilePlayback}
         hrefForVideo={id => hrefFor({ type: 'video', q: address.q, item: id })}
         closeDirectLink={() => navigate({ type: 'video', q: address.q, item: '' }, true)}>
         {reader}
