@@ -31,6 +31,7 @@ type Link = { url: string; label: string };
 type Entry = {
   id: string;
   title: string;
+  projectCover?: { src: string; thumbnail: string; alt: [string, string] };
   alternateTitle?: string;
   publishedAt?: string;
   duration?: string;
@@ -246,6 +247,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
   const sources = item.kind === 'video' ? videoSources(item) : [];
+  const cover = item.projectCover;
   const meta = item.kind === 'video' ? videoMetadata(item) : item.meta;
   const player = embed ? new URL(embed) : undefined;
   const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
@@ -253,6 +255,8 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   return (
     <article id="ex-reader" className="ex-reader" aria-label={item.title}>
       <div className="ex-reading">
+        {cover && <img className="ex-project-cover" src={import.meta.env.BASE_URL + cover.src}
+          alt={cover.alt[Number(en)]} width={832} height={468} decoding="async" />}
         <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{categoryOf(item) === 'writing'
           ? ' · ' + writingLabel(item, en)
           : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
@@ -460,7 +464,9 @@ export default function WorksExplorer() {
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {
-              const active = current.id === item.id, Icon = iconFor(item), cover = artwork[item.kind];
+              const active = current.id === item.id, Icon = iconFor(item);
+              const cover = item.projectCover;
+              const thumbnail = cover?.thumbnail || artwork[item.kind];
               const category = labelForWork(item, en);
               const rowLabel = activeType === 'video' ? (item.featured ? (en ? 'Pinned' : '置顶') : '') : category;
               const extra = item.kind === 'video' ? videoMetadata(item) :
@@ -469,9 +475,11 @@ export default function WorksExplorer() {
                 item.kind === 'articles' ? (categoryOf(item) === 'writing' ? writingLabel(item, en)
                   : item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
               return <div className="ex-row" key={item.kind + ':' + item.id}>
-                <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
+                <button type="button" className={cover ? 'ex-select ex-select--project' : 'ex-select'} data-key={item.id} aria-pressed={active}
                   aria-expanded={small ? active && !folded : undefined} aria-controls={active && (!small || !folded) ? 'ex-reader' : undefined} onClick={() => choose(item)}>
-                  <span className={'ex-row-icon tone-' + item.kind}>{cover ? <img alt="" src={import.meta.env.BASE_URL + cover} /> : <Icon aria-hidden="true" />}</span>
+                  <span className={'ex-row-icon tone-' + item.kind}>{thumbnail
+                    ? <img alt="" src={import.meta.env.BASE_URL + thumbnail} loading="lazy" decoding="async" />
+                    : <Icon aria-hidden="true" />}</span>
                   <span className="ex-row-text"><small>{[rowLabel, extra !== rowLabel && extra].filter(Boolean).join(' · ')}</small>
                     <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
                 </button>

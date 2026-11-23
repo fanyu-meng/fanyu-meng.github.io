@@ -1693,6 +1693,11 @@
     {
       "id": "repo-podcast-content-studio",
       "title": "podcast-content-studio",
+      "projectCover": {
+        "src": "project-covers/podcast-content-studio.webp",
+        "thumbnail": "project-covers/podcast-content-studio-thumb.webp",
+        "alt": ["采访桌上的播客麦克风、耳机和摊开的笔记本", "A broadcast microphone, headphones and an open interview notebook"]
+      },
       "summary": "为播客准备采访大纲，把转录稿整理成节目笔记，再写成适合发布的宣传文案。",
       "url": "https://github.com/fanyu-meng/podcast-content-studio",
       "meta": "GitHub · 个人仓库",
@@ -1716,6 +1721,11 @@
     {
       "id": "repo-wechat-articles-batch-downloader",
       "title": "WeChat-Articles-Batch-Downloader",
+      "projectCover": {
+        "src": "project-covers/wechat-articles.webp",
+        "thumbnail": "project-covers/wechat-articles-thumb.webp",
+        "alt": ["绿色档案盒里按顺序收好的文章卡片", "Article cards filed in a green metal index drawer"]
+      },
       "summary": "把已选的公众号文章批量保存成 Markdown，支持从网址列表或表格导入。",
       "url": "https://github.com/fanyu-meng/WeChat-Articles-Batch-Downloader",
       "meta": "GitHub · 个人仓库",
@@ -1738,6 +1748,11 @@
     {
       "id": "repo-kara4everok",
       "title": "kara4EverOK",
+      "projectCover": {
+        "src": "project-covers/kara4everok.webp",
+        "thumbnail": "project-covers/kara4everok-thumb.webp",
+        "alt": ["蓝紫色灯光下，手持麦克风斜放在卡拉 OK 调音台上", "A handheld microphone on a karaoke mixer under blue and violet light"]
+      },
       "summary": "本地卡拉 OK 工具，使用 Demucs 分离人声，跟着伴奏唱歌。",
       "url": "https://github.com/fanyu-meng/kara4EverOK",
       "meta": "GitHub · 个人仓库",
@@ -1760,6 +1775,11 @@
     {
       "id": "repo-leslam-comedy",
       "title": "LeSlam Comedy",
+      "projectCover": {
+        "src": "project-covers/leslam-comedy.webp",
+        "thumbnail": "project-covers/leslam-comedy-thumb.webp",
+        "alt": ["红色幕布前，一束聚光灯照着开放麦舞台上的话筒和木凳", "A spotlight on a microphone and stool in front of a red stage curtain"]
+      },
       "meta": "GitHub · 乐咔喜剧",
       "topic": "网站开发",
       "summary": "我和乐咔伙伴一起维护的慕尼黑中文脱口秀俱乐部网站。",
