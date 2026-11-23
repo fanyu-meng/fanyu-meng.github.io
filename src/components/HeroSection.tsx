@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AboutSection from './AboutSection';
+import CreationStats from './CreationStats';
 import { EmailIcon } from './icons/EmailIcon';
 import { YoutubeIcon } from './icons/YoutubeIcon';
 import { BilibiliIcon } from './icons/BilibiliIcon';
@@ -41,6 +42,7 @@ export default function HeroSection() {
             <div><h1 className="gradient-text text-2xl font-bold sm:text-3xl">{t('hero.name')}</h1>
               <p className="mt-1 text-sm text-muted-foreground sm:text-base">{t('hero.description')}</p></div>
           </div>
+          <CreationStats />
           <details className="group" id="about">
             <summary className="absolute right-0 top-3 flex cursor-pointer list-none items-center gap-2 text-sm text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
               {t('about.title')}<ChevronDown aria-hidden="true" className="h-4 w-4 group-open:rotate-180" />
