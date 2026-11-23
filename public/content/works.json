@@ -870,7 +870,8 @@
           "label": "在 B 站观看",
           "url": "https://www.bilibili.com/video/BV1VWe56XEd6/"
         }
-      ]
+      ],
+      "publishedAt": "2026-09-14"
     },
     {
       "id": "BV1kcg9eMEKE",
@@ -888,7 +889,8 @@
           "label": "在 B 站观看",
           "url": "https://www.bilibili.com/video/BV1kcg9eMEKE/"
         }
-      ]
+      ],
+      "publishedAt": "2024-06-21"
     },
     {
       "id": "BV1Cs4y1Z7jw",
@@ -905,24 +907,784 @@
         {
           "label": "在 B 站观看",
           "url": "https://www.bilibili.com/video/BV1Cs4y1Z7jw/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=eicGWMiJP9Q"
+        }
+      ],
+      "publishedAt": "2023-02-27",
+      "alternateTitle": "November - Masaaki Kishibe | Fingerstyle Guitar (cover)"
+    },
+    {
+      "id": "BV1Jex86QExd",
+      "title": "不再犹豫 - Beyond｜吉他🎸前奏solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Jex86QExd/"
+        }
+      ],
+      "publishedAt": "2026-11-01",
+      "duration": "00:31"
+    },
+    {
+      "id": "BV1zAt56yEhL",
+      "title": "Song 2 - Blur 🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1zAt56yEhL/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=R_IxhQa2xqw"
+        }
+      ],
+      "publishedAt": "2026-09-01",
+      "duration": "01:57"
+    },
+    {
+      "id": "BV12Uts69E7o",
+      "title": "🎸绿日Basket case把右手弹成吴老二",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV12Uts69E7o/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=9GXg1DYW1sY"
+        }
+      ],
+      "publishedAt": "2026-08-30",
+      "duration": "01:06",
+      "alternateTitle": "Basket case - Green Day | Guitar rhythm 🎸"
+    },
+    {
+      "id": "BV13H866LEQM",
+      "title": "Radiohead - Creep | 吉他🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV13H866LEQM/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=rNg5Y3BNp1k"
+        }
+      ],
+      "publishedAt": "2026-08-21",
+      "duration": "01:31",
+      "alternateTitle": "Creep - Radiohead | Guitar 🎸"
+    },
+    {
+      "id": "BV14i3m6VEHM",
+      "title": "光辉岁月 - Beyond | 吉他 intro",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV14i3m6VEHM/"
+        }
+      ],
+      "publishedAt": "2026-08-01",
+      "duration": "00:29"
+    },
+    {
+      "id": "BV1Qh366YEDZ",
+      "title": "Highway to hell - AC/DC | 吉他 solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Qh366YEDZ/"
+        }
+      ],
+      "publishedAt": "2026-07-28",
+      "duration": "00:37"
+    },
+    {
+      "id": "BV1UPgm63EcD",
+      "title": "仙儿 - 二手玫瑰 | 吉他🎸solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1UPgm63EcD/"
+        }
+      ],
+      "publishedAt": "2026-07-22",
+      "duration": "00:30"
+    },
+    {
+      "id": "BV1rZJN6qEWa",
+      "title": "陶喆 - 黑色柳丁｜电吉他",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1rZJN6qEWa/"
+        }
+      ],
+      "publishedAt": "2026-06-14",
+      "duration": "02:19"
+    },
+    {
+      "id": "BV1AtGp6iEAV",
+      "title": "窦靖童 - Don't break my heart - 黑豹🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1AtGp6iEAV/"
+        }
+      ],
+      "publishedAt": "2026-05-24",
+      "duration": "01:06"
+    },
+    {
+      "id": "BV1JvLa6YEgU",
+      "title": "小拇指撸出火星子版 River flows in you",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1JvLa6YEgU/"
+        }
+      ],
+      "publishedAt": "2026-05-21",
+      "duration": "02:51"
+    },
+    {
+      "id": "BV1yq5n6BEpe",
+      "title": "拿吉他当琵琶，时过夏末",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1yq5n6BEpe/"
+        }
+      ],
+      "publishedAt": "2026-05-10",
+      "duration": "01:57"
+    },
+    {
+      "id": "BV1XzDDBxE5m",
+      "title": "Better Call Saul - 风骚律师前奏迷幻吉他",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1XzDDBxE5m/"
+        }
+      ],
+      "publishedAt": "2026-04-12",
+      "duration": "00:25"
+    },
+    {
+      "id": "BV13qDtBbEoP",
+      "title": "万青-採石吉他前奏",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV13qDtBbEoP/"
+        }
+      ],
+      "publishedAt": "2026-04-09",
+      "duration": "01:31"
+    },
+    {
+      "id": "BV18NfLB3EbZ",
+      "title": "海阔天空- Beyond｜尾奏吉他solo🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV18NfLB3EbZ/"
+        }
+      ],
+      "publishedAt": "2026-02-20",
+      "duration": "01:06"
+    },
+    {
+      "id": "BV113c5zNEVT",
+      "title": "Yesterday - Beatles | 吉他指弹🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV113c5zNEVT/"
+        }
+      ],
+      "publishedAt": "2026-02-12",
+      "duration": "01:40"
+    },
+    {
+      "id": "BV1kuiHBpEY3",
+      "title": "死男人-蔡徐坤 | Deadman吉他solo🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1kuiHBpEY3/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=5lsq2yKuef4"
+        }
+      ],
+      "publishedAt": "2026-01-04",
+      "duration": "00:43",
+      "alternateTitle": "Deadman - 蔡徐坤（KUN）｜Guitar solo"
+    },
+    {
+      "id": "BV1SsSpBMEyt",
+      "title": "来忒毕 ｜Let it be 吉他solo - The Beatles🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1SsSpBMEyt/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=CFU7GjMv-ak"
+        }
+      ],
+      "publishedAt": "2025-12-01",
+      "duration": "01:14",
+      "alternateTitle": "Beatles | let it be - guitar solo 🎸"
+    },
+    {
+      "id": "BV1yLgMz6Evp",
+      "title": "这一刻的想法：Lose control! 吉他solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1yLgMz6Evp/"
+        }
+      ],
+      "publishedAt": "2025-07-17",
+      "duration": "00:40"
+    },
+    {
+      "id": "BV16EAje1ENh",
+      "title": "绿日 - Basket case ｜ 吉他solo🎸",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV16EAje1ENh/"
+        }
+      ],
+      "publishedAt": "2025-02-19",
+      "duration": "00:34"
+    },
+    {
+      "id": "BV14eAge3EXY",
+      "title": "再见理想 - Beyond | 吉他前奏",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV14eAge3EXY/"
+        }
+      ],
+      "publishedAt": "2025-02-15",
+      "duration": "00:36"
+    },
+    {
+      "id": "BV1woCBYhEoZ",
+      "title": "Comfortably Numb (Solo1) - Pink Floyd",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1woCBYhEoZ/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=HVba8F7g1qY"
+        }
+      ],
+      "publishedAt": "2024-12-26",
+      "duration": "00:57"
+    },
+    {
+      "id": "BV1CZCQYTEbA",
+      "title": "Pink Floyd致敬乐队，目睹吉他手现场成仙",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1CZCQYTEbA/"
+        }
+      ],
+      "publishedAt": "2024-10-18",
+      "duration": "13:40"
+    },
+    {
+      "id": "BV1NQ2sYMECA",
+      "title": "真的爱你 - Beyond ｜前奏吉他🎸solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1NQ2sYMECA/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=kYoc9gQ4o24"
+        }
+      ],
+      "publishedAt": "2024-10-09",
+      "duration": "00:31"
+    },
+    {
+      "id": "BV1nY1fYsEPP",
+      "title": "Time - Pink Floyd | 吉他🎸solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1nY1fYsEPP/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=eE2RBwdVUpE"
+        }
+      ],
+      "publishedAt": "2024-10-05",
+      "duration": "01:41",
+      "alternateTitle": "Time - Pink Floyd | Guitar solo cover"
+    },
+    {
+      "id": "BV1Ka4eePErR",
+      "title": "谁还不是块砖头呢 Another brick in the wall - Pink Floyd",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Ka4eePErR/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=nevhQg9es6U"
+        }
+      ],
+      "publishedAt": "2024-09-10",
+      "duration": "01:35",
+      "alternateTitle": "Another brick in the wall - Pink Floyd | guitar solo 🎸"
+    },
+    {
+      "id": "BV14mYPeAEhp",
+      "title": "生命中最美丽的一天 - 痛仰",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV14mYPeAEhp/"
+        }
+      ],
+      "publishedAt": "2024-08-06",
+      "duration": "00:50"
+    },
+    {
+      "id": "BV1wb421i7yM",
+      "title": "在烧着的房子里慢摇 - 囧妹 | 吉他solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1wb421i7yM/"
+        }
+      ],
+      "publishedAt": "2024-05-30",
+      "duration": "00:35"
+    },
+    {
+      "id": "BV1c1421B7Lx",
+      "title": "天空之城在哭泣之南京市民李志",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1c1421B7Lx/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=DjaH0-2pCqo"
+        }
+      ],
+      "publishedAt": "2024-05-17",
+      "duration": "00:40",
+      "alternateTitle": "天空之城 - 李志 ｜ 间奏吉他solo"
+    },
+    {
+      "id": "BV19C411n7o2",
+      "title": "Pink Floyd寂寞惊现巴塞罗那街头",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV19C411n7o2/"
+        }
+      ],
+      "publishedAt": "2024-04-26",
+      "duration": "07:28"
+    },
+    {
+      "id": "BV16J4m1h7Go",
+      "title": "滑动变阻器，一秒推进太空",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV16J4m1h7Go/"
+        }
+      ],
+      "publishedAt": "2024-03-08",
+      "duration": "01:05"
+    },
+    {
+      "id": "BV1ew411j7No",
+      "title": "朋友问我，听Pink Floyd是什么感觉",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1ew411j7No/"
+        }
+      ],
+      "publishedAt": "2024-01-25",
+      "duration": "12:29"
+    },
+    {
+      "id": "BV1e5411i7wA",
+      "title": "喜欢了二十年的beyond，终于学会了灰色轨迹的尾奏吉他solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1e5411i7wA/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=m6vIMaIYdyI"
+        }
+      ],
+      "publishedAt": "2024-01-13",
+      "duration": "01:21",
+      "alternateTitle": "灰色轨迹 - Beyond | 尾奏吉他solo"
+    },
+    {
+      "id": "BV1Zp4y1o7yi",
+      "title": "大地 - Beyond ｜ 前奏solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Zp4y1o7yi/"
+        }
+      ],
+      "publishedAt": "2023-12-21",
+      "duration": "00:23"
+    },
+    {
+      "id": "BV1ru4y157V3",
+      "title": "原版：Windy&Warm我的版本：Dirty&Cold，中文名：埋汰又凉飕",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1ru4y157V3/"
+        }
+      ],
+      "publishedAt": "2023-11-25",
+      "duration": "01:18"
+    },
+    {
+      "id": "BV13b4y1g7Ej",
+      "title": "后来 - 刘若英｜间奏吉他🎸solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV13b4y1g7Ej/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=q2RkKIITO84"
+        }
+      ],
+      "publishedAt": "2023-11-10",
+      "duration": "00:35",
+      "alternateTitle": "后来 - 刘若英｜间奏🎸吉他solo"
+    },
+    {
+      "id": "BV1Qz4y157xw",
+      "title": "Wonderful tonight - Eric Clapton | 电吉他solo",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Qz4y157xw/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=CbTgnMgQhMg"
+        }
+      ],
+      "publishedAt": "2023-09-17",
+      "duration": "00:29",
+      "alternateTitle": "Wonderful tonight - Eric Clapton | Intro solo guitar"
+    },
+    {
+      "id": "BV1Wj411C7Yw",
+      "title": "🎸吉他 solo｜Californication - Red Hot Chili Peppers （红辣椒乐队）",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Wj411C7Yw/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=JPxdagXX6Uc"
+        }
+      ],
+      "publishedAt": "2023-09-10",
+      "duration": "00:47",
+      "alternateTitle": "Guitar solo | Californication - Red Hot Chili Peppers"
+    },
+    {
+      "id": "BV1Uu411N7kG",
+      "title": "在梁博的日落大道上打出溜滑",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Uu411N7kG/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=BnizaywV3pQ"
+        }
+      ],
+      "publishedAt": "2023-08-27",
+      "duration": "00:52",
+      "alternateTitle": "日落大道🎸尾奏solo - 梁博"
+    },
+    {
+      "id": "BV1WG41177XA",
+      "title": "普通朋友 - 陶喆｜指弹吉他（假装给陶喆伴奏，没有古典民谣吉他来凑）",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1WG41177XA/"
+        }
+      ],
+      "publishedAt": "2022-10-16",
+      "duration": "00:25"
+    },
+    {
+      "id": "yt-C6xgo6tosmg",
+      "title": "David Tao - Regular friend | Fingerstyle guitar (陶喆 - 普通朋友｜指弹吉他)",
+      "publishedAt": "2022-10-16",
+      "duration": "00:35",
+      "links": [
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=C6xgo6tosmg"
         }
       ]
     },
     {
-      "id": "guitar-channel",
-      "title": "子鱼的吉他🎸&音乐🎵",
-      "meta": "个人演奏频道 · B 站 / YouTube",
-      "summary": "Pink Floyd、Beyond 和指弹。去我的 B 站或 YouTube 频道看演奏。",
-      "topic": "吉他",
-      "url": "https://b23.tv/gkxZqiT",
+      "id": "BV1G14y1h7sW",
+      "title": "风之诗 - 押尾桑｜指弹吉他",
       "links": [
         {
-          "label": "我的 B 站",
-          "url": "https://b23.tv/gkxZqiT"
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1G14y1h7sW/"
         },
         {
-          "label": "我的 YouTube",
-          "url": "https://www.youtube.com/@florence_fernandez"
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=_CBLrONAze8"
+        }
+      ],
+      "publishedAt": "2022-10-08",
+      "duration": "03:55",
+      "alternateTitle": "Wind song - Kotaro Oshio | Fingerstyle guitar cover"
+    },
+    {
+      "id": "BV1dt4y177yE",
+      "title": "Beyond - 谁伴我闯荡（前奏）｜ 吉他指弹（二十年老粉终于对偶像下手了）",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1dt4y177yE/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=h7jgFf8PNoQ"
+        }
+      ],
+      "publishedAt": "2022-09-10",
+      "duration": "00:27",
+      "alternateTitle": "Beyond - 谁伴我闯荡（前奏Intro）｜ 吉他指弹 Fingerstyle guitar"
+    },
+    {
+      "id": "BV1KW4y1r7fN",
+      "title": "首次尝试布鲁斯，就被不明飞行物袭击……",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1KW4y1r7fN/"
+        }
+      ],
+      "publishedAt": "2022-06-22",
+      "duration": "00:41"
+    },
+    {
+      "id": "BV16R4y1j7qL",
+      "title": "爱的罗曼史 |吉他指弹 #手指掰稀碎系列",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV16R4y1j7qL/"
+        }
+      ],
+      "publishedAt": "2022-02-05",
+      "duration": "02:11"
+    },
+    {
+      "id": "BV1x44y1a7rf",
+      "title": "River flows in you（你的心河） - 郑成河版 | 指弹吉他 #你的心河 #吉他指弹 #弹到小拇指出血 #郑成河 #Yiruma #李闰珉",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1x44y1a7rf/"
+        }
+      ],
+      "publishedAt": "2021-12-04",
+      "duration": "03:42"
+    },
+    {
+      "id": "BV1YL4y1v7qq",
+      "title": "一直很安静 - 阿桑 | 指弹吉他（再不录，就要弹吐了）",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1YL4y1v7qq/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=Om6RplIxumQ"
+        }
+      ],
+      "publishedAt": "2021-11-14",
+      "duration": "04:15",
+      "alternateTitle": "一直很安静 - 阿桑 | 指弹吉他 Fingerstyle guitar cover"
+    },
+    {
+      "id": "BV13X4y1A7ds",
+      "title": "天空之城 Castle in the Sky - 久石让 | 吉他指弹 - Fingerstyle cover",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV13X4y1A7ds/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=IQPD-sycDVw"
+        }
+      ],
+      "publishedAt": "2021-07-15",
+      "duration": "03:00",
+      "alternateTitle": "Castle in the sky/天空の城ラピュタ - Joe Hisaishi | Fingerstyle guitar cover"
+    },
+    {
+      "id": "BV1DV411W7V5",
+      "title": "Pink Floyd - Wish you were here | 指弹吉他 - Fingerstyle Gutar Cover",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1DV411W7V5/"
+        }
+      ],
+      "publishedAt": "2021-07-06",
+      "duration": "01:22"
+    },
+    {
+      "id": "BV1Vw411o7ip",
+      "title": "Yesterday - Beatles/甲壳虫乐队 | Fingerstyle guitar/吉他指弹",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Vw411o7ip/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=-rYE-2wVj-M"
+        }
+      ],
+      "publishedAt": "2021-06-28",
+      "duration": "01:42",
+      "alternateTitle": "Yesterday Beatles | Fingerstyle guitar cover"
+    },
+    {
+      "id": "BV1b54y1V7u2",
+      "title": "吉他指弹 | 啊朋友再见/Bella Ciao | 感谢肩上黄尾巴的伙伴友情伴奏",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1b54y1V7u2/"
+        }
+      ],
+      "publishedAt": "2021-05-30",
+      "duration": "01:55"
+    },
+    {
+      "id": "BV1bq4y1j7Wp",
+      "title": "Pink Floyd - Another brick in the wall | Fingerstyle cover - 吉他指弹",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1bq4y1j7Wp/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=TvEdFsGJXVM"
+        }
+      ],
+      "publishedAt": "2021-05-29",
+      "duration": "01:09",
+      "alternateTitle": "Pink Floyd - Another brick in the wall | Fingerstyle guitar cover"
+    },
+    {
+      "id": "BV1W64y1d7Su",
+      "title": "Nothing else matters - Metallica / Guitar fingerstyle cover/ 吉他指弹",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1W64y1d7Su/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=zq2EsxJGJGQ"
+        }
+      ],
+      "publishedAt": "2021-05-23",
+      "duration": "02:38",
+      "alternateTitle": "Nothing else matters - Metallica / Guitar fingerstyle cover"
+    },
+    {
+      "id": "BV1Mh411Z7PX",
+      "title": "Nostalgia- Sungha Jung（郑成河）吉他指弹",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1Mh411Z7PX/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=KbbRbIzQkpY"
+        }
+      ],
+      "publishedAt": "2020-08-02",
+      "duration": "04:44",
+      "alternateTitle": "Nostalgia by Sungha Jung (郑成河) - Fingerstyle Guitar Covered by ZiYu"
+    },
+    {
+      "id": "BV1dA411e7zZ",
+      "title": "2020声学年：穿越160年的辉煌",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1dA411e7zZ/"
+        }
+      ],
+      "publishedAt": "2020-07-19",
+      "duration": "08:13"
+    },
+    {
+      "id": "yt-_b_bz0c-wAY",
+      "title": "天空之城 - 天空の城ラピュタ - Castle in the sky - Guitar covered by ZiYu",
+      "publishedAt": "2020-07-19",
+      "duration": "02:57",
+      "links": [
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=_b_bz0c-wAY"
         }
       ]
     }
@@ -1031,6 +1793,16 @@
           "label": "演出资讯"
         }
       ]
+    }
+  ],
+  "videoChannels": [
+    {
+      "label": "Bilibili",
+      "url": "https://space.bilibili.com/636318549"
+    },
+    {
+      "label": "YouTube",
+      "url": "https://www.youtube.com/@florence_fernandez/videos"
     }
   ]
 }

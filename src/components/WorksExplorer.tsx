@@ -24,6 +24,9 @@ type Link = { url: string; label: string };
 type Entry = {
   id: string;
   title: string;
+  alternateTitle?: string;
+  publishedAt?: string;
+  duration?: string;
   meta?: string;
   topic?: string;
   section?: 'articles' | 'writing';
@@ -40,7 +43,7 @@ type Entry = {
   chapters?: { seconds: number; title: string }[];
 };
 type Work = Entry & { kind: Kind };
-type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>>;
+type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoChannels?: Link[] };
 type Article = { body?: string[]; html?: string };
 type Address = { type: Category; item: string; q: string; format?: ArticleFormat; writingTab?: WritingTab };
 
@@ -69,6 +72,10 @@ function categoryOf(item: Work): Category {
 
 function labelForWork(item: Work, en: boolean) {
   return categories[categoryOf(item)][Number(en)];
+}
+
+function videoMetadata(item: Entry) {
+  return [item.publishedAt, item.duration].filter(Boolean).join(' · ') || item.meta;
 }
 
 function iconFor(item: Work) {
@@ -214,6 +221,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
   const sources = item.kind === 'video' ? videoSources(item) : [];
+  const meta = item.kind === 'video' ? videoMetadata(item) : item.meta;
   const player = embed ? new URL(embed) : undefined;
   const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
   if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', '0');
@@ -224,12 +232,12 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
           ? ' · ' + writingTabs[writingTabFor(item)][Number(en)]
           : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
         <h3>{item.title}</h3>
-        {item.meta && <p className="ex-meta">{item.meta}</p>}
+        {meta && <p className="ex-meta">{meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
           (sources.length > 1 || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} /> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
-        <div className="ex-body">
+        <div className="ex-body empty:hidden">
           {intro}
           {rest && (small ? <details className="ex-more"><summary>{en ? 'Continue reading' : '继续阅读'}</summary>{rest}</details> : rest)}
           {item.contentPath && article.isPending && <p role="status">{en ? 'Loading article…' : '正在加载正文…'}</p>}
@@ -275,7 +283,7 @@ export default function WorksExplorer() {
     if (browsingArticles && address.format && (item.format || 'article') !== address.format) return false;
     if (activeType === 'writing' && writingTabFor(item) !== activeWritingTab) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
-    const searchable = [item.id, item.title, item.meta, item.topic, item.summary, source,
+    const searchable = [item.id, item.title, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
       category === 'writing' ? writingTabs[writingTabFor(item)].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
@@ -373,7 +381,12 @@ export default function WorksExplorer() {
         })}
         <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
       </div>}
-      {!browsingArticles && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
+      {activeType === 'video' && <div className="ex-subfilters">
+        {works.data?.videoChannels?.map(link => <a key={link.url} href={webURL(link.url)} target="_blank" rel="noopener noreferrer"
+          className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
+        <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
+      </div>}
+      {!browsingArticles && activeType !== 'video' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
       {errored && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
         <button type="button" onClick={() => { if (works.isError) works.refetch(); if (articles.isError) articles.refetch(); }}>{en ? 'Retry' : '重新加载'}</button>
       </div>}
@@ -384,7 +397,9 @@ export default function WorksExplorer() {
             {visible.map(item => {
               const active = current.id === item.id, Icon = iconFor(item), cover = artwork[item.kind];
               const category = labelForWork(item, en);
-              const extra = item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
+              const rowLabel = activeType === 'video' ? (item.featured ? (en ? 'Pinned' : '置顶') : '') : category;
+              const extra = item.kind === 'video' ? videoMetadata(item) :
+                item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
                 item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] :
                 item.kind === 'articles' ? (categoryOf(item) === 'writing' ? writingTabs[writingTabFor(item)][Number(en)]
                   : item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
@@ -392,7 +407,7 @@ export default function WorksExplorer() {
                 <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
                   aria-expanded={small ? active && !folded : undefined} aria-controls={active && (!small || !folded) ? 'ex-reader' : undefined} onClick={() => choose(item)}>
                   <span className={'ex-row-icon tone-' + item.kind}>{cover ? <img alt="" src={import.meta.env.BASE_URL + cover} /> : <Icon aria-hidden="true" />}</span>
-                  <span className="ex-row-text"><small>{(extra && extra !== category ? [category, extra] : [category]).join(' · ')}</small>
+                  <span className="ex-row-text"><small>{[rowLabel, extra !== rowLabel && extra].filter(Boolean).join(' · ')}</small>
                     <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
                 </button>
                 {small && active && !folded && reader}
