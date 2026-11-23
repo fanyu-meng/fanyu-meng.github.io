@@ -10,7 +10,7 @@ const categories = {
   reviews: ['脱口秀', 'Stand-up'],
   podcast: ['播客', 'Podcast'],
   articles: ['声学科普', 'Acoustics'],
-  writing: ['写作', 'Writing'],
+  writing: ['文字', 'Writing'],
   video: ['吉他🎸&音乐🎵', 'Guitar 🎸 & music 🎵'],
   github: ['我开发的项目', 'Projects I built'],
 } as const;
@@ -18,6 +18,7 @@ const categories = {
 type Category = keyof typeof categories;
 type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
 type ArticleFormat = 'article' | 'answer';
+type WritingTab = 'writing' | 'zhihu';
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -40,7 +41,20 @@ type Entry = {
 type Work = Entry & { kind: Kind };
 type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>>;
 type Article = { body?: string[]; html?: string };
-type Address = { type: Category; item: string; q: string; format?: ArticleFormat };
+type Address = { type: Category; item: string; q: string; format?: ArticleFormat; writingTab?: WritingTab };
+
+// Curated writing selection. Other non-acoustics entries appear under 知乎创作.
+const writingIds = new Set([
+  'answer-499222686', 'answer-510079266', 'answer-814774540', 'answer-850209799',
+  'answer-625250053', 'answer-652610384', 'answer-883511002', 'answer-974363858',
+  'answer-962373050', 'answer-986565730', 'answer-1095657294', 'answer-1584623872',
+  'answer-1059104737', 'zhihu-17943190775',
+]);
+const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Zhihu creations'] } as const;
+
+function writingTabFor(item: Work): WritingTab {
+  return writingIds.has(item.id) ? 'writing' : 'zhihu';
+}
 
 const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
 const iconByKind = { reviews: Mic, podcast: Headphones, articles: BookOpen, video: Guitar, github: Code2, club: Ticket };
@@ -150,7 +164,9 @@ function readAddress(): Address {
     Object.prototype.hasOwnProperty.call(categories, rawType) ? rawType as Category : 'all';
   const item = params.get('item') || (rawType === 'leslam' || rawType === 'club' ? 'leslam-club' : id);
   const format = params.get('format');
-  return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined };
+  const tab = params.get('tab');
+  return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined,
+    writingTab: tab === 'writing' || tab === 'zhihu' ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -159,6 +175,7 @@ function hrefFor(address: Address) {
   if (address.item) params.set('item', address.item);
   if (address.q) params.set('q', address.q);
   if (address.format) params.set('format', address.format);
+  if (address.type === 'writing' && address.writingTab) params.set('tab', address.writingTab);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -201,7 +218,9 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   return (
     <article id="ex-reader" className="ex-reader" aria-label={item.title}>
       <div className="ex-reading">
-        <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{item.format === 'answer' && (en ? ' · Zhihu answer' : ' · 知乎回答')}</div>
+        <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{categoryOf(item) === 'writing'
+          ? ' · ' + writingTabs[writingTabFor(item)][Number(en)]
+          : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
         <h3>{item.title}</h3>
         {item.meta && <p className="ex-meta">{item.meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
@@ -245,13 +264,18 @@ export default function WorksExplorer() {
   // Preserve published article links whose topic now belongs in another section.
   const linkedArticle = address.type !== 'all' && entries.find(item => item.kind === 'articles' && item.id === address.item);
   const activeType = linkedArticle ? categoryOf(linkedArticle) : address.type;
-  const browsingArticles = activeType === 'articles' || activeType === 'writing';
+  const browsingArticles = activeType === 'articles';
+  const activeWritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
+    ? writingTabFor(linkedArticle) : address.writingTab || 'writing';
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
     if (browsingArticles && address.format && (item.format || 'article') !== address.format) return false;
+    if (activeType === 'writing' && writingTabFor(item) !== activeWritingTab) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
-    const searchable = [item.id, item.title, item.meta, item.topic, item.summary, source, item.format === 'answer' ? '知乎回答 Zhihu answer' : '', labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
+    const searchable = [item.id, item.title, item.meta, item.topic, item.summary, source,
+      category === 'writing' ? writingTabs[writingTabFor(item)].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
+      labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
   const current = visible.find(item => item.id === address.item) || visible[0];
@@ -274,7 +298,7 @@ export default function WorksExplorer() {
     };
   }, []);
 
-  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format]);
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format, address.writingTab]);
   useEffect(() => {
     if (works.isPending || articles.isPending || !requestedScroll.current) return;
     requestedScroll.current = false;
@@ -326,6 +350,14 @@ export default function WorksExplorer() {
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
           aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
       </nav>
+      {activeType === 'writing' && <div className="ex-writing-tabs" role="group" aria-label={en ? 'Writing categories' : '文字分类'}>
+        {(Object.keys(writingTabs) as WritingTab[]).map(tab => <button key={tab} type="button"
+          aria-pressed={activeWritingTab === tab}
+          onClick={() => navigate({ type: 'writing', item: '', q: address.q, writingTab: tab })}>
+          {writingTabs[tab][Number(en)]}
+        </button>)}
+        <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
+      </div>}
       {browsingArticles && <div className="ex-formats">
         <label>{en ? 'Show' : '查看'}
           <select value={address.format || ''} onChange={event =>
@@ -350,7 +382,8 @@ export default function WorksExplorer() {
               const category = labelForWork(item, en);
               const extra = item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
                 item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] :
-                item.kind === 'articles' ? (item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
+                item.kind === 'articles' ? (categoryOf(item) === 'writing' ? writingTabs[writingTabFor(item)][Number(en)]
+                  : item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
               return <div className="ex-row" key={item.kind + ':' + item.id}>
                 <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
                   aria-expanded={small ? active && !folded : undefined} aria-controls={active && (!small || !folded) ? 'ex-reader' : undefined} onClick={() => choose(item)}>
