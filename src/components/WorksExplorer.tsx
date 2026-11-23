@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Play, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import './works-explorer.css';
 
 const categories = {
@@ -195,6 +196,7 @@ function Reader({ item, small, playVideo, children }: { item: Work; small: boole
   const audio = webURL(item.audio);
   const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
+  const sources = item.kind === 'video' ? videoSources(item) : [];
   const player = embed ? new URL(embed) : undefined;
   const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
   if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', playVideo ? '1' : '0');
@@ -205,6 +207,7 @@ function Reader({ item, small, playVideo, children }: { item: Work; small: boole
         <h3>{item.title}</h3>
         {item.meta && <p className="ex-meta">{item.meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
+          (sources.length > 1 || (sources.length && !embedAllowed && !videoFile)) ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} autoplay={playVideo} /> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body">
@@ -238,7 +241,7 @@ export default function WorksExplorer() {
   const section = useRef<HTMLElement>(null);
   const requestedScroll = useRef(Boolean(location.hash.match(/^#\/?works\?/)));
   const labels = (type: Category) => categories[type][Number(en)];
-  const works = useQuery({ queryKey: ['work-index'], queryFn: ({ signal }) => loadJSON<WorksFile>(new URL('works.json', dataRoot), signal), staleTime: Infinity });
+  const works = useQuery({ queryKey: ['work-index'], queryFn: async ({ signal }) => withPublishedVideos(await loadJSON<WorksFile>(new URL('works.json', dataRoot), signal), dataRoot, signal), staleTime: Infinity });
   const articles = useQuery({ queryKey: ['acoustics-index'], queryFn: ({ signal }) => loadJSON<Entry[]>(new URL('acoustics-index.json', dataRoot), signal), staleTime: Infinity });
   const entries = useMemo(() => orderWorks(works.data || {}, articles.data || []), [works.data, articles.data]);
   const terms = address.q.trim().toLowerCase().split(/\s+/).filter(Boolean);

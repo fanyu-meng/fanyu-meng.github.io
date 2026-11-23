@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com https://uploads.github.com; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>视频发布台 · 孟凡雨</title><link rel="stylesheet" href="./studio.css">
+</head>
+<body>
+  <header><a href="https://fanyu-meng.github.io/">孟凡雨 <span>/</span> 个人网站</a><span>创作者后台</span></header>
+  <main>
+    <div class="heading"><div><h1>视频发布台</h1><p>上传原片，选择平台。每条作品在首页只出现一次。</p></div><a class="quiet" href="https://fanyu-meng.github.io/#/works?type=video">查看音乐作品 </a></div>
+    <section id="connection" aria-labelledby="connection-title"><h2 id="connection-title">连接发布账号</h2><p id="connect-note" role="status">原片和封面保存在你的 GitHub 私有仓库。使用该仓库的细粒度令牌连接。</p><label for="token" id="token-label">GitHub 令牌<input id="token" type="password" autocomplete="off" spellcheck="false"></label><div class="actions"><button id="signin" type="button">连接私有仓库</button> <a id="setup" class="quiet" href="https://github.com/fanyu-meng/fanyu-meng.github.io/blob/main/scripts/video-studio/README.md">首次设置</a> · <a href="https://github.com/settings/personal-access-tokens/new?name=Video+Studio&amp;target_name=fanyu-meng&amp;contents=write&amp;actions=write" rel="noopener" target="_blank">创建仓库令牌</a></div></section>
+    <div id="desk" hidden>
+      <form id="publish">
+        <section><h2>视频和封面</h2><div class="files">
+          <label class="file">视频原片<input id="video" type="file" accept="video/*,.mkv,.mov,.mp4,.flv,.webm" required></label>
+          <label class="file">自定义封面 <small>可选 · JPG / PNG</small><input id="cover" type="file" accept="image/png,image/jpeg"></label>
+        </div>
+        <label>标题<input id="title" type="text" maxlength="100" required></label>
+        <label>简介<textarea id="description" rows="3" maxlength="5000"></textarea></label>
+        <label>标签 <small>用逗号分隔</small><input id="tags" type="text" placeholder="吉他，翻弹" maxlength="450"></label></section>
+        <section><h2>发布平台</h2>
+          <div class="channels"><label class="check"><input id="youtube" type="checkbox" checked>YouTube</label><label class="check"><input id="bilibili" type="checkbox" checked>B 站</label></div>
+          <div id="yt-options" class="options"><p id="yt-note" hidden></p><label>YouTube 可见性<select id="privacy"><option value="private">私享</option><option value="unlisted">不公开列出</option><option value="public">公开</option><option value="scheduled">定时公开</option></select></label>
+          <label id="time-wrap" hidden>公开时间（本地时间）<input id="time" type="datetime-local"></label>
+          <label class="check"><input type="checkbox" id="kids">这条视频是为儿童制作的</label></div>
+          <div id="bili-options" class="options"><p id="bili-note"></p><label id="tid-wrap" hidden>B 站投稿分区 ID<input id="tid" type="number" min="1" step="1" value="59"></label><label class="check" id="original-wrap" hidden><input id="original" type="checkbox">我确认此稿符合 B 站自制投稿条件</label></div>
+          <label class="check"><input type="checkbox" id="show-site" checked>平台公开后，在个人网站展示</label>
+        </section>
+        <div class="submit"><button id="send" type="submit">上传并加入发布队列</button><progress id="progress" max="100" value="0" hidden></progress><span id="message" role="status"></span></div>
+      </form>
+      <section><div class="section-head"><h2>发布记录</h2><button class="outline" type="button" id="refresh">刷新</button></div><p id="list-message" role="status"></p><div id="jobs"></div></section>
+    </div>
+  </main>
+  <script type="module" src="./studio.js"></script>
+</body></html>

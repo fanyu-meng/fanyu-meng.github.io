@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Footer: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -13,6 +13,8 @@ const Footer: React.FC = () => {
           <p className="text-sm text-muted-foreground">
             © {currentYear} {t('hero.name')}. {t('footer.rights')}.
           </p>
+
+          <a href="/studio/" className="text-sm text-muted-foreground hover:text-foreground">{language === 'zh' ? '视频发布台' : 'Video studio'}</a>
 
           {/* Back to top */}
           <a
