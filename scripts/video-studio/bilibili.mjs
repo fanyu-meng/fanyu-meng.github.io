@@ -62,9 +62,9 @@ async function publicBV(id) {
   const url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + id;
   const response = await checked(await fetch(url, { headers: { Referer: 'https://www.bilibili.com/' } }));
   const data = await response.json();
-  if (data.code === -404 || data.code === 62002) return false;
+  if (data.code === -404 || data.code === 62002) return null;
   if (data.code !== 0) throw new Error('B 站公开状态暂时无法核实（' + Number(data.code) + '）');
-  return data.data?.bvid === id && data.data?.state === 0;
+  return data.data?.bvid === id && data.data?.state === 0 ? data.data : null;
 }
 async function submit(ctx, target) {
   const { storage, video, cover, save, bili, spec } = ctx, query = () => ({ upload_token: target.uploadToken });
@@ -121,6 +121,7 @@ export async function processBili(ctx, target) {
     if (!bvId(manual)) throw new Error('BV 号无效');
     target.id = manual;
     target.apiPost = false;
+    delete target.publicCover;
     delete target.uncertain;
     delete target.uploadToken;
   }
@@ -136,9 +137,12 @@ export async function processBili(ctx, target) {
     const data = await ctx.bili('view', { method: 'GET', query: { resource_id: target.id } });
     const code = data.addit_info?.state;
     target.live = data.resource_id === target.id && code === 0;
+    if (target.live) target.publicCover = data.cover || target.coverURL;
     if (data.addit_info?.reject_reason && !target.live) throw new Error('B 站审核未通过，请到创作中心查看原因。');
   } else {
-    target.live = await publicBV(target.id);
+    const video = await publicBV(target.id);
+    target.live = Boolean(video);
+    if (video) target.publicCover = video.pic;
   }
   target.status = target.live ? 'public' : 'submitted';
 }

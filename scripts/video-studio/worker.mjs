@@ -18,7 +18,10 @@ export function publicRecord(job, state, createdAt) {
   const youtube = s.youtube && yt?.live && youtubeId(yt.id) ? yt.id : undefined;
   const bilibili = s.bilibili && bi?.live && bvId(bi.id) ? bi.id : undefined;
   if (!s.showSite || !(youtube || bilibili)) return null;
-  return { id: 'video-' + job.workId, title: s.title, summary: s.description, createdAt, ...(youtube ? { youtube } : {}), ...(bilibili ? { bilibili } : {}) };
+  const cover = bilibili && typeof bi.publicCover === 'string'
+    ? bi.publicCover.match(/^(?:https?:)?(\/\/i\d+\.hdslb\.com\/bfs\/[\w/.-]+)/i)?.[1] : undefined;
+  return { id: 'video-' + job.workId, title: s.title, summary: s.description, createdAt,
+    ...(youtube ? { youtube } : {}), ...(bilibili ? { bilibili } : {}), ...(cover ? { cover: 'https:' + cover } : {}) };
 }
 export function summary(state) {
   const out = {};

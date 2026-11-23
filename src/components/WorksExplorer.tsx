@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
+import VideoGallery from './VideoGallery';
 import './works-explorer.css';
 
 const categories = {
@@ -370,9 +371,11 @@ export default function WorksExplorer() {
     const breakpoint = window.matchMedia('(max-width: 759px)');
     const resize = () => { setSmall(breakpoint.matches); setFolded(false); };
     const restore = () => {
-      requestedScroll.current = /^#\/?works\?/.test(location.hash);
+      const next = readAddress();
+      const withinGallery = next.type === 'video' && section.current?.querySelector('.video-gallery');
+      requestedScroll.current = !withinGallery && /^#\/?works\?/.test(location.hash);
       setFolded(false);
-      setAddress(readAddress());
+      setAddress(next);
     };
     breakpoint.addEventListener('change', resize);
     window.addEventListener('popstate', restore);
@@ -490,7 +493,12 @@ export default function WorksExplorer() {
           : <>{en ? 'No works found. ' : '没有匹配的作品。'}<button type="button" onClick={() => navigate({ type: 'all', item: '', q: '' })}>{en ? 'Clear filters' : '清除筛选'}</button></>}
       </div>}
       {activeType === 'github' && visible.length > 0 && <ProjectGallery projects={visible} address={address} en={en} />}
-      {activeType !== 'github' && visible.length > 0 &&
+      {activeType === 'video' && visible.length > 0 && <VideoGallery videos={visible} en={en} selectedId={address.item}
+        hrefForVideo={id => hrefFor({ type: 'video', q: address.q, item: id })}
+        closeDirectLink={() => navigate({ type: 'video', q: address.q, item: '' }, true)}>
+        {reader}
+      </VideoGallery>}
+      {activeType !== 'video' && activeType !== 'github' && visible.length > 0 &&
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {
@@ -498,7 +506,6 @@ export default function WorksExplorer() {
               const cover = item.projectCover;
               const thumbnail = cover?.thumbnail || artwork[item.kind];
               const category = labelForWork(item, en);
-              const rowLabel = activeType === 'video' ? (item.featured ? (en ? 'Pinned' : '置顶') : '') : category;
               const extra = item.kind === 'video' ? videoMetadata(item) :
                 item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
                 item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] :
@@ -510,7 +517,7 @@ export default function WorksExplorer() {
                   <span className={'ex-row-icon tone-' + item.kind}>{thumbnail
                     ? <img alt="" src={import.meta.env.BASE_URL + thumbnail} loading="lazy" decoding="async" />
                     : <Icon aria-hidden="true" />}</span>
-                  <span className="ex-row-text"><small>{[rowLabel, extra !== rowLabel && extra].filter(Boolean).join(' · ')}</small>
+                  <span className="ex-row-text"><small>{[category, extra !== category && extra].filter(Boolean).join(' · ')}</small>
                     <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
                 </button>
                 {small && active && !folded && reader}

@@ -1,7 +1,19 @@
 import { useState } from 'react';
 
-type FeedRow = { id: string; title: string; summary: string; createdAt: string; youtube?: string; bilibili?: string };
-type VideoEntry = { id: string; title: string; url?: string; links?: { label: string; url: string }[]; embed?: string; summary?: string; featured?: boolean; publishedAt?: string };
+type FeedRow = { id: string; title: string; summary: string; createdAt: string; youtube?: string; bilibili?: string; cover?: string };
+export type VideoEntry = {
+  id: string;
+  title: string;
+  url?: string;
+  links?: { label: string; url: string }[];
+  embed?: string;
+  summary?: string;
+  featured?: boolean;
+  publishedAt?: string;
+  duration?: string;
+  cover?: string;
+  thumbnail?: string;
+};
 export type VideoSource = { label: string; url: string; embed: string };
 
 export function videoSources(entry: VideoEntry): VideoSource[] {
@@ -47,11 +59,11 @@ export async function withPublishedVideos<T extends { video?: VideoEntry[] }>(wo
     if (row.youtube && /^[\w-]{11}$/.test(row.youtube)) links.push({ label: 'YouTube', url: 'https://www.youtube.com/watch?v=' + row.youtube });
     if (!links.length) continue;
     const publishedAt = typeof row.createdAt === 'string' ? row.createdAt.slice(0, 10) : undefined;
-    const item = { id: row.id, title: row.title, summary: row.summary, publishedAt, links };
+    const item = { id: row.id, title: row.title, summary: row.summary, publishedAt, cover: row.cover, links };
     const match = curated.findIndex(old => old.id === item.id || videoSources(old).some(source => links.some(link => link.url === source.url)));
     if (match >= 0) {
       const old = curated[match];
-      curated[match] = { ...old, links: [...new Map([...(old.links || []), ...links].map(link => [link.url, link])).values()] };
+      curated[match] = { ...old, cover: old.cover || item.cover, links: [...new Map([...(old.links || []), ...links].map(link => [link.url, link])).values()] };
     } else if (!fresh.some(old => old.id === row.id || videoSources(old).some(source => links.some(link => link.url === source.url)))) fresh.push(item);
   }
   const pinned = curated.filter(item => item.featured);
