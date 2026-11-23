@@ -33,6 +33,7 @@ function VideoCard({ video, en, href, eager, mobilePlayback, rememberOpener }: {
 
   const openOnBilibili = mobilePlayback && !video.videoFile && !youtube && sources[0]?.label === 'B 站';
   return <a className="video-card" href={openOnBilibili ? sources[0].url : href} aria-haspopup={openOnBilibili ? undefined : 'dialog'}
+    target={openOnBilibili ? '_blank' : undefined} rel={openOnBilibili ? 'noopener noreferrer' : undefined}
     onClick={openOnBilibili ? undefined : rememberOpener} data-video-id={video.id}>
     <div className="video-poster">
       {thumbnail && <img src={thumbnail} alt="" width={720} height={405} loading={eager ? 'eager' : 'lazy'}

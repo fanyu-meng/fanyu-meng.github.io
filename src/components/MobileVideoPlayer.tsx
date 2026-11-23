@@ -23,7 +23,7 @@ export default function MobileVideoPlayer({ video, sources, en }: {
     const bilibili = sources.find(source => source.label === 'B 站');
     if (!bilibili) return null;
     const cover = video.thumbnail ? import.meta.env.BASE_URL + video.thumbnail : video.cover;
-    return <div className="ex-media"><a className="mobile-video-cover" href={bilibili.url}>
+    return <div className="ex-media"><a className="mobile-video-cover" href={bilibili.url} target="_blank" rel="noopener noreferrer">
       {cover && <img src={cover} alt="" referrerPolicy="no-referrer" />}
       <span><Play aria-hidden="true" />{en ? 'Watch on Bilibili' : '在 B 站观看'}</span>
     </a></div>;
@@ -37,7 +37,7 @@ export default function MobileVideoPlayer({ video, sources, en }: {
       {sources.map(source => {
         const label = source.label === 'B 站' ? (en ? 'Watch on Bilibili' : '在 B 站观看') :
           (en ? 'Watch on YouTube' : '在 YouTube 观看');
-        return <a key={source.url} href={source.url}>{label}</a>;
+        return <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer">{label}</a>;
       })}
     </div>
   </>;
