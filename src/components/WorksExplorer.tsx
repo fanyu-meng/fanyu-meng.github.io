@@ -33,6 +33,7 @@ type Link = { url: string; label: string };
 type Entry = {
   id: string;
   title: string;
+  bookTitle?: string;
   projectCover?: { src: string; thumbnail: string; alt: [string, string] };
   alternateTitle?: string;
   publishedAt?: string;
@@ -227,6 +228,10 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
   return [...keys.flatMap(k => groups[k].slice(0, 1)), ...keys.flatMap(k => groups[k].slice(1))];
 }
 
+function ReviewedBook({ title, en }: { title: string; en: boolean }) {
+  return <span className="ex-reviewed-book">{en ? `Review of ${title}` : `评《${title}》`}</span>;
+}
+
 function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
   const { language } = useLanguage();
   const en = language === 'en';
@@ -265,6 +270,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
           ? ' · ' + writingLabel(item, en)
           : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
         <h3>{item.title}</h3>
+        {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
         {meta && <p className="ex-meta">{meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
@@ -359,7 +365,7 @@ export default function WorksExplorer() {
     const group = writingTab === 'douban' ? doubanGroupFor(item) : undefined;
     if (activeDoubanGroup && group !== activeDoubanGroup) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
-    const searchable = [item.id, item.title, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
+    const searchable = [item.id, item.title, item.bookTitle, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
       writingTab ? writingTabs[writingTab].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
       group && doubanGroups[group].join(' '),
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
@@ -524,7 +530,9 @@ export default function WorksExplorer() {
                     ? <img alt="" src={import.meta.env.BASE_URL + thumbnail} loading="lazy" decoding="async" />
                     : <Icon aria-hidden="true" />}</span>
                   <span className="ex-row-text"><small>{[category, extra !== category && extra].filter(Boolean).join(' · ')}</small>
-                    <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
+                    <strong>{item.title}</strong>
+                    {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
+                    {item.summary && <span className="ex-row-summary">{item.summary}</span>}</span>
                 </button>
                 {small && active && !folded && reader}
               </div>;

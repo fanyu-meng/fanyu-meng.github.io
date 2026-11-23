@@ -61,7 +61,7 @@ def article_image(src, kind, article_url):
     return f'../douban-media/{target.name}'
 
 
-class ArticleBody(HTMLParser):
+class ArticlePage(HTMLParser):
     def __init__(self, kind, article_url):
         super().__init__(convert_charrefs=True)
         self.kind = kind
@@ -73,9 +73,17 @@ class ArticleBody(HTMLParser):
         self.parts = []
         self.plain = []
         self.open_tags = []
+        self.in_review_header = False
+        self.in_book_link = False
+        self.book_text = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == 'header':
+            self.in_review_header = self.kind == 'review' and 'main-hd' in attrs.get('class', '').split()
+        elif self.in_review_header and tag == 'a':
+            path = urlsplit(attrs.get('href', '')).path
+            self.in_book_link = bool(re.fullmatch(r'/subject/\d+/?', path))
         if tag == 'div' and attrs.get('id') == 'link-report':
             self.in_report = True
             self.report_depth = self.depth + 1
@@ -99,6 +107,10 @@ class ArticleBody(HTMLParser):
             self.depth += 1
 
     def handle_endtag(self, tag):
+        if tag == 'a':
+            self.in_book_link = False
+        elif tag == 'header':
+            self.in_review_header = False
         if tag in VOID:
             return
         if self.body_depth is not None:
@@ -111,6 +123,8 @@ class ArticleBody(HTMLParser):
         self.depth = max(0, self.depth - 1)
 
     def handle_data(self, data):
+        if self.in_book_link:
+            self.book_text.append(data)
         if self.body_depth is not None:
             self.parts.append(html.escape(data))
             self.plain.append(data)
@@ -134,7 +148,7 @@ def extract(path):
     if not date:
         raise ValueError(f'{path.name}: no publication date')
     url = f'https://www.douban.com/note/{article_id}/' if kind == 'note' else f'https://book.douban.com/review/{article_id}/'
-    parser = ArticleBody(kind, url)
+    parser = ArticlePage(kind, url)
     parser.feed(source)
     body = ''.join(parser.parts).strip()
     plain = re.sub(r'\s+', ' ', ''.join(parser.plain)).strip()
@@ -152,6 +166,11 @@ def extract(path):
         'contentPath': content_path,
         'publishedAt': date.group()[:10], 'section': 'writing', 'format': 'article',
     }
+    if kind == 'review':
+        book_title = ' '.join(''.join(parser.book_text).split())
+        if not book_title:
+            raise ValueError(f'{path.name}: no reviewed book in review header')
+        entry['bookTitle'] = book_title
     return entry, {'html': body}, date.group()
 
 
