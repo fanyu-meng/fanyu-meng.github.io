@@ -32,8 +32,17 @@ export function videoSources(entry: VideoEntry): VideoSource[] {
     if (['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com'].includes(host)) yt = u.pathname === '/watch' ? u.searchParams.get('v') : ['embed', 'shorts', 'live'].includes(parts[0]) ? parts[1] : null;
     if (['www.bilibili.com', 'bilibili.com'].includes(host) && parts[0] === 'video') bv = parts[1];
     if (host === 'player.bilibili.com') bv = u.searchParams.get('bvid');
-    if (yt && /^[\w-]{11}$/.test(yt)) found.set('youtube', { label: 'YouTube', url: 'https://www.youtube.com/watch?v=' + yt, embed: 'https://www.youtube-nocookie.com/embed/' + yt });
-    if (bv && /^BV[0-9A-Za-z]{10}$/.test(bv)) found.set('bilibili', { label: 'B 站', url: 'https://www.bilibili.com/video/' + bv + '/', embed: 'https://player.bilibili.com/player.html?autoplay=0&bvid=' + bv });
+    if (yt && /^[\w-]{11}$/.test(yt)) found.set('youtube', { label: 'YouTube', url: 'https://www.youtube.com/watch?v=' + yt, embed: 'https://www.youtube-nocookie.com/embed/' + yt + '?playsinline=1' });
+    if (bv && /^BV[0-9A-Za-z]{10}$/.test(bv)) {
+      const url = 'https://www.bilibili.com/video/' + bv + '/';
+      // Keep a curated player's settings when the same work also links to the watch page.
+      if (host !== 'player.bilibili.com' && found.get('bilibili')?.url === url) continue;
+      const player = new URL('https://player.bilibili.com/player.html');
+      if (host === 'player.bilibili.com') player.search = u.search;
+      player.searchParams.set('bvid', bv);
+      player.searchParams.set('autoplay', '0');
+      found.set('bilibili', { label: 'B 站', url, embed: player.href });
+    }
   }
   return [...found.values()];
 }

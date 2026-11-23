@@ -4,11 +4,8 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { videoSources, type VideoEntry } from './PublishedVideos';
 import './video-gallery.css';
 
-type GalleryVideo = VideoEntry & { videoFile?: string };
-
 type GalleryProps = {
-  videos: GalleryVideo[];
-  mobilePlayback: boolean;
+  videos: VideoEntry[];
   selectedId: string;
   en: boolean;
   hrefForVideo: (id: string) => string;
@@ -16,8 +13,8 @@ type GalleryProps = {
   children: ReactNode;
 };
 
-function VideoCard({ video, en, href, eager, mobilePlayback, rememberOpener }: {
-  video: GalleryVideo; en: boolean; href: string; eager: boolean; mobilePlayback: boolean;
+function VideoCard({ video, en, href, eager, rememberOpener }: {
+  video: VideoEntry; en: boolean; href: string; eager: boolean;
   rememberOpener: (event: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   const [failedImages, setFailedImages] = useState<string[]>([]);
@@ -31,10 +28,7 @@ function VideoCard({ video, en, href, eager, mobilePlayback, rememberOpener }: {
   ].find(src => src && !failedImages.includes(src));
   const platforms = sources.map(source => en && source.label === 'B 站' ? 'Bilibili' : source.label).join(' / ');
 
-  const openOnBilibili = mobilePlayback && !video.videoFile && !youtube && sources[0]?.label === 'B 站';
-  return <a className="video-card" href={openOnBilibili ? sources[0].url : href} aria-haspopup={openOnBilibili ? undefined : 'dialog'}
-    target={openOnBilibili ? '_blank' : undefined} rel={openOnBilibili ? 'noopener noreferrer' : undefined}
-    onClick={openOnBilibili ? undefined : rememberOpener} data-video-id={video.id}>
+  return <a className="video-card" href={href} aria-haspopup="dialog" onClick={rememberOpener} data-video-id={video.id}>
     <div className="video-poster">
       {thumbnail && <img src={thumbnail} alt="" width={720} height={405} loading={eager ? 'eager' : 'lazy'}
         decoding="async" referrerPolicy="no-referrer" onError={() => setFailedImages(failed => [...failed, thumbnail])} />}
@@ -44,11 +38,11 @@ function VideoCard({ video, en, href, eager, mobilePlayback, rememberOpener }: {
     </div>
     <h3 className="video-card-title">{video.title}</h3>
     <div className="video-card-meta">{video.publishedAt && <time dateTime={video.publishedAt}>{video.publishedAt}</time>}
-      {video.publishedAt && platforms && <span aria-hidden="true"> · </span>}{openOnBilibili ? (en ? 'Watch on Bilibili' : '在 B 站观看') : platforms}</div>
+      {video.publishedAt && platforms && <span aria-hidden="true"> · </span>}{platforms}</div>
   </a>;
 }
 
-export default function VideoGallery({ videos, selectedId, en, mobilePlayback, hrefForVideo, closeDirectLink, children }: GalleryProps) {
+export default function VideoGallery({ videos, selectedId, en, hrefForVideo, closeDirectLink, children }: GalleryProps) {
   const gallery = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLAnchorElement>(null);
   const historyLengthBeforeOpen = useRef(0);
@@ -69,7 +63,7 @@ export default function VideoGallery({ videos, selectedId, en, mobilePlayback, h
   return <>
     <div className="video-gallery" ref={gallery} tabIndex={-1} role="group" aria-label={en ? 'Video gallery' : '视频作品'}>
       {videos.map((video, index) => <VideoCard key={video.id} video={video} en={en} href={hrefForVideo(video.id)}
-        eager={index < 3} mobilePlayback={mobilePlayback} rememberOpener={rememberOpener} />)}
+        eager={index < 3} rememberOpener={rememberOpener} />)}
     </div>
     <Dialog open={Boolean(selected)} onOpenChange={open => { if (!open) dismiss(); }}>
       {selected && <DialogContent className="video-dialog w-[calc(100%-1.5rem)] max-w-4xl gap-0 overflow-y-auto rounded-xl p-0"
