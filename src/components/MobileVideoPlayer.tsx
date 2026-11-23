@@ -35,8 +35,9 @@ export default function MobileVideoPlayer({ video, sources, en }: {
       allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen /></div>
     <div className="ex-actions mobile-video-links" role="group" aria-label={en ? 'Watch on platform' : '到原站观看'}>
       {sources.map(source => {
-        const name = en && source.label === 'B 站' ? 'Bilibili' : source.label;
-        return <a key={source.url} href={source.url}>{en ? 'Watch on ' + name : '在 ' + name + ' 观看'}</a>;
+        const label = source.label === 'B 站' ? (en ? 'Watch on Bilibili' : '在 B 站观看') :
+          (en ? 'Watch on YouTube' : '在 YouTube 观看');
+        return <a key={source.url} href={source.url}>{label}</a>;
       })}
     </div>
   </>;

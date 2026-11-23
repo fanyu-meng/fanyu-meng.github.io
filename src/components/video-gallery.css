@@ -83,6 +83,8 @@
   .video-pin { top: 5px; left: 5px; }
   .video-duration { right: 5px; bottom: 5px; }
   .video-dialog .ex-reading { padding: 0 12px 16px; }
+  .video-dialog > h2 { padding-inline: 12px 46px; text-wrap: balance; }
+  .video-dialog > button { top: 3px; right: 3px; display: grid; place-items: center; width: 44px; height: 44px; }
 }
 
 .ex-media.mobile-youtube iframe { min-height: 200px; }
