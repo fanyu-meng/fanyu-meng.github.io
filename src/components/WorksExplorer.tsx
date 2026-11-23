@@ -333,7 +333,7 @@ export default function WorksExplorer() {
             navigate(next);
             setPlayingVideo(video.id);
           }}>
-            <span className="ex-film-cover"><img src={video.cover} alt="" />
+            <span className="ex-film-cover"><img src={video.cover} alt="" referrerPolicy="no-referrer" />
               <span className="ex-play"><Play aria-hidden="true" /></span>
               {video.duration && <span className="ex-duration">{video.duration}</span>}
             </span>
