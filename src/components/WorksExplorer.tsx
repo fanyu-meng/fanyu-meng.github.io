@@ -365,7 +365,7 @@ export default function WorksExplorer() {
   if (activeType === 'reviews') {
     visible.sort((a, b) => Number(b.id === 'leslam-club') - Number(a.id === 'leslam-club'));
   }
-  const current = visible.find(item => item.id === address.item) || visible[0];
+  const current = visible.find(item => item.id === address.item);
 
   useEffect(() => {
     const breakpoint = window.matchMedia('(max-width: 759px)');
@@ -502,7 +502,7 @@ export default function WorksExplorer() {
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {
-              const active = current.id === item.id, Icon = iconFor(item);
+              const active = current?.id === item.id, Icon = iconFor(item);
               const cover = item.projectCover;
               const thumbnail = cover?.thumbnail || artwork[item.kind];
               const category = labelForWork(item, en);
@@ -524,7 +524,7 @@ export default function WorksExplorer() {
               </div>;
             })}
           </div>
-          {!small && <div id="ex-pane" className="ex-pane">{reader}</div>}
+          {!small && current && <div id="ex-pane" className="ex-pane">{reader}</div>}
         </div>}
     </div>
   </section>;

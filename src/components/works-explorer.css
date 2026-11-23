@@ -80,6 +80,7 @@
   background: #11151a;
   border-radius: 14px 0 0 14px;
 }
+.ex-list:only-child { grid-column: 1 / -1; border-radius: inherit; }
 .ex-row { min-width: 0; }
 .ex-row + .ex-row { border-top: 1px solid #292d34; }
 .ex-select {
