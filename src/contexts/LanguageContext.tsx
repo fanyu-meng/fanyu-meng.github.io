@@ -19,7 +19,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.greeting': '你好，我是',
     'hero.name': '孟凡雨',
-    'hero.description': '一个想表达的nerdy音频算法工程师',
+    'hero.description': '工程师，脱口秀演员，播客主播，文字创作，吉他手',
     'hero.cta': '了解更多',
     
     // About
