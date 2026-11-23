@@ -3,13 +3,18 @@
 Save the account's individual pages as ``douban-note-ID.html`` or
 ``douban-review-ID.html`` in ``.douban-import/`` before running this script.
 The importer reads only the author's own article body, not comments or page UI.
+Article images are mirrored to public/content/douban-media and reused on reimport.
 """
 
+import hashlib
 import html
 from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+from tempfile import TemporaryDirectory
+from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / '.douban-import'
@@ -21,11 +26,46 @@ TAGS = {'p', 'br', 'strong', 'b', 'em', 'i', 'blockquote', 'ul', 'ol', 'li',
 VOID = {'br', 'img', 'hr'}
 
 
+def article_image(src, kind, article_url):
+    url = urlsplit(src)
+    name = re.fullmatch(r'/view/(?:note|thing_review)/[^/]+/public/(p\d+)\.\w+', url.path)
+    if not name or not re.fullmatch(r'img\d*\.doubanio\.com', url.hostname or ''):
+        return src
+
+    directory = CONTENT / 'douban-media'
+    stem = f'{kind}-{name[1]}'
+    for suffix in ('webp', 'jpg', 'png', 'gif'):
+        cached = directory / f'{stem}.{suffix}'
+        if cached.is_file():
+            return f'../douban-media/{cached.name}'
+
+    request = Request(src, headers={'Referer': article_url, 'Accept': 'image/webp,image/*'})
+    with urlopen(request, timeout=30) as response:
+        data = response.read()
+    if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
+        suffix = 'webp'
+    elif data.startswith(b'\xff\xd8\xff'):
+        suffix = 'jpg'
+    elif data.startswith(b'\x89PNG\r\n\x1a\n'):
+        suffix = 'png'
+    elif data[:6] in (b'GIF87a', b'GIF89a'):
+        suffix = 'gif'
+    else:
+        raise ValueError(f'Expected an image at {src}')
+    directory.mkdir(exist_ok=True)
+    target = directory / f'{stem}.{suffix}'
+    with TemporaryDirectory(dir=directory) as scratch:
+        staged = Path(scratch) / target.name
+        staged.write_bytes(data)
+        staged.replace(target)
+    return f'../douban-media/{target.name}'
+
+
 class ArticleBody(HTMLParser):
-    def __init__(self, kind, article_id):
+    def __init__(self, kind, article_url):
         super().__init__(convert_charrefs=True)
         self.kind = kind
-        self.article_id = article_id
+        self.article_url = article_url
         self.depth = 0
         self.body_depth = None
         self.in_report = False
@@ -48,7 +88,8 @@ class ArticleBody(HTMLParser):
         elif self.body_depth is not None and tag in TAGS:
             safe = ''
             if tag == 'img' and attrs.get('src', '').startswith('https://'):
-                safe = f' src="{html.escape(attrs["src"], quote=True)}" alt="{html.escape(attrs.get("alt", ""), quote=True)}"'
+                src = article_image(attrs['src'], self.kind, self.article_url)
+                safe = f' src="{html.escape(src, quote=True)}" alt="{html.escape(attrs.get("alt", ""), quote=True)}"'
             elif tag == 'a' and attrs.get('href', '').startswith('https://'):
                 safe = f' href="{html.escape(attrs["href"], quote=True)}"'
             self.parts.append(f'<{tag}{safe}>')
@@ -92,20 +133,23 @@ def extract(path):
     date = re.search(r'20\d\d-\d\d-\d\d(?:\s+\d\d:\d\d:\d\d)?', date_area)
     if not date:
         raise ValueError(f'{path.name}: no publication date')
-    parser = ArticleBody(kind, article_id)
+    url = f'https://www.douban.com/note/{article_id}/' if kind == 'note' else f'https://book.douban.com/review/{article_id}/'
+    parser = ArticleBody(kind, url)
     parser.feed(source)
     body = ''.join(parser.parts).strip()
     plain = re.sub(r'\s+', ' ', ''.join(parser.plain)).strip()
     if len(plain) < 30:
         raise ValueError(f'{path.name}: body missing or too short')
-    url = f'https://www.douban.com/note/{article_id}/' if kind == 'note' else f'https://book.douban.com/review/{article_id}/'
+    content_path = f'/content/articles/douban-{kind}-{article_id}.json'
+    if '<img ' in body:
+        content_path += '?v=' + hashlib.sha256(body.encode('utf-8')).hexdigest()[:12]
     entry = {
         'id': f'douban-{kind}-{article_id}', 'title': title,
         'meta': f'豆瓣{ "日记" if kind == "note" else "书评" } · {date.group()[:10]}',
         'summary': plain[:105] + ('…' if len(plain) > 105 else ''),
         'topic': '豆瓣日记' if kind == 'note' else '豆瓣书评',
         'url': url, 'links': [{'label': '豆瓣原文', 'url': url}],
-        'contentPath': f'/content/articles/douban-{kind}-{article_id}.json',
+        'contentPath': content_path,
         'publishedAt': date.group()[:10], 'section': 'writing', 'format': 'article',
     }
     return entry, {'html': body}, date.group()
@@ -122,7 +166,7 @@ def main():
     index = [entry for entry in index if entry['id'] not in ids]
     index.extend(entry for entry, _, _ in sorted(extracted, key=lambda pair: pair[2], reverse=True))
     for entry, body, _ in extracted:
-        target = CONTENT / entry['contentPath'].removeprefix('/content/')
+        target = CONTENT / urlsplit(entry['contentPath']).path.removeprefix('/content/')
         target.write_text(json.dumps(body, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     INDEX.write_text(json.dumps(index, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     print(f'Imported {len(extracted)} articles ({sum(e[0]["id"].startswith("douban-note") for e in extracted)} notes, '
