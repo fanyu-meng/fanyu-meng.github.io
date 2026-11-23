@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
+import worksIndexUrl from '../../public/content/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
 import './works-explorer.css';
 
@@ -291,7 +292,11 @@ export default function WorksExplorer() {
   const section = useRef<HTMLElement>(null);
   const requestedScroll = useRef(Boolean(location.hash.match(/^#\/?works\?/)));
   const labels = (type: Category) => categories[type][Number(en)];
-  const works = useQuery({ queryKey: ['work-index'], queryFn: async ({ signal }) => withPublishedVideos(await loadJSON<WorksFile>(new URL('works.json', dataRoot), signal), dataRoot, signal), staleTime: Infinity });
+  const works = useQuery({
+    queryKey: ['work-index', worksIndexUrl],
+    queryFn: async ({ signal }) => withPublishedVideos(await loadJSON<WorksFile>(worksIndexUrl, signal), dataRoot, signal),
+    staleTime: Infinity,
+  });
   const articles = useQuery({
     queryKey: ['acoustics-index', articleIndexUrl],
     queryFn: ({ signal }) => loadJSON<Entry[]>(articleIndexUrl, signal),
