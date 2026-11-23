@@ -19,7 +19,7 @@ type Category = keyof typeof categories;
 type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
 const articleFormats = { article: ['文章', 'Articles'], answer: ['知乎回答', 'Zhihu answers'] } as const;
 type ArticleFormat = keyof typeof articleFormats;
-type WritingTab = 'writing' | 'zhihu';
+type WritingTab = 'writing' | 'zhihu' | 'douban';
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -51,9 +51,10 @@ const writingIds = new Set([
   'answer-962373050', 'answer-986565730', 'answer-1095657294', 'answer-1584623872',
   'answer-1059104737', 'zhihu-17943190775',
 ]);
-const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Zhihu creations'] } as const;
+const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Zhihu creations'], douban: ['豆瓣', 'Douban'] } as const;
 
 function writingTabFor(item: Work): WritingTab {
+  if (item.id.startsWith('douban-')) return 'douban';
   return writingIds.has(item.id) ? 'writing' : 'zhihu';
 }
 
@@ -167,7 +168,7 @@ function readAddress(): Address {
   const format = params.get('format');
   const tab = params.get('tab');
   return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined,
-    writingTab: tab === 'writing' || tab === 'zhihu' ? tab : undefined };
+    writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -279,6 +280,9 @@ export default function WorksExplorer() {
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
+  if (activeType === 'reviews') {
+    visible.sort((a, b) => Number(b.id === 'leslam-club') - Number(a.id === 'leslam-club'));
+  }
   const current = visible.find(item => item.id === address.item) || visible[0];
 
   useEffect(() => {
