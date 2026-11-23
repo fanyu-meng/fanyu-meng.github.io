@@ -8,8 +8,8 @@
   "podcastEpisodes": {
     "value": 30,
     "asOf": "2026-11-23",
-    "status": "last-known",
-    "source": "https://podcasts.apple.com/us/podcast/id1719475456"
+    "status": "verified",
+    "source": "https://anchor.fm/s/1063042b8/podcast/rss"
   },
   "zhihuFollowers": {
     "value": null,

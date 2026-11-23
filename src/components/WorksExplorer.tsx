@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, Code2, Guitar, Headphones, Mic, Search, Ticket } from 'lucide-react';
+import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Play, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import './works-explorer.css';
 
@@ -9,18 +9,25 @@ const categories = {
   reviews: ['脱口秀', 'Stand-up'],
   podcast: ['播客', 'Podcast'],
   articles: ['声学科普', 'Acoustics'],
+  writing: ['写作', 'Writing'],
   video: ['吉他🎸&音乐🎵', 'Guitar 🎸 & music 🎵'],
   github: ['我开发的项目', 'Projects I built'],
 } as const;
 
 type Category = keyof typeof categories;
-type Kind = Exclude<Category, 'all'> | 'club';
+type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
+type ArticleFormat = 'article' | 'answer';
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
   title: string;
   meta?: string;
   topic?: string;
+  section?: 'articles' | 'writing';
+  format?: ArticleFormat;
+  featured?: boolean;
+  cover?: string;
+  duration?: string;
   summary?: string;
   url?: string;
   links?: Link[];
@@ -28,17 +35,30 @@ type Entry = {
   contentPath?: string;
   audio?: string;
   embed?: string;
+  videoFile?: string;
   chapters?: { seconds: number; title: string }[];
 };
 type Work = Entry & { kind: Kind };
 type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>>;
 type Article = { body?: string[]; html?: string };
-type Address = { type: Category; item: string; q: string };
+type Address = { type: Category; item: string; q: string; format?: ArticleFormat };
 
 const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
 const iconByKind = { reviews: Mic, podcast: Headphones, articles: BookOpen, video: Guitar, github: Code2, club: Ticket };
 const artwork: Partial<Record<Kind, string>> = { podcast: 'pobicast.webp', club: 'leslam.webp' };
-const categoryOf = (kind: Kind): Category => kind === 'club' ? 'reviews' : kind;
+function categoryOf(item: Work): Category {
+  if (item.kind === 'club') return 'reviews';
+  if (item.kind === 'articles') return item.section || (item.topic === '声学科普' ? 'articles' : 'writing');
+  return item.kind;
+}
+
+function labelForWork(item: Work, en: boolean) {
+  return categories[categoryOf(item)][Number(en)];
+}
+
+function iconFor(item: Work) {
+  return categoryOf(item) === 'writing' ? PenLine : iconByKind[item.kind];
+}
 
 async function loadJSON<T>(url: URL, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal });
@@ -62,7 +82,10 @@ function webURL(raw?: string, base = location.href) {
 }
 
 const safeTags = new Set('p br b strong em i del s sub sup u ol ul li blockquote pre code h1 h2 h3 h4 h5 h6 hr figure figcaption img a table thead tbody tfoot tr td th'.split(' '));
-const omitTags = new Set('script style template iframe object embed svg math noscript form video audio'.split(' '));
+const omitTags = new Set('script style template iframe object embed svg noscript form video audio'.split(' '));
+const mathNS = 'http://www.w3.org/1998/Math/MathML';
+const mathTags = new Set('math mfrac mi mn mo mover munder munderover mroot mrow msqrt msub msubsup msup mtable mtd mtext mtr mspace mstyle'.split(' '));
+const mathAttributes = ['display', 'stretchy', 'form', 'mathvariant', 'columnalign', 'accent'];
 
 function articleMarkup(html: string, base: string) {
   // Read into an inert template; only create approved markup in the resulting document fragment.
@@ -77,19 +100,35 @@ function articleMarkup(html: string, base: string) {
     if (!(source instanceof Element)) return;
     const tag = source.localName;
     if (omitTags.has(tag)) return;
-    const el = safeTags.has(tag) ? document.createElement(tag) : null;
+    const isMath = source.namespaceURI === mathNS && mathTags.has(tag);
+    const el = isMath ? document.createElementNS(mathNS, tag) : safeTags.has(tag) ? document.createElement(tag) : null;
     if (el) {
-      const url = webURL(source.getAttribute(tag === 'img' ? 'src' : 'href'), base);
-      if (tag === 'img') {
+      if (isMath) {
+        for (const name of mathAttributes) {
+          const value = source.getAttribute(name);
+          if (value && /^[a-z]+$/.test(value)) el.setAttribute(name, value);
+        }
+      } else if (tag === 'img') {
+        const url = webURL(source.getAttribute('src'), base);
         if (!url) return;
         el.setAttribute('src', url);
         el.setAttribute('alt', source.getAttribute('alt') || '');
         el.setAttribute('loading', 'lazy');
         el.setAttribute('referrerpolicy', 'no-referrer');
-      } else if (tag === 'a' && url) {
-        el.setAttribute('href', url);
-        el.setAttribute('target', '_blank');
-        el.setAttribute('rel', 'noopener noreferrer');
+      } else if (tag === 'a') {
+        const url = webURL(source.getAttribute('href'), base);
+        if (url) {
+          el.setAttribute('href', url);
+          if (new URL(url).origin !== location.origin) {
+            el.setAttribute('target', '_blank');
+            el.setAttribute('rel', 'noopener noreferrer');
+          }
+        }
+      } else if (tag === 'td' || tag === 'th') {
+        for (const name of ['colspan', 'rowspan']) {
+          const value = source.getAttribute(name);
+          if (value && /^[1-9]\d?$/.test(value)) el.setAttribute(name, value);
+        }
       }
       parent.appendChild(el);
     }
@@ -111,7 +150,8 @@ function readAddress(): Address {
   const type = rawType === 'leslam' || rawType === 'club' ? 'reviews' :
     Object.prototype.hasOwnProperty.call(categories, rawType) ? rawType as Category : 'all';
   const item = params.get('item') || (rawType === 'leslam' || rawType === 'club' ? 'leslam-club' : id);
-  return { type, item, q: params.get('q') || '' };
+  const format = params.get('format');
+  return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -119,6 +159,7 @@ function hrefFor(address: Address) {
   if (address.type !== 'all') params.set('type', address.type);
   if (address.item) params.set('item', address.item);
   if (address.q) params.set('q', address.q);
+  if (address.format) params.set('format', address.format);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -133,7 +174,7 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
   return [...keys.flatMap(k => groups[k].slice(0, 1)), ...keys.flatMap(k => groups[k].slice(1))];
 }
 
-function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
+function Reader({ item, small, playVideo, children }: { item: Work; small: boolean; playVideo: boolean; children?: React.ReactNode }) {
   const { language } = useLanguage();
   const en = language === 'en';
   const article = useQuery({
@@ -144,7 +185,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   });
   const richText = useMemo(() => article.data?.html && item.contentPath
     ? articleMarkup(article.data.html, articleURL(item.contentPath).href) : undefined, [article.data, item.contentPath]);
-  const Icon = iconByKind[item.kind];
+  const Icon = iconFor(item);
   const paragraphs = article.data?.body || (item.body?.length ? item.body : item.summary ? [item.summary] : []);
   const text = paragraphs.map((p, index) => <p key={index}>{p}</p>);
   const intro = richText ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.head }} /> : text[0];
@@ -152,17 +193,20 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
     !richText && text.length > 1 ? text.slice(1) : null;
   const links = item.links?.length ? item.links : item.url ? [{ url: item.url, label: en ? 'Original' : '原文' }] : [];
   const audio = webURL(item.audio);
+  const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
-  const provider = embed && new URL(embed).hostname;
-  const embedAllowed = ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(provider);
+  const player = embed ? new URL(embed) : undefined;
+  const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
+  if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', playVideo ? '1' : '0');
   return (
     <article id="ex-reader" className="ex-reader" aria-label={item.title}>
       <div className="ex-reading">
-        <div className="ex-kicker"><Icon aria-hidden="true" />{categories[categoryOf(item.kind)][Number(en)]}</div>
+        <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{item.format === 'answer' && (en ? ' · Zhihu answer' : ' · 知乎回答')}</div>
         <h3>{item.title}</h3>
         {item.meta && <p className="ex-meta">{item.meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
-          embedAllowed && <div className="ex-media"><iframe title={item.title} src={embed} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
+          videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} /></div> :
+          embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body">
           {intro}
           {rest && (small ? <details className="ex-more"><summary>{en ? 'Continue reading' : '继续阅读'}</summary>{rest}</details> : rest)}
@@ -188,6 +232,7 @@ export default function WorksExplorer() {
   const en = language === 'en';
   const [address, setAddress] = useState(readAddress);
   const [folded, setFolded] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState('');
   const [small, setSmall] = useState(() => window.matchMedia('(max-width: 759px)').matches);
   const list = useRef<HTMLDivElement>(null);
   const section = useRef<HTMLElement>(null);
@@ -197,10 +242,16 @@ export default function WorksExplorer() {
   const articles = useQuery({ queryKey: ['acoustics-index'], queryFn: ({ signal }) => loadJSON<Entry[]>(new URL('acoustics-index.json', dataRoot), signal), staleTime: Infinity });
   const entries = useMemo(() => orderWorks(works.data || {}, articles.data || []), [works.data, articles.data]);
   const terms = address.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  // Preserve published article links whose topic now belongs in another section.
+  const linkedArticle = address.type !== 'all' && entries.find(item => item.kind === 'articles' && item.id === address.item);
+  const activeType = linkedArticle ? categoryOf(linkedArticle) : address.type;
+  const browsingArticles = activeType === 'articles' || activeType === 'writing';
   const visible = entries.filter(item => {
-    const kind = categoryOf(item.kind);
-    if (address.type !== 'all' && kind !== address.type) return false;
-    const searchable = [item.id,item.title,item.meta,item.topic,item.summary,...categories[kind]].join(' ').toLowerCase();
+    const category = categoryOf(item);
+    if (activeType !== 'all' && category !== activeType) return false;
+    if (browsingArticles && address.format && (item.format || 'article') !== address.format) return false;
+    const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
+    const searchable = [item.id, item.title, item.meta, item.topic, item.summary, source, item.format === 'answer' ? '知乎回答 Zhihu answer' : '', labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
   const current = visible.find(item => item.id === address.item) || visible[0];
@@ -208,7 +259,12 @@ export default function WorksExplorer() {
   useEffect(() => {
     const breakpoint = window.matchMedia('(max-width: 759px)');
     const resize = () => { setSmall(breakpoint.matches); setFolded(false); };
-    const restore = () => { setFolded(false); setAddress(readAddress()); };
+    const restore = () => {
+      requestedScroll.current = /^#\/?works\?/.test(location.hash);
+      setPlayingVideo('');
+      setFolded(false);
+      setAddress(readAddress());
+    };
     breakpoint.addEventListener('change', resize);
     window.addEventListener('popstate', restore);
     window.addEventListener('hashchange', restore);
@@ -219,7 +275,7 @@ export default function WorksExplorer() {
     };
   }, []);
 
-  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type]);
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format]);
   useEffect(() => {
     if (works.isPending || articles.isPending || !requestedScroll.current) return;
     requestedScroll.current = false;
@@ -227,12 +283,13 @@ export default function WorksExplorer() {
     const chosen = list.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
     if (chosen && list.current && !small) {
       const delta = chosen.getBoundingClientRect().top - list.current.getBoundingClientRect().top;
-      if (delta > list.current.clientHeight) list.current.scrollTop += delta;
+      if (delta < 0 || delta + chosen.offsetHeight > list.current.clientHeight) list.current.scrollTop += delta;
     }
     if (chosen && small) chosen.scrollIntoView({ block: 'start' });
-  }, [works.isPending, articles.isPending, small]);
+  }, [works.isPending, articles.isPending, small, address]);
 
   function navigate(next: Address, replace = false) {
+    setPlayingVideo('');
     setFolded(false);
     setAddress(next);
     const href = hrefFor(next);
@@ -240,7 +297,7 @@ export default function WorksExplorer() {
   }
   function choose(item: Work) {
     if (small && current?.id === item.id) { setFolded(!folded); return; }
-    navigate({ ...address, item: item.id });
+    navigate({ ...address, type: activeType, item: item.id });
     requestAnimationFrame(() => {
       if (small) {
         const selected = list.current?.querySelector<HTMLElement>('[aria-expanded="true"]');
@@ -254,24 +311,58 @@ export default function WorksExplorer() {
   const errored = works.isError || articles.isError;
   const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
     current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
-  const reader = current && <Reader key={current.id} item={current} small={small}>
+  const reader = current && <Reader key={current.id} item={current} small={small} playVideo={playingVideo === current.id}>
     {related.length > 0 && <div className="ex-related">{related.map(row => <button type="button" key={row.id}
       onClick={() => navigate({ type: 'reviews', item: row.id, q: '' })}>{row.title}</button>)}</div>}
   </Reader>;
 
-  return <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
+  const featured = works.data?.video?.filter(video => video.featured) || [];
+  return <>
+    {featured.length > 0 && <section className="ex-featured" aria-labelledby="featured-heading">
+      <div className="ex-wrap">
+        <h2 id="featured-heading">{en ? 'Featured videos' : '视频代表作'}</h2>
+        <div className="ex-films">{featured.map(video => {
+          const next = { type: 'video', item: video.id, q: '' } as const;
+          return <a className="ex-film" key={video.id} href={hrefFor(next)} onClick={event => {
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            requestedScroll.current = true;
+            navigate(next);
+            setPlayingVideo(video.id);
+          }}>
+            <span className="ex-film-cover"><img src={video.cover} alt="" />
+              <span className="ex-play"><Play aria-hidden="true" /></span>
+              {video.duration && <span className="ex-duration">{video.duration}</span>}
+            </span>
+            <strong>{video.title}</strong>
+          </a>;
+        })}</div>
+      </div>
+    </section>}
+    <section id="works" className="explorer" ref={section} aria-labelledby="ex-heading">
     <div className="ex-wrap">
       <div className="ex-heading">
         <h2 id="ex-heading">{t('projects.title')}</h2>
         <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
           placeholder={en ? 'Search work' : '搜索作品'} aria-label={en ? 'Search work' : '搜索作品'}
-          value={address.q} onChange={e => navigate({ ...address, item: '', q: e.target.value }, true)} /></label>
+          value={address.q} onChange={e => navigate({ ...address, type: activeType, item: '', q: e.target.value }, true)} /></label>
       </div>
       <nav className="ex-filters" aria-label={en ? 'Filter by type' : '按栏目筛选'}>
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
-          aria-pressed={address.type === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
+          aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
       </nav>
-      <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>
+      {browsingArticles && <div className="ex-formats">
+        <label>{en ? 'Show' : '查看'}
+          <select value={address.format || ''} onChange={event =>
+            navigate({ ...address, type: activeType, item: '', format: event.target.value as ArticleFormat || undefined })}>
+            <option value="">{en ? 'Articles and answers' : '文章和回答'}</option>
+            <option value="article">{en ? 'Articles' : '文章'}</option>
+            <option value="answer">{en ? 'Zhihu answers' : '知乎回答'}</option>
+          </select>
+        </label>
+        <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
+      </div>}
+      {!browsingArticles && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
       {errored && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
         <button type="button" onClick={() => { if (works.isError) works.refetch(); if (articles.isError) articles.refetch(); }}>{en ? 'Retry' : '重新加载'}</button>
       </div>}
@@ -280,15 +371,16 @@ export default function WorksExplorer() {
         <div className="ex-split">
           <div className="ex-list" role="group" aria-label={en ? 'Work index' : '作品目录'} ref={list}>
             {visible.map(item => {
-              const active = current.id === item.id, Icon = iconByKind[item.kind], cover = artwork[item.kind];
-              const category = labels(categoryOf(item.kind));
+              const active = current.id === item.id, Icon = iconFor(item), cover = artwork[item.kind];
+              const category = labelForWork(item, en);
               const extra = item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
-                item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] : item.topic;
+                item.kind === 'reviews' ? item.meta?.match(/\d{4}-\d\d-\d\d/)?.[0] :
+                item.kind === 'articles' ? (item.format === 'answer' ? (en ? 'Zhihu answer' : '知乎回答') : item.meta?.split(' · ')[0]) : item.topic;
               return <div className="ex-row" key={item.kind + ':' + item.id}>
                 <button type="button" className="ex-select" data-key={item.id} aria-pressed={active}
                   aria-expanded={small ? active && !folded : undefined} aria-controls={active && (!small || !folded) ? 'ex-reader' : undefined} onClick={() => choose(item)}>
                   <span className={'ex-row-icon tone-' + item.kind}>{cover ? <img alt="" src={import.meta.env.BASE_URL + cover} /> : <Icon aria-hidden="true" />}</span>
-                  <span className="ex-row-text"><small>{[category, extra].filter(Boolean).join(' · ')}</small>
+                  <span className="ex-row-text"><small>{(extra && extra !== category ? [category, extra] : [category]).join(' · ')}</small>
                     <strong>{item.title}</strong>{item.summary && <span>{item.summary}</span>}</span>
                 </button>
                 {small && active && !folded && reader}
@@ -298,5 +390,5 @@ export default function WorksExplorer() {
           {!small && <div id="ex-pane" className="ex-pane">{reader}</div>}
         </div>}
     </div>
-  </section>;
+  </section></>;
 }

@@ -4,6 +4,53 @@
   padding: clamp(26px, 3.6vw, 46px) 0 clamp(45px, 6vw, 80px);
   background: radial-gradient(ellipse at 90% 0, #64351f0c, transparent 48%), #0d1014;
 }
+.ex-featured {
+  padding: 24px 0 22px;
+  background: #111419;
+  border-bottom: 1px solid #292d34;
+}
+.ex-featured h2 {
+  margin-bottom: 12px;
+  color: #edf0f4;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+.ex-films { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 26px); }
+.ex-film { display: grid; gap: 8px; align-content: start; border-radius: 8px; }
+.ex-film:focus-visible { outline: 2px solid #f3ae89; outline-offset: 4px; }
+.ex-film-cover {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 2.65;
+  background: #20242a;
+  border-radius: 8px;
+}
+.ex-film-cover img { width: 100%; height: 100%; object-fit: cover; }
+.ex-play, .ex-duration {
+  position: absolute;
+  bottom: 7px;
+  color: white;
+  background: #0b0c0edb;
+}
+.ex-play { left: 7px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; }
+.ex-play svg { width: 12px; height: 12px; fill: currentColor; }
+.ex-duration { right: 7px; padding: 1px 5px; border-radius: 4px; font-size: .75rem; font-variant-numeric: tabular-nums; }
+.ex-film strong { color: #e5e8ee; font-size: .95rem; line-height: 1.45; font-weight: 600; }
+.ex-film:hover strong { color: #ffbd98; }
+.ex-formats { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -5px 0 14px; }
+.ex-formats label { display: inline-flex; align-items: center; gap: 8px; }
+.ex-formats { color: #b7bfcb; font-size: .875rem; }
+.ex-formats select { border-radius: 6px; padding: 4px 8px; border: 1px solid #393d46; color: #e3e6eb; background: #171b21; }
+@media (max-width: 600px) {
+  .ex-featured { padding-block: 16px; }
+  .ex-films { grid-template-columns: 1fr; gap: 9px; }
+  .ex-film { grid-template-columns: 94px minmax(0, 1fr); align-items: center; gap: 12px; }
+  .ex-film-cover { aspect-ratio: 16/9; border-radius: 5px; }
+  .ex-film strong { font-size: .9rem; }
+  .ex-play { width: 19px; height: 19px; bottom: 4px; left: 4px; }
+  .ex-duration { right: 3px; bottom: 3px; }
+}
 .ex-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .ex-heading h2 {
   font-size: clamp(1.45rem, 2.65vw, 2rem);
@@ -184,7 +231,8 @@
 }
 .ex-body p:last-child { margin-bottom: 0; }
 .ex-media { margin-top: 18px; }
-.ex-media iframe, .ex-media audio { display: block; width: 100%; border: 0; border-radius: 10px; }
+.ex-media iframe, .ex-media video, .ex-media audio { display: block; width: 100%; border: 0; border-radius: 10px; }
+.ex-media video { max-height: 72vh; background: #101317; }
 .ex-media iframe { aspect-ratio: 16 / 9; height: auto; background: #111418; }
 .ex-media iframe[src*="podcasts.apple.com"] { aspect-ratio: auto; height: 175px; }
 .ex-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 19px 0 0; }
@@ -279,6 +327,7 @@
 .ex-format h2, .ex-format h3, .ex-format h4 { font-size: 1.15rem; font-weight: 650; margin: 1em 0 .55em; }
 .ex-format { overflow-wrap: anywhere; }
 .ex-format img { max-width: 100%; height: auto; margin: .5em auto; }
+.ex-format math { max-width: 100%; overflow-x: auto; }
 .ex-format figcaption { font-size: .83rem; color: #adb4c1; text-align: center; }
 .ex-format li { margin: .3em 0; }
 .ex-format ul, .ex-format ol { list-style: revert; padding-left: 1.4em; margin-block: .8em; }
