@@ -21,8 +21,12 @@ const categories = {
 
 type Category = keyof typeof categories;
 type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
-const articleFormats = { article: ['文章', 'Articles'], answer: ['知乎回答', 'Zhihu answers'] } as const;
-type ArticleFormat = keyof typeof articleFormats;
+const articleTabs = {
+  article: ['本人原创', 'My original articles'],
+  'non-original': ['非本人原创', 'Guest & sourced articles'],
+  answer: ['知乎回答', 'Zhihu answers'],
+} as const;
+type ArticleTab = keyof typeof articleTabs;
 type WritingTab = 'writing' | 'zhihu' | 'douban';
 const doubanGroups = {
   northeast: ['东北回家过年', 'New Year in Northeast China'],
@@ -41,7 +45,8 @@ type Entry = {
   meta?: string;
   topic?: string;
   section?: 'articles' | 'writing';
-  format?: ArticleFormat;
+  format?: 'article' | 'answer';
+  originality?: 'original' | 'non-original';
   featured?: boolean;
   summary?: string;
   url?: string;
@@ -58,8 +63,13 @@ type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoCh
 type Article = { body?: string[]; html?: string };
 type Address = {
   type: Category; item: string; q: string;
-  format?: ArticleFormat; writingTab?: WritingTab; doubanGroup?: DoubanGroup;
+  articleTab?: ArticleTab; writingTab?: WritingTab; doubanGroup?: DoubanGroup;
 };
+
+function articleTabFor(item: Entry): ArticleTab {
+  if (item.format === 'answer') return 'answer';
+  return item.originality === 'non-original' ? 'non-original' : 'article';
+}
 
 // Curated writing selection. Other non-acoustics entries appear under 知乎创作.
 const writingIds = new Set([
@@ -211,7 +221,8 @@ function readAddress(): Address {
   const format = params.get('format');
   const tab = params.get('tab');
   const group = params.get('group');
-  return { type, item, q: params.get('q') || '', format: format === 'answer' || format === 'article' ? format : undefined,
+  return { type, item, q: params.get('q') || '',
+    articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
     writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined,
     doubanGroup: tab === 'douban' && (group === 'northeast' || group === 'book-reviews') ? group : undefined };
 }
@@ -221,7 +232,7 @@ function hrefFor(address: Address) {
   if (address.type !== 'all') params.set('type', address.type);
   if (address.item) params.set('item', address.item);
   if (address.q) params.set('q', address.q);
-  if (address.format) params.set('format', address.format);
+  if (address.type === 'articles' && address.articleTab) params.set('format', address.articleTab);
   if (address.type === 'writing' && address.writingTab) {
     params.set('tab', address.writingTab);
     if (address.writingTab === 'douban' && address.doubanGroup) params.set('group', address.doubanGroup);
@@ -280,7 +291,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
           alt={cover.alt[Number(en)]} width={832} height={468} decoding="async" />}
         <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{categoryOf(item) === 'writing'
           ? ' · ' + writingLabel(item, en)
-          : item.format === 'answer' ? (en ? ' · Zhihu answer' : ' · 知乎回答') : ''}</div>
+          : item.kind === 'articles' ? ' · ' + articleTabs[articleTabFor(item)][Number(en)] : ''}</div>
         <h3>{item.title}</h3>
         {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
         {meta && <p className="ex-meta">{meta}</p>}
@@ -363,6 +374,8 @@ export default function WorksExplorer() {
   const linkedArticle = address.type !== 'all' && entries.find(item => item.kind === 'articles' && item.id === address.item);
   const activeType = linkedArticle ? categoryOf(linkedArticle) : address.type;
   const browsingArticles = activeType === 'articles';
+  const activeArticleTab = browsingArticles && linkedArticle
+    ? articleTabFor(linkedArticle) : address.articleTab || 'article';
   const activeWritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
     ? writingTabFor(linkedArticle) : address.writingTab || 'writing';
   const browsingDouban = activeType === 'writing' && activeWritingTab === 'douban';
@@ -371,7 +384,7 @@ export default function WorksExplorer() {
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
-    if (browsingArticles && address.format && (item.format || 'article') !== address.format) return false;
+    if (browsingArticles && articleTabFor(item) !== activeArticleTab) return false;
     const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
     const group = writingTab === 'douban' ? doubanGroupFor(item) : undefined;
@@ -408,7 +421,7 @@ export default function WorksExplorer() {
     };
   }, []);
 
-  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, address.format, address.writingTab, address.doubanGroup]);
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, activeArticleTab, address.writingTab, address.doubanGroup]);
   useEffect(() => {
     if (works.isPending || articles.isPending || !requestedScroll.current) return;
     requestedScroll.current = false;
@@ -431,7 +444,7 @@ export default function WorksExplorer() {
     navigate({
       type: activeType, item: '', q, doubanGroup: activeDoubanGroup,
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
-      format: browsingArticles ? address.format : undefined,
+      articleTab: browsingArticles ? activeArticleTab : undefined,
     }, replace);
   }
   function choose(item: Work) {
@@ -491,14 +504,12 @@ export default function WorksExplorer() {
         </button>)}
         {writingCount}
       </div>}
-      {browsingArticles && <div className="ex-subfilters" role="group" aria-label={en ? 'Filter by format' : '按作品形式筛选'}>
-        {(Object.keys(articleFormats) as ArticleFormat[]).map(format => {
-          const selected = address.format === format;
-          return <button key={format} type="button" aria-pressed={selected}
-            onClick={() => navigate({ ...address, type: activeType, item: '', format: selected ? undefined : format })}>
-            {articleFormats[format][Number(en)]}
-          </button>;
-        })}
+      {browsingArticles && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Acoustics categories' : '声学科普分类'}>
+        {(Object.keys(articleTabs) as ArticleTab[]).map(tab => <button key={tab} type="button"
+          aria-pressed={activeArticleTab === tab}
+          onClick={() => navigate({ type: 'articles', item: '', q: address.q, articleTab: tab })}>
+          {articleTabs[tab][Number(en)]}
+        </button>)}
         <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
       </div>}
       {activeType === 'video' && <div className="ex-subfilters">
