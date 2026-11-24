@@ -358,6 +358,7 @@
 .ex-format h2, .ex-format h3, .ex-format h4 { font-size: 1.15rem; font-weight: 650; margin: 1em 0 .55em; }
 .ex-format { overflow-wrap: anywhere; }
 .ex-format img { max-width: 100%; height: auto; margin: .5em auto; }
+.ex-format audio { display: block; width: 100%; margin: .65em 0; }
 .ex-format math { max-width: 100%; overflow-x: auto; }
 .ex-format figcaption { font-size: .83rem; color: #adb4c1; text-align: center; }
 .ex-format li { margin: .3em 0; }

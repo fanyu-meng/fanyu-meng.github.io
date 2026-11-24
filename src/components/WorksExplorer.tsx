@@ -128,7 +128,7 @@ function webURL(raw?: string, base = location.href) {
 }
 
 const safeTags = new Set('p br b strong em i del s sub sup u ol ul li blockquote pre code h1 h2 h3 h4 h5 h6 hr figure figcaption img a table thead tbody tfoot tr td th'.split(' '));
-const omitTags = new Set('script style template iframe object embed svg noscript form video audio'.split(' '));
+const omitTags = new Set('script style template iframe object embed svg noscript form video'.split(' '));
 const mathNS = 'http://www.w3.org/1998/Math/MathML';
 const mathTags = new Set('math mfrac mi mn mo mover munder munderover mroot mrow msqrt msub msubsup msup mtable mtd mtext mtr mspace mstyle'.split(' '));
 const mathAttributes = ['display', 'stretchy', 'form', 'mathvariant', 'columnalign', 'accent'];
@@ -146,6 +146,18 @@ function articleMarkup(html: string, base: string) {
     if (!(source instanceof Element)) return;
     const tag = source.localName;
     if (omitTags.has(tag)) return;
+    if (tag === 'audio') {
+      const src = webURL(source.getAttribute('src'), base);
+      if (!src || !src.startsWith(new URL('acoustics-media/', dataRoot).href)) return;
+      const player = document.createElement('audio');
+      player.controls = true;
+      player.preload = 'none';
+      player.src = src;
+      const label = source.getAttribute('aria-label');
+      if (label) player.setAttribute('aria-label', label);
+      parent.appendChild(player);
+      return;
+    }
     const isMath = source.namespaceURI === mathNS && mathTags.has(tag);
     const el = isMath ? document.createElementNS(mathNS, tag) : safeTags.has(tag) ? document.createElement(tag) : null;
     if (el) {
