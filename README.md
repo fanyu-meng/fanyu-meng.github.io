@@ -2,6 +2,8 @@
 
 A modern personal portfolio website built with React, TypeScript, and Vite.
 
+声学科普文章的索引、正文、配图、MP3 和上线验收见[科普文章网站首发](./科普文章网站首发.md)。
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
