@@ -138,7 +138,7 @@ function webURL(raw?: string, base = location.href) {
 }
 
 const safeTags = new Set('p br b strong em i del s sub sup u ol ul li blockquote pre code h1 h2 h3 h4 h5 h6 hr figure figcaption img a table thead tbody tfoot tr td th'.split(' '));
-const omitTags = new Set('script style template iframe object embed svg noscript form video'.split(' '));
+const omitTags = new Set('script style template iframe object embed svg noscript form'.split(' '));
 const mathNS = 'http://www.w3.org/1998/Math/MathML';
 const mathTags = new Set('math mfrac mi mn mo mover munder munderover mroot mrow msqrt msub msubsup msup mtable mtd mtext mtr mspace mstyle'.split(' '));
 const mathAttributes = ['display', 'stretchy', 'form', 'mathvariant', 'columnalign', 'accent'];
@@ -156,13 +156,28 @@ function articleMarkup(html: string, base: string) {
     if (!(source instanceof Element)) return;
     const tag = source.localName;
     if (omitTags.has(tag)) return;
-    if (tag === 'audio') {
-      const src = webURL(source.getAttribute('src'), base);
-      if (!src || !src.startsWith(new URL('acoustics-media/', dataRoot).href)) return;
-      const player = document.createElement('audio');
+    if (tag === 'audio' || tag === 'video') {
+      // Players only load media stored with the site's own article archive.
+      const archived = (raw: string | null) => {
+        const url = webURL(raw || undefined, base);
+        return url?.startsWith(new URL('acoustics-media/', dataRoot).href) ? url : undefined;
+      };
+      const src = archived(source.getAttribute('src'));
+      if (!src) return;
+      const player = document.createElement(tag);
       player.controls = true;
       player.preload = 'none';
       player.src = src;
+      if (player instanceof HTMLVideoElement) {
+        player.playsInline = true;
+        const poster = archived(source.getAttribute('poster'));
+        if (poster) player.poster = poster;
+        // Reserve the frame before playback so the article does not jump when the video loads.
+        for (const name of ['width', 'height'] as const) {
+          const value = source.getAttribute(name);
+          if (value && /^[1-9]\d{1,3}$/.test(value)) player.setAttribute(name, value);
+        }
+      }
       const label = source.getAttribute('aria-label');
       if (label) player.setAttribute('aria-label', label);
       parent.appendChild(player);
