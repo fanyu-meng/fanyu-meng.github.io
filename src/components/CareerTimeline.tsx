@@ -365,11 +365,11 @@ export default function CareerTimeline({ en }: { en: boolean }) {
       </li>
     </ol>
     <h3 className="cr-label"><GraduationCap aria-hidden="true" />{en ? 'Education' : '教育'}</h3>
-    <ul className="cr-edu">
-      {schools.map(school => <li key={school.file} className="cr-school">
-        <span className="cr-mark"><Logo file={school.file} alt="" height={school.height} /></span>
-        {en ? <strong>{school.en}</strong> : <><strong>{school.zh}</strong><span>{school.en}</span></>}
+    <ol className="cr-rail cr-edu">
+      {schools.map(school => <li key={school.file} className="cr-node">
+        <h4 className="cr-role">{en ? school.en : school.zh} <Logo file={school.file} alt={school.en} height={school.height} /></h4>
+        {!en && <p className="cr-years">{school.en}</p>}
       </li>)}
-    </ul>
+    </ol>
   </div>;
 }
