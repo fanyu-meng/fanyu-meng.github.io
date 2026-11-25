@@ -1232,7 +1232,16 @@
       "summary": "公司圣诞派对上和乐队一起演奏 The Beatles 的《Let It Be》，弹其中的吉他 solo。",
       "topic": "乐队现场",
       "thumbnail": "content/video-covers/2025-12-christmas-party-let-it-be.webp",
-      "links": []
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV12dy1zqEL4/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=tSPtk5R-N_4"
+        }
+      ]
     },
     {
       "id": "BV1SsSpBMEyt",
