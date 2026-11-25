@@ -24,7 +24,7 @@ export function englishPagePlugin(): Plugin {
       html = replaceOnce(html, /<meta name="author" content="[^"]*"/, '<meta name="author" content="Fanyu Meng"');
       html = replaceOnce(html, /<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`);
       html = replaceOnce(html, /<meta property="og:description" content="[^"]*"/, `<meta property="og:description" content="${description}"`);
-      html = replaceOnce(html, /<link rel="canonical" href="[^"]*"/, '<link rel="canonical" href="https://fanyu-meng.github.io/en/"');
+      html = replaceOnce(html, /<link rel="canonical" href="[^"]*"/, '<link rel="canonical" href="https://fanyumeng.com/en/"');
       this.emitFile({ type: 'asset', fileName: 'en/index.html', source: html });
     },
   };
