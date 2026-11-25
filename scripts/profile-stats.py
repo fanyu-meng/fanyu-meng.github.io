@@ -23,7 +23,7 @@ PAGES = "https://fanyu-meng.github.io/content/profile-stats.json"
 TODAY = dt.datetime.now(dt.timezone.utc).date().isoformat()
 NUMBER = re.compile(r"(?:Open\s*Mic\s*#?\s*|开放麦\s*#\s*)(\d+)(?:\s*[-–—至]\s*(\d+))?", re.I)
 PERSONAL_NOTES = Path.home() / "Library/Mobile Documents/iCloud~md~obsidian/Documents/Apple Notes Backup/iCloud/脱口秀/复盘/我的复盘"
-KEYS = ("standupShows", "podcastEpisodes", "zhihuFollowers", "wechatFollowers")
+KEYS = ("standupShows", "podcastEpisodes", "acousticsArticles", "zhihuFollowers", "wechatFollowers")
 
 
 def fetch(url, data=None):
@@ -73,6 +73,13 @@ def documented_shows(staged):
     if not ordinals:
         raise ValueError("no numbered show notes")
     return verified(max(ordinals), "numbered-show-notes")
+
+
+def acoustics_articles():
+    # Acoustics-science articles on the site, excluding Zhihu answers.
+    entries = json.loads((ROOT / "public/content/acoustics-index.json").read_text(encoding="utf-8"))
+    ids = {e.get("sameWorkAs") or e["id"] for e in entries if e.get("section") == "articles" and e.get("format") == "article"}
+    return verified(len(ids), "acoustics-index.json")
 
 
 def published_episodes():
@@ -149,7 +156,7 @@ def main():
     path = ROOT / FILE
     baseline = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     jobs = {"standupShows": lambda: documented_shows(args.staged), "podcastEpisodes": published_episodes,
-            "zhihuFollowers": zhihu_followers, "wechatFollowers": wechat_followers}
+            "acousticsArticles": acoustics_articles, "zhihuFollowers": zhihu_followers, "wechatFollowers": wechat_followers}
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
         tasks = {key: pool.submit(job) for key, job in jobs.items()}
         # The previous deployment may contain fresher measurements than the

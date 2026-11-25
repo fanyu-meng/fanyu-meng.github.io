@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type Metric = { value: number | null; asOf: string | null; status: string };
-type ProfileStats = Record<'standupShows' | 'podcastEpisodes' | 'followers' | 'wechatFollowers' | 'zhihuFollowers', Metric>;
+type ProfileStats = Record<'standupShows' | 'podcastEpisodes' | 'acousticsArticles' | 'followers' | 'wechatFollowers' | 'zhihuFollowers', Metric>;
 
 async function getStats(): Promise<ProfileStats> {
   const response = await fetch('/content/profile-stats.json', { cache: 'no-cache' });
@@ -28,8 +28,14 @@ export default function AboutSection() {
       {line(data?.standupShows, zh ? '脱口秀演员' : 'Stand-up comedian', n => zh ? `脱口秀已记录上台 ${n} 次` : `Stand-up comedian · ${n} documented performances`)}
       {line(data?.podcastEpisodes, zh ? '《破壁圆桌》播客主播' : 'Host of Pobicast', n => zh ? `《破壁圆桌》已发布 ${n} 期播客` : `Host of Pobicast · ${n} published episodes`)}
       <li>{t('about.item.4')}</li>
-      {line(data?.followers, zh ? '声学科普博主' : 'Acoustics blogger',
-        n => zh ? `声学科普博主，${n} 位关注者` : `Acoustics blogger · ${n} followers`)}
+      <li>{(() => {
+        const articles = count(data?.acousticsArticles), followers = count(data?.followers);
+        const parts = zh
+          ? [articles && `${articles} 篇文章`, followers && `全网 ${followers} 位关注者`]
+          : [articles && `${articles} articles`, followers && `${followers} followers across platforms`];
+        const tail = parts.filter(Boolean).join(zh ? '，' : ' · ');
+        return tail ? (zh ? `声学科普博主，${tail}` : `Acoustics blogger · ${tail}`) : (zh ? '声学科普博主' : 'Acoustics blogger');
+      })()}</li>
     </ul>
   );
 }

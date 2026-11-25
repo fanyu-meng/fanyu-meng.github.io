@@ -11,6 +11,12 @@
     "status": "last-known",
     "source": "https://anchor.fm/s/1063042b8/podcast/rss"
   },
+  "acousticsArticles": {
+    "value": 170,
+    "asOf": "2026-11-25",
+    "status": "verified",
+    "source": "acoustics-index.json"
+  },
   "zhihuFollowers": {
     "value": null,
     "asOf": null,
