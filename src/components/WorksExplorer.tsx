@@ -16,9 +16,9 @@ const categories = {
   career: ['主业', 'Career'],
   reviews: ['脱口秀', 'Stand-up'],
   podcast: ['播客', 'Podcast'],
-  articles: ['声学科普', 'Acoustics'],
+  articles: ['科普', 'Science'],
   writing: ['写作', 'Writing'],
-  video: ['吉他&音乐', 'Guitar & music'],
+  video: ['吉他', 'Guitar'],
   github: ['AI Builder', 'AI Builder'],
 } as const;
 
@@ -570,7 +570,7 @@ export default function WorksExplorer() {
         </button>)}
         {writingCount}
       </div>}
-      {browsingArticles && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Acoustics categories' : '声学科普分类'}>
+      {browsingArticles && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Science categories' : '科普分类'}>
         {(Object.keys(articleTabs) as ArticleTab[]).map(tab => <button key={tab} type="button"
           aria-pressed={activeArticleTab === tab}
           onClick={() => navigate({ type: 'articles', item: '', q: address.q, articleTab: tab })}>
