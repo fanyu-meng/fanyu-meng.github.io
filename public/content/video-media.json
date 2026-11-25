@@ -4,6 +4,13 @@
     "guitar-media-2": "/guitar-media-2/"
   },
   "videos": {
+    "2025-12-christmas-party-let-it-be": {
+      "repo": "guitar-media-1",
+      "path": "2025-12-christmas-party-let-it-be/video.mp4",
+      "type": "mp4",
+      "width": 480,
+      "height": 848
+    },
     "BV113c5zNEVT": {
       "repo": "guitar-media-1",
       "path": "BV113c5zNEVT/video.mp4",

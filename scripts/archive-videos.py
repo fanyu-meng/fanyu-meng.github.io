@@ -57,8 +57,13 @@ def probe(path):
     info = json.loads(out)
     video = next(s for s in info['streams'] if s['codec_type'] == 'video')
     audio = next((s for s in info['streams'] if s['codec_type'] == 'audio'), None)
+    width, height = video.get('width'), video.get('height')
+    # Phone footage is often stored sideways with a rotation flag; record the size it is shown at.
+    rotation = next((d['rotation'] for d in video.get('side_data_list', []) if 'rotation' in d), 0)
+    if abs(int(rotation)) % 180 == 90:
+        width, height = height, width
     return {
-        'width': video.get('width'), 'height': video.get('height'),
+        'width': width, 'height': height,
         'videoCodec': video.get('codec_name'), 'audioCodec': audio and audio.get('codec_name'),
         'duration': round(float(info['format'].get('duration', 0)), 2),
     }
