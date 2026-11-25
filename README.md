@@ -6,6 +6,8 @@ A modern personal portfolio website built with React, TypeScript, and Vite.
 
 小说、散文、诗歌等文学作品发到「文字 → 写作」并分发到豆瓣和知乎的做法见[文学作品发布流程](./文学作品发布流程.md)。
 
+由文章改编的小红书视频挂到网站对应文章的做法见[小红书视频上站](./小红书视频上站.md)。
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
