@@ -146,6 +146,16 @@
 .ex-row-text { display: grid; gap: 3px; min-width: 0; }
 .ex-row-text > small,.ex-meta { color: #a8aeb9; font-size: .78rem; line-height: 1.45; }
 .ex-row-text > small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ex-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-inline-end: 7px;
+  color: #ffc4a7;
+  font-weight: 600;
+  vertical-align: bottom;
+}
+.ex-pin svg { width: 12px; height: 12px; }
 .ex-row-text > strong {
   display: -webkit-box;
   overflow: hidden;

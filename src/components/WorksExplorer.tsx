@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, ChevronDown, ChevronUp, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, Code2, Guitar, Headphones, Mic, PenLine, Pin, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
@@ -36,11 +36,6 @@ const videoTabs = { room: ['琴房', 'Practice room'], rehearsal: ['排练', 'Re
 type VideoTab = keyof typeof videoTabs;
 const isVideoTab = (tab: unknown): tab is VideoTab =>
   typeof tab === 'string' && Object.prototype.hasOwnProperty.call(videoTabs, tab);
-// Podcast sub-tabs: every episode, and the episodes that have a highlights cut.
-const podcastTabs = { episodes: ['全部单集', 'All episodes'], highlights: ['Highlights', 'Highlights'] } as const;
-type PodcastTab = keyof typeof podcastTabs;
-const isPodcastTab = (tab: unknown): tab is PodcastTab =>
-  typeof tab === 'string' && Object.prototype.hasOwnProperty.call(podcastTabs, tab);
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -54,7 +49,6 @@ type Entry = {
   topic?: string;
   section?: 'articles' | 'writing';
   videoTab?: 'rehearsal' | 'gigs';
-  highlights?: boolean;
   theme?: string;
   format?: 'article' | 'answer';
   originality?: 'original' | 'non-original';
@@ -77,7 +71,7 @@ type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoCh
 type Article = { body?: string[]; html?: string };
 type Address = {
   type: Category; item: string; q: string;
-  articleTab?: ArticleTab; writingTab?: WritingTab; videoTab?: VideoTab; podcastTab?: PodcastTab;
+  articleTab?: ArticleTab; writingTab?: WritingTab; videoTab?: VideoTab;
 };
 
 function articleTabFor(item: Entry): ArticleTab {
@@ -265,8 +259,7 @@ function readAddress(): Address {
   return { type, item, q: params.get('q') || '',
     articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
     writingTab,
-    videoTab: type === 'video' && isVideoTab(tab) ? tab : undefined,
-    podcastTab: type === 'podcast' && isPodcastTab(tab) ? tab : undefined };
+    videoTab: type === 'video' && isVideoTab(tab) ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -277,7 +270,6 @@ function hrefFor(address: Address) {
   if (address.type === 'articles' && address.articleTab) params.set('format', address.articleTab);
   if (address.type === 'writing' && address.writingTab) params.set('tab', address.writingTab);
   if (address.type === 'video' && address.videoTab) params.set('tab', address.videoTab);
-  if (address.type === 'podcast' && address.podcastTab) params.set('tab', address.podcastTab);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -286,6 +278,8 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
   const groups: Record<Kind, Work[]> = { reviews: [], podcast: [], articles: [], video: [], github: [], club: [] };
   for (const kind of Object.keys(groups) as Kind[]) {
     groups[kind] = (kind === 'articles' ? articles : works[kind] || []).map(entry => ({ ...entry, kind }));
+    // Pinned podcast episodes lead their list, as pinned videos already do.
+    if (kind === 'podcast') groups[kind].sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)));
   }
   // Show each pursuit in the first few rows, and keep each source's ordering within its category.
   const keys = Object.keys(groups) as Kind[];
@@ -464,13 +458,11 @@ export default function WorksExplorer() {
   // A direct link to a video opens in the sub-tab the video belongs to.
   const linkedVideo = activeType === 'video' && entries.find(item => item.kind === 'video' && item.id === address.item);
   const activeVideoTab: VideoTab = linkedVideo ? videoTabFor(linkedVideo) : address.videoTab || 'room';
-  const activePodcastTab: PodcastTab = address.podcastTab || 'episodes';
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
     if (browsingArticles && articleTabFor(item) !== activeArticleTab) return false;
     if (activeType === 'video' && videoTabFor(item) !== activeVideoTab) return false;
-    if (activeType === 'podcast' && activePodcastTab === 'highlights' && !item.highlights) return false;
     const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
@@ -530,7 +522,6 @@ export default function WorksExplorer() {
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
       articleTab: browsingArticles ? activeArticleTab : undefined,
       videoTab: activeType === 'video' ? activeVideoTab : undefined,
-      podcastTab: activeType === 'podcast' ? activePodcastTab : undefined,
     }, replace);
   }
   function choose(item: Work) {
@@ -601,14 +592,6 @@ export default function WorksExplorer() {
           className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
         <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
       </div>}
-      {activeType === 'podcast' && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Podcast categories' : '播客分类'}>
-        {(Object.keys(podcastTabs) as PodcastTab[]).map(tab => <button key={tab} type="button"
-          aria-pressed={activePodcastTab === tab}
-          onClick={() => navigate({ type: 'podcast', item: '', q: address.q, podcastTab: tab })}>
-          {podcastTabs[tab][Number(en)]}
-        </button>)}
-        <span role="status">{en ? visible.length + (visible.length === 1 ? ' episode' : ' episodes') : '共 ' + visible.length + ' 集'}</span>
-      </div>}
       {!browsingArticles && activeType !== 'writing' && activeType !== 'video' && activeType !== 'career' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
       {activeType === 'career' ? <CareerTimeline en={en} /> : <>
       {failedIndexes.length > 0 && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
@@ -645,7 +628,8 @@ export default function WorksExplorer() {
                   <span className={'ex-row-icon tone-' + item.kind}>{thumbnail
                     ? <img alt="" src={import.meta.env.BASE_URL + thumbnail} loading="lazy" decoding="async" />
                     : <Icon aria-hidden="true" />}</span>
-                  <span className="ex-row-text"><small>{[category, extra !== category && extra].filter(Boolean).join(' · ')}</small>
+                  <span className="ex-row-text"><small>{activeType === 'podcast' && item.featured &&
+                    <span className="ex-pin"><Pin aria-hidden="true" />{en ? 'Pinned' : '置顶'}</span>}{[category, extra !== category && extra].filter(Boolean).join(' · ')}</small>
                     <strong>{item.title}</strong>
                     {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
                     {item.summary && <span className="ex-row-summary">{item.summary}</span>}</span>

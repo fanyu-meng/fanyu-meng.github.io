@@ -535,7 +535,7 @@
     },
     {
       "id": "podcast-ep23",
-      "highlights": true,
+      "featured": true,
       "title": "对谈「喜剧之王单口季」阿水——用脱口秀，找到真实的自己",
       "summary": "阿水聊新加坡华语脱口秀和综艺录制。对着观众讲和面对镜头讲，开头十秒会有什么变化？",
       "url": "https://www.xiaoyuzhoufm.com/episode/69ed2c001d989496e781de65",
@@ -650,7 +650,7 @@
     },
     {
       "id": "podcast-ep17",
-      "highlights": true,
+      "featured": true,
       "title": "从 20 亿业务负责人到 AI 创业：对话硅谷资深创业者 Cathy",
       "meta": "破壁圆桌 · EP17 · 106 分钟",
       "episodeNumber": 17,
@@ -667,7 +667,7 @@
     },
     {
       "id": "podcast-ep16",
-      "highlights": true,
+      "featured": true,
       "title": "手工艺品电商，一人企业：如何不打工，不内耗，享受当下",
       "meta": "破壁圆桌 · EP16 · 84 分钟",
       "episodeNumber": 16,
@@ -700,7 +700,7 @@
     },
     {
       "id": "podcast-ep14",
-      "highlights": true,
+      "featured": true,
       "title": "对话课代表立正：AI时代下，后悔没早点离开职场",
       "meta": "破壁圆桌 · EP14 · 80 分钟",
       "episodeNumber": 14,
@@ -749,7 +749,7 @@
     },
     {
       "id": "podcast-ep11",
-      "highlights": true,
+      "featured": true,
       "title": "对话一口新饭/MoneyXYZ 主播 Ray：关于内耗和变现",
       "meta": "破壁圆桌 · EP11 · 115 分钟",
       "episodeNumber": 11,
@@ -830,7 +830,7 @@
     },
     {
       "id": "podcast-ep6",
-      "highlights": true,
+      "featured": true,
       "title": "科研，蛋糕师，作家，养娃，怎么一起搞？访谈 Cake Researcher 创始人李婕",
       "meta": "破壁圆桌 · EP6 · 74 分钟",
       "episodeNumber": 6,
