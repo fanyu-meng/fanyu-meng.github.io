@@ -350,7 +350,7 @@ type Job = { id: string; years: string; role: ReactNode; place?: string; desc?: 
 
 export default function CareerTimeline({ en }: { en: boolean }) {
   const jobs: Job[] = [
-    { id: 'harman', years: en ? '2022 – present' : '2022 – 现在', role: en ? 'Audio Algorithm Engineer' : '音频算法工程师',
+    { id: 'harman', years: en ? '2022 – present' : '2022 – 现在', role: en ? 'Audio Algorithm Engineer' : '音频算法工程师', place: en ? 'Munich, Germany' : '德国慕尼黑',
       logo: <Logo file="harman.svg" alt="HARMAN" height={24} />,
       slides: [<AlgorithmFigure en={en} />] },
     { id: 'microflown', years: '2018 – 2022', role: 'Scientist', place: en ? 'Arnhem, the Netherlands' : '荷兰阿纳姆',
@@ -359,10 +359,10 @@ export default function CareerTimeline({ en }: { en: boolean }) {
         <><MaterialFigure en={en} /><h5>{en ? 'Acoustic material testing R&D' : '材料测试研发'}</h5></>,
         <><QualityFigure en={en} /><h5>{en ? 'AI-based end-of-line quality inspection' : 'AI 产线质量检测'}</h5></>,
       ] },
-    { id: 'tue', years: '2017 – 2018', role: 'Lecturer',
+    { id: 'tue', years: '2017 – 2018', role: 'Lecturer', place: en ? 'Eindhoven, the Netherlands' : '荷兰埃因霍温',
       logo: <Logo file="tue.svg" alt="Eindhoven University of Technology (TU/e)" height={16} />,
       slides: [<LectureFigure en={en} />] },
-    { id: 'rwth', years: '2013 – 2018', role: en ? 'Doctoral research' : '博士研究',
+    { id: 'rwth', years: '2013 – 2018', role: en ? 'Doctoral research' : '博士研究', place: en ? 'Aachen, Germany' : '德国亚琛',
       logo: <Logo file="rwth.svg" alt="RWTH Aachen University" height={24} />,
       desc: en
         ? 'Modeling of moving sound sources based on microphone array measurements: recording pass-by vehicles, reconstructing the source signals, and auralizing them in virtual reality.'
@@ -371,11 +371,10 @@ export default function CareerTimeline({ en }: { en: boolean }) {
   ];
   return <div className="cr">
     <h3 className="cr-label"><Briefcase aria-hidden="true" />{en ? 'Experience' : '经历'}</h3>
-    <ol className="cr-jobs">
-      {jobs.map(job => <li key={job.id} className="cr-job">
-        <div className="cr-top">{job.logo}<span className="cr-years">{job.years}</span></div>
-        <h4 className="cr-role">{job.role}</h4>
-        {job.place && <p className="cr-years">{job.place}</p>}
+    <ol className="cr-rail">
+      {jobs.map((job, i) => <li key={job.id} className={'cr-node' + (i === 0 ? ' cr-now' : '')}>
+        <p className="cr-years">{job.years}{job.place && ' · ' + job.place}</p>
+        <h4 className="cr-role">{job.role} {job.logo}</h4>
         {job.desc && <p className="cr-desc">{job.desc}</p>}
         <Strip slides={job.slides} />
       </li>)}

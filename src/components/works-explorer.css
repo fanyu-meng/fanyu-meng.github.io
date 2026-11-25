@@ -418,14 +418,11 @@
 .cr-node { display: grid; gap: 6px; }
 .cr-node::before { content: ""; position: absolute; left: -26px; width: 9px; height: 9px; border: 1.5px solid #5d6570; border-radius: 50%; background: #0d1014; }
 .cr-node::before { top: 6px; }
+.cr-now::before { border-color: #ee7a4f; background: #ee7a4f; }
 .cr-years { margin: 0; color: #8e97a5; font-size: .8rem; font-variant-numeric: tabular-nums; }
 .cr-role { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; margin: 0; color: #eef0f3; font-size: 1rem; font-weight: 500; letter-spacing: 0; }
-.cr-role img, .cr-top img { width: auto; max-width: 100%; }
-.cr-jobs { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid #232831; }
-.cr-job { display: grid; gap: 2px; padding: 20px 0 24px; border-bottom: 1px solid #232831; }
-.cr-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
-.cr-job .cr-role { margin-top: 8px; font-size: 1.05rem; }
-.cr-strip { display: flex; gap: 10px; margin: 12px -16px 0; padding: 0 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 16px; scrollbar-width: none; }
+.cr-role img { width: auto; max-width: 100%; }
+.cr-strip { display: flex; gap: 10px; margin: 8px -16px 0 0; padding: 0 16px 0 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .cr-strip::-webkit-scrollbar { display: none; }
 .cr-slide { flex: 0 0 82%; min-width: 0; scroll-snap-align: start; }
 .cr-slide:only-child { flex-basis: 100%; }
@@ -437,7 +434,8 @@
 .cr-fig { margin-top: 8px; overflow: hidden; }
 .cr-fig svg { display: block; width: 100%; height: auto; }
 @media (min-width: 760px) {
-  .cr-strip { margin: 12px 0 0; padding: 0; overflow: visible; }
+  .cr-strip { margin: 8px 0 0; padding: 0; overflow: visible; }
   .cr-slide { flex: 1 1 0; }
+  .cr-slide:only-child { flex: 0 1 460px; }
   .cr-dots { display: none; }
 }
