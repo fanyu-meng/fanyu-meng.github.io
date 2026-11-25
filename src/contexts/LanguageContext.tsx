@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Language = 'zh' | 'en';
 
@@ -74,9 +75,9 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.cta': 'Learn More',
     
     // About
-    'about.title': 'About Me',
-    'about.item.1': 'Audio Algorithm Engineer',
-    'about.item.4': 'Guitarist who has "retired" from 3 bands',
+    'about.title': 'About me',
+    'about.item.1': 'Audio algorithm engineer',
+    'about.item.4': 'Open-chord guitarist who has quit three bands',
     'about.highlight.audio': 'Audio',
     'about.highlight.comedy': 'Stand-up',
     'about.highlight.guitar': 'Guitar',
@@ -114,8 +115,33 @@ const translations: Record<Language, Record<string, string>> = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// The English site lives at /en/. index.html sends first-time visitors whose browser has no Chinese there.
+const isEnglishPath = (pathname: string) => /^\/en(?:\/|$)/.test(pathname);
+
+const head: Record<Language, { title: string; description: string }> = {
+  zh: { title: '孟凡雨 | Fanyu Meng', description: '音频算法工程师。分享技术文章、副业项目和生活感悟。' },
+  en: {
+    title: 'Fanyu Meng | Audio algorithm engineer',
+    description: 'Fanyu Meng is an audio algorithm engineer and acoustician in Munich. Writing on acoustics, stand-up comedy, the Pobicast podcast, guitar and AI projects.',
+  },
+};
+
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('zh');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language: Language = isEnglishPath(location.pathname) ? 'en' : 'zh';
+
+  useEffect(() => {
+    document.documentElement.lang = language === 'en' ? 'en' : 'zh-CN';
+    document.title = head[language].title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', head[language].description);
+  }, [language]);
+
+  // Switching keeps the open tab and work, which live in the hash.
+  const setLanguage = (next: Language) => {
+    try { localStorage.setItem('language', next); } catch { /* the choice still applies to this visit */ }
+    if (next !== language) navigate({ pathname: next === 'en' ? '/en/' : '/', search: location.search, hash: location.hash });
+  };
 
   const t = (key: string): string => {
     return translations[language][key] || key;

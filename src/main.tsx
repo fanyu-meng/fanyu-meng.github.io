@@ -16,11 +16,12 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
 
   render() {
     if (this.state.hasError) {
+      const en = /^\/en(?:\/|$)/.test(window.location.pathname);
       return (
         <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-          <h1>页面暂时无法显示</h1>
-          <p>请刷新页面重试。</p>
-          <button type="button" onClick={() => window.location.reload()}>刷新页面</button>
+          <h1>{en ? "This page could not be displayed" : "页面暂时无法显示"}</h1>
+          <p>{en ? "Please reload the page." : "请刷新页面重试。"}</p>
+          <button type="button" onClick={() => window.location.reload()}>{en ? "Reload" : "刷新页面"}</button>
         </main>
       );
     }

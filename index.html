@@ -18,6 +18,10 @@
     <meta name="twitter:image" content="https://fanyu-meng.github.io/ProfilePhoto.png" />
     
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <link rel="canonical" href="https://fanyu-meng.github.io/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://fanyu-meng.github.io/" />
+    <link rel="alternate" hreflang="en" href="https://fanyu-meng.github.io/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://fanyu-meng.github.io/" />
     
     <!-- GitHub Pages SPA routing support -->
     <script type="text/javascript">
@@ -32,7 +36,19 @@
               l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
-      }(window.location))
+      }(window.location));
+
+      // A first visit to the Chinese home page from a browser without Chinese opens the English site.
+      // A language picked with the EN / 中文 switch is remembered; crawlers always get the page they asked for.
+      (function(l, n) {
+        var saved = null;
+        try { saved = localStorage.getItem('language'); } catch (e) {}
+        var languages = n.languages && n.languages.length ? n.languages : [n.language || ''];
+        var chinese = languages.some(function(x) { return /^zh\b/i.test(x); });
+        if (l.pathname === '/' && !saved && !chinese && !/bot|crawl|spider|slurp|preview/i.test(n.userAgent)) {
+          window.history.replaceState(null, '', '/en/' + l.search + l.hash);
+        }
+      }(window.location, window.navigator));
     </script>
   </head>
   <body>

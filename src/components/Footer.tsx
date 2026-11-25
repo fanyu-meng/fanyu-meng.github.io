@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
             href="#home"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            ↑ Top
+            {language === 'zh' ? '↑ 回到顶部' : '↑ Back to top'}
           </a>
         </div>
       </div>

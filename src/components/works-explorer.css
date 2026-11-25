@@ -265,6 +265,11 @@
   overflow-wrap: anywhere;
 }
 .ex-meta { margin: 8px 0 0; }
+.ex-language-note { margin: 6px 0 0; color: #a8aeb9; font-size: .78rem; line-height: 1.45; }
+.ex-language-note button { color: #efb598; text-decoration: underline; text-underline-offset: .22em; }
+.ex-reviewed-book cite { font-style: italic; }
+/* English text breaks long words with a hyphen instead of at an arbitrary letter. */
+.ex-body:lang(en) { hyphens: auto; }
 .ex-body { margin-top: 19px; border-top: 1px solid #32353c; padding-top: 19px; }
 .ex-body p {
   margin: 0 0 1em;

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { creationStatsPlugin } from "./scripts/creation-stats";
+import { englishPagePlugin } from "./scripts/english-page";
 
 // Article videos live in the separate largeFiles repository; the deployment publishes it at /largeFiles/.
 // Local development and preview read the published copy.
@@ -19,7 +20,7 @@ export default defineConfig(({ mode }) => ({
   preview: {
     proxy: mediaProxy,
   },
-  plugins: [react(), creationStatsPlugin(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), creationStatsPlugin(), englishPagePlugin(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

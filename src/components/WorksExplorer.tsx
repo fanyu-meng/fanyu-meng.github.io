@@ -5,6 +5,8 @@ import { BookOpen, ChevronDown, ChevronUp, Code2, Guitar, Headphones, Mic, PenLi
 import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
+import englishIndexUrl from '../../public/content/en/acoustics-index.json?url';
+import englishWorksUrl from '../../public/content/en/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos, type ArchivedVideo } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
 import CreationStats from './CreationStats';
@@ -65,8 +67,15 @@ type Entry = {
   thumbnail?: string;
   archive?: ArchivedVideo;
   chapters?: { seconds: number; title: string }[];
+  // Set on the English site: how the English text was made, and the Chinese entry it came from.
+  english?: EnglishMode | 'missing';
+  original?: Entry;
 };
 type Work = Entry & { kind: Kind };
+type EnglishMode = 'translation' | 'summary';
+// public/content/en/*.json add English wording by work ID; see 英文版.md.
+type EnglishText = { title: string; summary?: string; meta?: string; bookTitle?: string; body?: string[]; chapters?: string[];
+  topic?: string; mode?: EnglishMode; contentPath?: string };
 type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoChannels?: Link[] };
 type Article = { body?: string[]; html?: string };
 type Address = {
@@ -82,7 +91,7 @@ function articleTabFor(item: Entry): ArticleTab {
 // Writing sub-tabs. 文学 holds works first published here (topic 文学) and is hidden while empty.
 const writingTabs = {
   literature: ['文学', 'Literature'],
-  home: ['回家过年', 'Home for the New Year'],
+  home: ['回家过年', 'Home for Chinese New Year'],
   reviews: ['书评', 'Book reviews'],
   abroad: ['留学生活', 'Life abroad'],
   research: ['科研与技术', 'Research & tech'],
@@ -99,7 +108,7 @@ function videoTabFor(item: Entry): VideoTab {
 
 function writingTabFor(item: Work): WritingTab {
   // Douban diaries are the New Year series; the rest of Douban is book reviews.
-  if (item.id.startsWith('douban-')) return /^东北(?:回家|老家)过年/.test(item.title) ? 'home' : 'reviews';
+  if (item.id.startsWith('douban-')) return /^东北(?:回家|老家)过年/.test((item.original || item).title) ? 'home' : 'reviews';
   if (item.topic === '文学') return 'literature';
   // Other writing carries a theme; anything new without one lands in 杂谈.
   return isWritingTab(item.theme) && item.theme !== 'literature' ? item.theme : 'misc';
@@ -122,6 +131,40 @@ function categoryOf(item: Work): Category {
 
 function labelForWork(item: Work, en: boolean) {
   return categories[categoryOf(item)][Number(en)];
+}
+
+function localize(item: Work, text: EnglishText | undefined): Work {
+  if (!text) return { ...item, english: 'missing', original: item };
+  const { chapters, mode, ...wording } = text;
+  return { ...item, ...wording, english: mode || 'translation', original: item,
+    chapters: item.chapters?.map((chapter, i) => ({ ...chapter, title: chapters?.[i] || chapter.title })) };
+}
+
+const englishLinkLabels: Record<string, string> = {
+  '知乎原文': 'Original on Zhihu', '知乎原回答': 'Original answer on Zhihu', '公众号原文': 'Original on WeChat',
+  '豆瓣原文': 'Original on Douban', '小红书笔记': 'Xiaohongshu post', '小红书视频笔记': 'Xiaohongshu video',
+  '在公众号查看原图': 'View the images on WeChat', '在 B 站观看': 'Watch on Bilibili', 'B 站': 'Bilibili',
+  '小宇宙单集': 'Listen on Xiaoyuzhou', 'GitHub 仓库': 'GitHub repository', '完整 README': 'Full README',
+  '访问网站': 'Visit the website', '乐咔官网': 'LeSlam Comedy website', '演出资讯': 'Upcoming shows',
+  '小红书主页': 'Xiaohongshu profile', '原文': 'Original',
+};
+
+function linkLabel(label: string, en: boolean) {
+  if (!en) return label;
+  return englishLinkLabels[label] || (/[\u3400-\u9fff]/.test(label) ? 'Original' : label);
+}
+
+// On the English site, say where the English came from and offer the Chinese original.
+function LanguageNote({ item }: { item: Work }) {
+  const { setLanguage } = useLanguage();
+  const chinese = <button type="button" onClick={() => setLanguage('zh')}>
+    {item.english === 'summary' ? 'Read the full article in Chinese' : 'Read the Chinese original'}</button>;
+  if (item.kind === 'podcast') return <p className="ex-language-note">Episode in Mandarin Chinese.</p>;
+  if (item.english === 'missing') return <p className="ex-language-note">Available in Chinese only.</p>;
+  if (item.kind !== 'articles' && item.kind !== 'reviews') return null;
+  return <p className="ex-language-note">
+    {item.english === 'summary' ? 'English summary of a Chinese adaptation. ' : 'Translated from the Chinese. '}{chinese}
+  </p>;
 }
 
 function videoMetadata(item: Entry) {
@@ -287,7 +330,7 @@ function orderWorks(works: WorksFile, articles: Entry[]) {
 }
 
 function ReviewedBook({ title, en }: { title: string; en: boolean }) {
-  return <span className="ex-reviewed-book">{en ? `Review of ${title}` : `评《${title}》`}</span>;
+  return <span className="ex-reviewed-book">{en ? <>Review of <cite>{title}</cite></> : `评《${title}》`}</span>;
 }
 
 // In the phone layout long text opens as a fading excerpt, so the list stays easy to scan.
@@ -346,7 +389,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
   const intro = richText ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.head }} /> : text[0];
   const rest = richText?.rest ? <div className="ex-format" dangerouslySetInnerHTML={{ __html: richText.rest }} /> :
     !richText && text.length > 1 ? text.slice(1) : null;
-  const originalLinks = item.links?.length ? item.links : item.url ? [{ url: item.url, label: en ? 'Original' : '原文' }] : [];
+  const originalLinks = item.links?.length ? item.links : item.url ? [{ url: item.url, label: '原文' }] : [];
   const audio = webURL(item.audio);
   const videoFile = webURL(item.videoFile);
   const embed = webURL(item.embed);
@@ -355,6 +398,8 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
     webURL(link.url) !== videoFile && !videoSources({ id: item.id, title: item.title, url: link.url }).length) : originalLinks;
   const cover = item.projectCover;
   const meta = item.kind === 'video' ? videoMetadata(item) : item.meta;
+  // Untranslated text on the English site is marked as Chinese for screen readers and line breaking.
+  const textLang = item.english === 'missing' ? 'zh-CN' : undefined;
   const player = embed ? new URL(embed) : undefined;
   const embedAllowed = player && ['embed.podcasts.apple.com','open.spotify.com','player.bilibili.com','www.youtube.com','www.youtube-nocookie.com','www.xiaoyuzhoufm.com'].includes(player.hostname);
   if (player?.hostname === 'player.bilibili.com') player.searchParams.set('autoplay', '0');
@@ -366,22 +411,23 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
         <div className="ex-kicker"><Icon aria-hidden="true" />{labelForWork(item, en)}{categoryOf(item) === 'writing'
           ? ' · ' + writingLabel(item, en)
           : item.kind === 'articles' ? ' · ' + articleTabs[articleTabFor(item)][Number(en)] : ''}</div>
-        <h3>{item.title}</h3>
+        <h3 lang={textLang}>{item.title}</h3>
         {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
-        {meta && <p className="ex-meta">{meta}</p>}
+        {meta && <p className="ex-meta" lang={textLang}>{meta}</p>}
+        {en && <LanguageNote item={item} />}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} poster={webURL(item.videoPoster)} /></div> :
           sources.length > 0 || item.archive ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en}
             archive={item.archive} poster={item.thumbnail && import.meta.env.BASE_URL + item.thumbnail} /> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
-        <div className="ex-body empty:hidden">
+        <div className="ex-body empty:hidden" lang={textLang}>
           {(intro || rest) && (small ? <Excerpt en={en}>{intro}{rest}</Excerpt> : <>{intro}{rest}</>)}
           {item.contentPath && article.isPending && <p role="status">{en ? 'Loading article…' : '正在加载正文…'}</p>}
           {item.contentPath && article.isError && <div className="ex-status" role="status">{en ? 'The article could not be loaded. ' : '正文暂未载入。'}<button onClick={() => article.refetch()}>{en ? 'Retry' : '重新加载'}</button></div>}
         </div>
         {links.length > 0 && <div className="ex-actions">{links.map(link => {
           const url = webURL(link.url);
-          return url && <a key={url} href={url} target="_blank" rel="noopener noreferrer">{link.label}</a>;
+          return url && <a key={url} href={url} target="_blank" rel="noopener noreferrer">{linkLabel(link.label, en)}</a>;
         })}</div>}
         {!!item.chapters?.length && <section className="ex-chapters">
           <h4>{en ? 'Episode chapters' : '本期时间轴'}</h4>
@@ -442,7 +488,25 @@ export default function WorksExplorer() {
     queryFn: ({ signal }) => loadJSON<Entry[]>(articleIndexUrl, signal),
     staleTime: Infinity,
   });
-  const entries = useMemo(() => orderWorks(works.data || {}, articles.data || []), [works.data, articles.data]);
+  const englishArticles = useQuery({
+    queryKey: ['english-index', englishIndexUrl],
+    queryFn: ({ signal }) => loadJSON<Record<string, EnglishText>>(englishIndexUrl, signal),
+    enabled: en,
+    staleTime: Infinity,
+  });
+  const englishWorks = useQuery({
+    queryKey: ['english-works', englishWorksUrl],
+    queryFn: ({ signal }) => loadJSON<Record<string, EnglishText>>(englishWorksUrl, signal),
+    enabled: en,
+    staleTime: Infinity,
+  });
+  const entries = useMemo(() => {
+    const all = orderWorks(works.data || {}, articles.data || []);
+    if (!en) return all;
+    // Wait for the English wording rather than flash the Chinese; if it cannot load, show the Chinese.
+    if (englishArticles.isPending || englishWorks.isPending) return [];
+    return all.map(item => localize(item, (item.kind === 'articles' ? englishArticles.data : englishWorks.data)?.[item.id]));
+  }, [works.data, articles.data, en, englishArticles.data, englishArticles.isPending, englishWorks.data, englishWorks.isPending]);
   const terms = address.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   // Preserve published article links whose topic now belongs in another section.
   const linkedArticle = address.type !== 'all' && entries.find(item => item.kind === 'articles' && item.id === address.item);
@@ -467,6 +531,7 @@ export default function WorksExplorer() {
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
     const searchable = [item.id, item.title, item.bookTitle, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
+      item.original && [item.original.title, item.original.bookTitle, item.original.meta, item.original.topic, item.original.summary].join(' '),
       writingTab ? writingTabs[writingTab].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
@@ -498,7 +563,7 @@ export default function WorksExplorer() {
 
   useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, activeArticleTab, address.writingTab]);
   useEffect(() => {
-    if (works.isPending || articles.isPending || !requestedScroll.current) return;
+    if (works.isPending || articles.isPending || entries.length === 0 || !requestedScroll.current) return;
     requestedScroll.current = false;
     section.current?.scrollIntoView({ block: 'start' });
     const chosen = list.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
@@ -507,7 +572,7 @@ export default function WorksExplorer() {
       if (delta < 0 || delta + chosen.offsetHeight > list.current.clientHeight) list.current.scrollTop += delta;
     }
     if (chosen && small) chosen.scrollIntoView({ block: 'start' });
-  }, [works.isPending, articles.isPending, small, address]);
+  }, [works.isPending, articles.isPending, entries.length, small, address]);
 
   function navigate(next: Address, replace = false) {
     setFolded(false);
@@ -537,13 +602,15 @@ export default function WorksExplorer() {
     });
   }
   const needsArticles = activeType === 'writing' || browsingArticles;
-  const indexes = activeType === 'all' ? [articles, works] : [needsArticles ? articles : works];
+  const indexes = (activeType === 'all' ? [articles, works] : [needsArticles ? articles : works])
+    .flatMap(index => en ? [index, index === articles ? englishArticles : englishWorks] : [index]);
   const loading = indexes.some(index => index.isPending);
   const failedIndexes = indexes.filter(index => index.isError);
   const writingCount = !loading && !failedIndexes.length &&
     <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>;
-  const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && /乐咔|LeSlam/i.test(x.title + (x.topic || ''))).slice(0, 3) :
-    current?.kind === 'reviews' && /乐咔|LeSlam/i.test(current.title + (current.topic || '')) ? entries.filter(x => x.kind === 'club') : [];
+  const atLeSlam = (x: Work) => /乐咔|LeSlam/i.test((x.original || x).title + ((x.original || x).topic || ''));
+  const related = current?.kind === 'club' ? entries.filter(x => x.kind === 'reviews' && atLeSlam(x)).slice(0, 3) :
+    current?.kind === 'reviews' && atLeSlam(current) ? entries.filter(x => x.kind === 'club') : [];
   const reader = current && <Reader key={current.id} item={current} small={small}>
     {related.length > 0 && <div className="ex-related">{related.map(row => <button type="button" key={row.id}
       onClick={() => navigate({ type: 'reviews', item: row.id, q: '' })}>{row.title}</button>)}</div>}
@@ -556,7 +623,7 @@ export default function WorksExplorer() {
         <div className="ex-tools">
           <CreationStats />
           <label className="ex-search"><Search aria-hidden="true" /><input type="search" maxLength={180}
-            placeholder={en ? 'Search works' : '搜索作品'} aria-label={en ? 'Search works' : '搜索作品'}
+            placeholder={en ? 'Search' : '搜索作品'} aria-label={en ? 'Search works' : '搜索作品'}
             value={address.q} onChange={e => search(e.target.value, true)} /></label>
         </div>
       </div>
@@ -630,7 +697,7 @@ export default function WorksExplorer() {
                     : <Icon aria-hidden="true" />}</span>
                   <span className="ex-row-text"><small>{activeType === 'podcast' && item.featured &&
                     <span className="ex-pin"><Pin aria-hidden="true" />{en ? 'Pinned' : '置顶'}</span>}{[category, extra !== category && extra].filter(Boolean).join(' · ')}</small>
-                    <strong>{item.title}</strong>
+                    <strong lang={item.english === 'missing' ? 'zh-CN' : undefined}>{item.title}</strong>
                     {item.bookTitle && <ReviewedBook title={item.bookTitle} en={en} />}
                     {item.summary && <span className="ex-row-summary">{item.summary}</span>}</span>
                 </button>
