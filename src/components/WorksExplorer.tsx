@@ -19,7 +19,7 @@ const categories = {
   articles: ['声学科普', 'Acoustics'],
   writing: ['写作', 'Writing'],
   video: ['吉他&音乐', 'Guitar & music'],
-  github: ['我开发的项目', 'Projects I built'],
+  github: ['AI Builder', 'AI Builder'],
 } as const;
 
 type Category = keyof typeof categories;
