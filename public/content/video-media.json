@@ -3,5 +3,384 @@
     "guitar-media-1": "/guitar-media-1/",
     "guitar-media-2": "/guitar-media-2/"
   },
-  "videos": {}
+  "videos": {
+    "BV113c5zNEVT": {
+      "repo": "guitar-media-1",
+      "path": "BV113c5zNEVT/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 564
+    },
+    "BV12Uts69E7o": {
+      "repo": "guitar-media-1",
+      "path": "BV12Uts69E7o/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV13H866LEQM": {
+      "repo": "guitar-media-1",
+      "path": "BV13H866LEQM/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV13X4y1A7ds": {
+      "repo": "guitar-media-1",
+      "path": "BV13X4y1A7ds/video.mp4",
+      "type": "mp4",
+      "width": 750,
+      "height": 360
+    },
+    "BV13b4y1g7Ej": {
+      "repo": "guitar-media-1",
+      "path": "BV13b4y1g7Ej/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV13qDtBbEoP": {
+      "repo": "guitar-media-1",
+      "path": "BV13qDtBbEoP/video.mp4",
+      "type": "mp4",
+      "width": 720,
+      "height": 1280
+    },
+    "BV14eAge3EXY": {
+      "repo": "guitar-media-1",
+      "path": "BV14eAge3EXY/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV14i3m6VEHM": {
+      "repo": "guitar-media-1",
+      "path": "BV14i3m6VEHM/video.mp4",
+      "type": "mp4",
+      "width": 1272,
+      "height": 704
+    },
+    "BV14mYPeAEhp": {
+      "repo": "guitar-media-1",
+      "path": "BV14mYPeAEhp/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV16EAje1ENh": {
+      "repo": "guitar-media-1",
+      "path": "BV16EAje1ENh/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV16J4m1h7Go": {
+      "repo": "guitar-media-1",
+      "path": "BV16J4m1h7Go/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 702
+    },
+    "BV16R4y1j7qL": {
+      "repo": "guitar-media-1",
+      "path": "BV16R4y1j7qL/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV18NfLB3EbZ": {
+      "repo": "guitar-media-1",
+      "path": "BV18NfLB3EbZ/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1AtGp6iEAV": {
+      "repo": "guitar-media-1",
+      "path": "BV1AtGp6iEAV/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Cs4y1Z7jw": {
+      "repo": "guitar-media-1",
+      "path": "BV1Cs4y1Z7jw/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1DV411W7V5": {
+      "repo": "guitar-media-1",
+      "path": "BV1DV411W7V5/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1G14y1h7sW": {
+      "repo": "guitar-media-1",
+      "path": "BV1G14y1h7sW/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1Jex86QExd": {
+      "repo": "guitar-media-1",
+      "path": "BV1Jex86QExd/video.mp4",
+      "type": "mp4",
+      "width": 1920,
+      "height": 1080
+    },
+    "BV1JvLa6YEgU": {
+      "repo": "guitar-media-1",
+      "path": "BV1JvLa6YEgU/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1KW4y1r7fN": {
+      "repo": "guitar-media-1",
+      "path": "BV1KW4y1r7fN/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1Ka4eePErR": {
+      "repo": "guitar-media-1",
+      "path": "BV1Ka4eePErR/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Mh411Z7PX": {
+      "repo": "guitar-media-1",
+      "path": "BV1Mh411Z7PX/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1NQ2sYMECA": {
+      "repo": "guitar-media-1",
+      "path": "BV1NQ2sYMECA/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Qh366YEDZ": {
+      "repo": "guitar-media-1",
+      "path": "BV1Qh366YEDZ/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Qz4y157xw": {
+      "repo": "guitar-media-1",
+      "path": "BV1Qz4y157xw/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1SsSpBMEyt": {
+      "repo": "guitar-media-1",
+      "path": "BV1SsSpBMEyt/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1UPgm63EcD": {
+      "repo": "guitar-media-1",
+      "path": "BV1UPgm63EcD/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Uu411N7kG": {
+      "repo": "guitar-media-1",
+      "path": "BV1Uu411N7kG/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1VWe56XEd6": {
+      "repo": "guitar-media-1",
+      "path": "BV1VWe56XEd6/video.mp4",
+      "type": "mp4",
+      "width": 720,
+      "height": 1280
+    },
+    "BV1Vw411o7ip": {
+      "repo": "guitar-media-1",
+      "path": "BV1Vw411o7ip/video.mp4",
+      "type": "mp4",
+      "width": 1158,
+      "height": 720
+    },
+    "BV1W64y1d7Su": {
+      "repo": "guitar-media-1",
+      "path": "BV1W64y1d7Su/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1WG41177XA": {
+      "repo": "guitar-media-1",
+      "path": "BV1WG41177XA/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1Wj411C7Yw": {
+      "repo": "guitar-media-1",
+      "path": "BV1Wj411C7Yw/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1XzDDBxE5m": {
+      "repo": "guitar-media-1",
+      "path": "BV1XzDDBxE5m/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1YL4y1v7qq": {
+      "repo": "guitar-media-1",
+      "path": "BV1YL4y1v7qq/video.mp4",
+      "type": "mp4",
+      "width": 1084,
+      "height": 638
+    },
+    "BV1Zp4y1o7yi": {
+      "repo": "guitar-media-1",
+      "path": "BV1Zp4y1o7yi/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1b54y1V7u2": {
+      "repo": "guitar-media-1",
+      "path": "BV1b54y1V7u2/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1bq4y1j7Wp": {
+      "repo": "guitar-media-1",
+      "path": "BV1bq4y1j7Wp/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1c1421B7Lx": {
+      "repo": "guitar-media-1",
+      "path": "BV1c1421B7Lx/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1dt4y177yE": {
+      "repo": "guitar-media-1",
+      "path": "BV1dt4y177yE/video.mp4",
+      "type": "mp4",
+      "width": 640,
+      "height": 360
+    },
+    "BV1e5411i7wA": {
+      "repo": "guitar-media-1",
+      "path": "BV1e5411i7wA/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1kcg9eMEKE": {
+      "repo": "guitar-media-1",
+      "path": "BV1kcg9eMEKE/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1kuiHBpEY3": {
+      "repo": "guitar-media-1",
+      "path": "BV1kuiHBpEY3/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1nY1fYsEPP": {
+      "repo": "guitar-media-1",
+      "path": "BV1nY1fYsEPP/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1rZJN6qEWa": {
+      "repo": "guitar-media-1",
+      "path": "BV1rZJN6qEWa/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1ru4y157V3": {
+      "repo": "guitar-media-1",
+      "path": "BV1ru4y157V3/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1wb421i7yM": {
+      "repo": "guitar-media-1",
+      "path": "BV1wb421i7yM/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1woCBYhEoZ": {
+      "repo": "guitar-media-1",
+      "path": "BV1woCBYhEoZ/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1x44y1a7rf": {
+      "repo": "guitar-media-1",
+      "path": "BV1x44y1a7rf/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1yLgMz6Evp": {
+      "repo": "guitar-media-1",
+      "path": "BV1yLgMz6Evp/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1yq5n6BEpe": {
+      "repo": "guitar-media-1",
+      "path": "BV1yq5n6BEpe/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "BV1zAt56yEhL": {
+      "repo": "guitar-media-1",
+      "path": "BV1zAt56yEhL/video.mp4",
+      "type": "mp4",
+      "width": 1920,
+      "height": 1080
+    },
+    "yt-C6xgo6tosmg": {
+      "repo": "guitar-media-1",
+      "path": "yt-C6xgo6tosmg/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "yt-_b_bz0c-wAY": {
+      "repo": "guitar-media-1",
+      "path": "yt-_b_bz0c-wAY/video.mp4",
+      "type": "mp4",
+      "width": 1920,
+      "height": 1080
+    }
+  }
 }
