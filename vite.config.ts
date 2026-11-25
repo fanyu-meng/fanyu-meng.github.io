@@ -4,9 +4,9 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { creationStatsPlugin } from "./scripts/creation-stats";
 
-// Article videos live in the separate acoustics-media repository, published at /acoustics-media/.
+// Article videos live in the separate largeFiles repository, published at /largeFiles/.
 // Local development and preview read the published copy.
-const mediaProxy = { "/acoustics-media": { target: "https://fanyu-meng.github.io", changeOrigin: true } };
+const mediaProxy = { "/largeFiles": { target: "https://fanyu-meng.github.io", changeOrigin: true } };
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({

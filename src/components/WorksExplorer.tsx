@@ -97,7 +97,7 @@ function writingLabel(item: Work, en: boolean) {
 
 const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
 const audioRoot = new URL('acoustics-media/', dataRoot).href;
-const videoRoot = new URL('/acoustics-media/', window.location.origin).href;
+const videoRoot = new URL('/largeFiles/acoustics-media/', window.location.origin).href;
 const iconByKind = { reviews: Mic, podcast: Headphones, articles: BookOpen, video: Guitar, github: Code2, club: Ticket };
 const artwork: Partial<Record<Kind, string>> = { podcast: 'pobicast.webp', club: 'leslam.webp' };
 function categoryOf(item: Work): Category {
@@ -160,7 +160,7 @@ function articleMarkup(html: string, base: string) {
     if (omitTags.has(tag)) return;
     if (tag === 'audio' || tag === 'video') {
       // Players only load media from the site's own archives: audio sits with the article data,
-      // videos sit in the separate acoustics-media repository that GitHub Pages serves at /acoustics-media/.
+      // videos sit in the separate largeFiles repository that GitHub Pages serves at /largeFiles/.
       const root = tag === 'video' ? videoRoot : audioRoot;
       const archived = (raw: string | null) => {
         const url = webURL(raw || undefined, base);
