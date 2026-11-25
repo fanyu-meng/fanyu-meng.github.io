@@ -18,7 +18,7 @@ const categories = {
   podcast: ['播客', 'Podcast'],
   articles: ['声学科普', 'Acoustics'],
   writing: ['写作', 'Writing'],
-  video: ['吉他🎸&音乐🎵', 'Guitar 🎸 & music 🎵'],
+  video: ['吉他&音乐', 'Guitar & music'],
   github: ['我开发的项目', 'Projects I built'],
 } as const;
 
@@ -552,7 +552,9 @@ export default function WorksExplorer() {
       </div>
       <nav className="ex-filters" aria-label={en ? 'Filter by type' : '按栏目筛选'}>
         {(Object.keys(categories) as Category[]).map(type => <button type="button" key={type}
-          aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>{labels(type)}</button>)}
+          className={type === 'all' ? 'ex-home' : undefined}
+          aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>
+          {labels(type)}</button>)}
       </nav>
       {activeType === 'writing' && <div className="ex-subfilters" role="group" aria-label={en ? 'Writing categories' : '写作分类'}>
         {(Object.keys(writingTabs) as WritingTab[]).map(tab => <button key={tab} type="button"

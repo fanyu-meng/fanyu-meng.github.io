@@ -59,6 +59,10 @@
   font-size: .875rem;
   line-height: 1.35;
 }
+/* The home tab (全部) is set apart from the category tabs: solid style plus a divider after it. */
+.ex-filters button.ex-home { font-weight: 600; background: #2a2f38; border-color: #4a505b; color: #fff; margin-right: 9px; position: relative; }
+.ex-filters button.ex-home::after { content: ""; position: absolute; right: -10px; top: 6px; bottom: 6px; width: 1px; background: #3a3f48; }
+.ex-filters button.ex-home[aria-pressed="true"] { background: #392720; border-color: #89533d; color: #ffc2a4; }
 .ex-filters button:hover { background: #24272d; color: #fff; }
 .ex-filters button[aria-pressed="true"] { background: #392720; border-color: #89533d; color: #ffc2a4; }
 .ex-split {
