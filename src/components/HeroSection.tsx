@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ComponentType } from 'react';
 import { ChevronDown, Github, Linkedin, Twitter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AboutSection from './AboutSection';
@@ -14,12 +14,13 @@ import { WeChatIcon } from './icons/WeChatIcon';
 import { ZhihuIcon } from './icons/ZhihuIcon';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 
-const social = [
+const social: { label: string; icon: ComponentType<{ className?: string }>; href: string; badge?: string }[] = [
   { label: 'Email', icon: EmailIcon, href: 'mailto:mengfanyuhit@gmail.com' },
   { label: 'GitHub', icon: Github, href: '#/works?type=github' },
   { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/fanyu-meng-9332b489/' },
   { label: 'X', icon: Twitter, href: 'https://x.com/fanyu_meng' },
-  { label: '小红书', icon: XiaohongshuIcon, href: 'https://www.xiaohongshu.com/user/profile/629325e80000000021027f9b' },
+  { label: '小红书 · 子鱼说声学', icon: XiaohongshuIcon, href: 'https://www.xiaohongshu.com/user/profile/62933ab2000000002102b627', badge: '声' },
+  { label: '小红书 · 子鱼脱口秀', icon: XiaohongshuIcon, href: 'https://www.xiaohongshu.com/user/profile/629325e80000000021027f9b', badge: '秀' },
   { label: 'YouTube', icon: YoutubeIcon, href: 'https://www.youtube.com/@florence_fernandez' },
   { label: 'Bilibili', icon: BilibiliIcon, href: 'https://b23.tv/gkxZqiT' },
   { label: '小宇宙', icon: XiaoyuzhouIcon, href: 'https://www.xiaoyuzhoufm.com/podcast/67cdacc32deb5237c648049f' },
@@ -55,9 +56,9 @@ export default function HeroSection() {
             </summary>
             <AboutSection />
             <div className="mt-5 flex flex-wrap gap-2">
-              {social.map(({ label, href, icon: Icon }) => <a key={label} className={socialClass} href={href}
+              {social.map(({ label, href, icon: Icon, badge }) => <a key={label} className={socialClass + ' relative'} href={href}
                 aria-label={label} title={label} target={href.startsWith('https:') ? '_blank' : undefined} rel={href.startsWith('https:') ? 'noopener noreferrer' : undefined}>
-                <Icon className="h-5 w-5" /></a>)}
+                <Icon className="h-5 w-5" />{badge && <span aria-hidden="true" className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] leading-none text-primary-foreground">{badge}</span>}</a>)}
               <button type="button" className={socialClass} aria-label={qrTitle} title={qrTitle} onClick={() => setShowQR(true)}><WeChatIcon className="h-5 w-5" /></button>
             </div>
           </details>
