@@ -1,14 +1,14 @@
 {
   "standupShows": {
     "value": 20,
-    "asOf": "2026-11-25",
+    "asOf": "2026-11-23",
     "status": "verified",
     "source": "numbered-show-notes"
   },
   "podcastEpisodes": {
     "value": 30,
     "asOf": "2026-11-23",
-    "status": "last-known",
+    "status": "verified",
     "source": "https://anchor.fm/s/1063042b8/podcast/rss"
   },
   "zhihuFollowers": {
