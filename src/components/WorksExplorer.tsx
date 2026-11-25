@@ -71,7 +71,8 @@ function articleTabFor(item: Entry): ArticleTab {
   return item.originality === 'non-original' ? 'non-original' : 'article';
 }
 
-// Curated writing selection. Other non-acoustics entries appear under 知乎创作.
+// Curated writing selection, joined by literary works first published here (topic 文学).
+// Other non-acoustics entries appear under 知乎创作.
 const writingIds = new Set([
   'answer-499222686', 'answer-510079266', 'answer-814774540', 'answer-850209799',
   'answer-625250053', 'answer-652610384', 'answer-883511002', 'answer-974363858',
@@ -82,7 +83,7 @@ const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Z
 
 function writingTabFor(item: Work): WritingTab {
   if (item.id.startsWith('douban-')) return 'douban';
-  return writingIds.has(item.id) ? 'writing' : 'zhihu';
+  return item.topic === '文学' || writingIds.has(item.id) ? 'writing' : 'zhihu';
 }
 
 function doubanGroupFor(item: Entry): DoubanGroup {

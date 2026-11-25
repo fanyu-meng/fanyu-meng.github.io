@@ -178,8 +178,13 @@ def main():
     paths = sorted(SOURCE.glob('douban-*.html'))
     if not paths:
         raise SystemExit('No saved Douban pages found in .douban-import/')
-    extracted = [extract(path) for path in paths]
     index = json.loads(INDEX.read_text(encoding='utf-8'))
+    # A work first published on this site links to its Douban copy; importing the copy would list it twice.
+    crossposted = {match.groups() for entry in index if not entry['id'].startswith('douban-')
+                   for link in entry.get('links', [])
+                   if (match := re.search(r'douban\.com/(note|review)/(\d+)', link['url']))}
+    extracted = [extract(path) for path in paths
+                 if re.fullmatch(r'douban-(note|review)-(\d+)\.html', path.name).groups() not in crossposted]
     ids = {entry['id'] for entry, _, _ in extracted}
     # Reimports replace only the matching Douban entries; all other work stays put.
     index = [entry for entry in index if entry['id'] not in ids]
