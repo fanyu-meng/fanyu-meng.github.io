@@ -332,18 +332,9 @@ const schools = [
   { file: 'rwth.svg', height: 28, zh: '亚琛工业大学', en: 'RWTH Aachen University' },
 ];
 
-// A row of figures that swipes sideways on a phone and sits side by side on a wide screen.
+// Figures of one job, side by side when there are two.
 function Strip({ slides }: { slides: ReactNode[] }) {
-  const [index, setIndex] = useState(0);
-  return <>
-    <div className="cr-strip" onScroll={e => {
-      const strip = e.currentTarget, first = strip.firstElementChild as HTMLElement | null;
-      if (first) setIndex(Math.round(strip.scrollLeft / (first.offsetWidth + 10)));
-    }}>
-      {slides.map((slide, i) => <div key={i} className="cr-slide">{slide}</div>)}
-    </div>
-    {slides.length > 1 && <div className="cr-dots" aria-hidden="true">{slides.map((_, i) => <i key={i} className={i === index ? 'on' : undefined} />)}</div>}
-  </>;
+  return <div className="cr-strip">{slides.map((slide, i) => <div key={i} className="cr-slide">{slide}</div>)}</div>;
 }
 
 type Job = { id: string; years: string; role: ReactNode; place?: string; desc?: string; logo: ReactNode; slides: ReactNode[] };
