@@ -410,30 +410,24 @@
 .cr { max-width: 780px; display: grid; gap: 26px; padding: 6px 0 12px; }
 .cr-label { display: flex; align-items: center; gap: 8px; margin: 0; color: #c4c9d1; font-size: .92rem; font-weight: 500; letter-spacing: 0; }
 .cr-label svg { width: 16px; height: 16px; color: #8e97a5; }
-.cr-rail, .cr-edu { position: relative; display: grid; margin: 0; padding: 0 0 0 26px; list-style: none; }
+.cr-rail { position: relative; display: grid; margin: 0; padding: 0 0 0 26px; list-style: none; }
 .cr-rail { gap: 38px; }
-.cr-edu { gap: 16px; }
-.cr-rail::before, .cr-edu::before { content: ""; position: absolute; left: 4px; top: 8px; bottom: 8px; width: 1px; background: #2c313a; }
-.cr-node, .cr-school { position: relative; min-width: 0; }
+.cr-edu { gap: 22px; }
+.cr-rail::before { content: ""; position: absolute; left: 4px; top: 8px; bottom: 8px; width: 1px; background: #2c313a; }
+.cr-node { position: relative; min-width: 0; }
 .cr-node { display: grid; gap: 6px; }
-.cr-node::before, .cr-school::before { content: ""; position: absolute; left: -26px; width: 9px; height: 9px; border: 1.5px solid #5d6570; border-radius: 50%; background: #0d1014; }
+.cr-node::before { content: ""; position: absolute; left: -26px; width: 9px; height: 9px; border: 1.5px solid #5d6570; border-radius: 50%; background: #0d1014; }
 .cr-node::before { top: 6px; }
 .cr-now::before { border-color: #ee7a4f; background: #ee7a4f; }
 .cr-years { margin: 0; color: #8e97a5; font-size: .8rem; font-variant-numeric: tabular-nums; }
 .cr-role { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 9px; margin: 0; color: #eef0f3; font-size: 1rem; font-weight: 500; letter-spacing: 0; }
-.cr-role img, .cr-mark img { width: auto; max-width: 100%; }
+.cr-role img { width: auto; max-width: 100%; }
 .cr-at { color: #5d6570; font-weight: 400; }
 .cr-desc { margin: 0; max-width: 62ch; color: #c4c9d1; font-size: .9rem; line-height: 1.7; }
 .cr-fig { margin-top: 8px; overflow: hidden; }
 .cr-fig svg { display: block; width: 100%; height: auto; }
 .cr-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 4px; }
 .cr-pair h5 { margin: 0; color: #c4c9d1; font-size: .9rem; font-weight: 500; letter-spacing: 0; }
-.cr-school { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 38px; }
-.cr-school::before { top: 50%; margin-top: -4.5px; }
-.cr-mark { display: flex; align-items: center; width: 104px; }
-.cr-school strong { color: #eef0f3; font-size: .94rem; font-weight: 500; }
-.cr-school span { color: #8e97a5; font-size: .8rem; }
 @media (max-width: 759px) {
   .cr-pair { grid-template-columns: minmax(0, 1fr); }
-  .cr-mark { width: 100%; }
 }
