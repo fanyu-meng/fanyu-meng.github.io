@@ -36,6 +36,11 @@ const videoTabs = { room: ['琴房', 'Practice room'], rehearsal: ['排练', 'Re
 type VideoTab = keyof typeof videoTabs;
 const isVideoTab = (tab: unknown): tab is VideoTab =>
   typeof tab === 'string' && Object.prototype.hasOwnProperty.call(videoTabs, tab);
+// Podcast sub-tabs: every episode, and the episodes that have a highlights cut.
+const podcastTabs = { episodes: ['全部单集', 'All episodes'], highlights: ['Highlights', 'Highlights'] } as const;
+type PodcastTab = keyof typeof podcastTabs;
+const isPodcastTab = (tab: unknown): tab is PodcastTab =>
+  typeof tab === 'string' && Object.prototype.hasOwnProperty.call(podcastTabs, tab);
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -49,6 +54,7 @@ type Entry = {
   topic?: string;
   section?: 'articles' | 'writing';
   videoTab?: 'rehearsal' | 'gigs';
+  highlights?: boolean;
   theme?: string;
   format?: 'article' | 'answer';
   originality?: 'original' | 'non-original';
@@ -71,7 +77,7 @@ type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoCh
 type Article = { body?: string[]; html?: string };
 type Address = {
   type: Category; item: string; q: string;
-  articleTab?: ArticleTab; writingTab?: WritingTab; videoTab?: VideoTab;
+  articleTab?: ArticleTab; writingTab?: WritingTab; videoTab?: VideoTab; podcastTab?: PodcastTab;
 };
 
 function articleTabFor(item: Entry): ArticleTab {
@@ -259,7 +265,8 @@ function readAddress(): Address {
   return { type, item, q: params.get('q') || '',
     articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
     writingTab,
-    videoTab: type === 'video' && isVideoTab(tab) ? tab : undefined };
+    videoTab: type === 'video' && isVideoTab(tab) ? tab : undefined,
+    podcastTab: type === 'podcast' && isPodcastTab(tab) ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -270,6 +277,7 @@ function hrefFor(address: Address) {
   if (address.type === 'articles' && address.articleTab) params.set('format', address.articleTab);
   if (address.type === 'writing' && address.writingTab) params.set('tab', address.writingTab);
   if (address.type === 'video' && address.videoTab) params.set('tab', address.videoTab);
+  if (address.type === 'podcast' && address.podcastTab) params.set('tab', address.podcastTab);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -456,11 +464,13 @@ export default function WorksExplorer() {
   // A direct link to a video opens in the sub-tab the video belongs to.
   const linkedVideo = activeType === 'video' && entries.find(item => item.kind === 'video' && item.id === address.item);
   const activeVideoTab: VideoTab = linkedVideo ? videoTabFor(linkedVideo) : address.videoTab || 'room';
+  const activePodcastTab: PodcastTab = address.podcastTab || 'episodes';
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
     if (browsingArticles && articleTabFor(item) !== activeArticleTab) return false;
     if (activeType === 'video' && videoTabFor(item) !== activeVideoTab) return false;
+    if (activeType === 'podcast' && activePodcastTab === 'highlights' && !item.highlights) return false;
     const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
@@ -520,6 +530,7 @@ export default function WorksExplorer() {
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
       articleTab: browsingArticles ? activeArticleTab : undefined,
       videoTab: activeType === 'video' ? activeVideoTab : undefined,
+      podcastTab: activeType === 'podcast' ? activePodcastTab : undefined,
     }, replace);
   }
   function choose(item: Work) {
@@ -589,6 +600,14 @@ export default function WorksExplorer() {
         {works.data?.videoChannels?.map(link => <a key={link.url} href={webURL(link.url)} target="_blank" rel="noopener noreferrer"
           className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
         <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
+      </div>}
+      {activeType === 'podcast' && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Podcast categories' : '播客分类'}>
+        {(Object.keys(podcastTabs) as PodcastTab[]).map(tab => <button key={tab} type="button"
+          aria-pressed={activePodcastTab === tab}
+          onClick={() => navigate({ type: 'podcast', item: '', q: address.q, podcastTab: tab })}>
+          {podcastTabs[tab][Number(en)]}
+        </button>)}
+        <span role="status">{en ? visible.length + (visible.length === 1 ? ' episode' : ' episodes') : '共 ' + visible.length + ' 集'}</span>
       </div>}
       {!browsingArticles && activeType !== 'writing' && activeType !== 'video' && activeType !== 'career' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
       {activeType === 'career' ? <CareerTimeline en={en} /> : <>
