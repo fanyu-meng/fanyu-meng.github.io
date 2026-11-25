@@ -4,6 +4,27 @@
     "guitar-media-2": "/guitar-media-2/"
   },
   "videos": {
+    "2023-06-02-rehearsal": {
+      "repo": "guitar-media-1",
+      "path": "2023-06-02-rehearsal/video.mp4",
+      "type": "mp4",
+      "width": 1280,
+      "height": 720
+    },
+    "2023-07-18-rehearsal": {
+      "repo": "guitar-media-1",
+      "path": "2023-07-18-rehearsal/video.mp4",
+      "type": "mp4",
+      "width": 960,
+      "height": 544
+    },
+    "2025-11-19-rehearsal": {
+      "repo": "guitar-media-1",
+      "path": "2025-11-19-rehearsal/video.mp4",
+      "type": "mp4",
+      "width": 960,
+      "height": 544
+    },
     "2025-12-christmas-party-let-it-be": {
       "repo": "guitar-media-1",
       "path": "2025-12-christmas-party-let-it-be/video.mp4",

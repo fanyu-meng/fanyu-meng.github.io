@@ -31,9 +31,11 @@ const articleTabs = {
   answer: ['知乎回答', 'Zhihu answers'],
 } as const;
 type ArticleTab = keyof typeof articleTabs;
-// Video sub-tabs: my own playing, and gigs I went to watch.
-const videoTabs = { room: ['琴房', 'Practice room'], gigs: ['Gigs', 'Gigs'] } as const;
+// Video sub-tabs: my own playing, band rehearsals, and gigs I went to watch.
+const videoTabs = { room: ['琴房', 'Practice room'], rehearsal: ['排练', 'Rehearsals'], gigs: ['Gigs', 'Gigs'] } as const;
 type VideoTab = keyof typeof videoTabs;
+const isVideoTab = (tab: unknown): tab is VideoTab =>
+  typeof tab === 'string' && Object.prototype.hasOwnProperty.call(videoTabs, tab);
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -46,7 +48,7 @@ type Entry = {
   meta?: string;
   topic?: string;
   section?: 'articles' | 'writing';
-  videoTab?: 'gigs';
+  videoTab?: 'rehearsal' | 'gigs';
   theme?: string;
   format?: 'article' | 'answer';
   originality?: 'original' | 'non-original';
@@ -92,7 +94,7 @@ const isWritingTab = (tab: unknown): tab is WritingTab =>
   typeof tab === 'string' && Object.prototype.hasOwnProperty.call(writingTabs, tab);
 
 function videoTabFor(item: Entry): VideoTab {
-  return item.videoTab === 'gigs' ? 'gigs' : 'room';
+  return isVideoTab(item.videoTab) ? item.videoTab : 'room';
 }
 
 function writingTabFor(item: Work): WritingTab {
@@ -257,7 +259,7 @@ function readAddress(): Address {
   return { type, item, q: params.get('q') || '',
     articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
     writingTab,
-    videoTab: type === 'video' && (tab === 'room' || tab === 'gigs') ? tab : undefined };
+    videoTab: type === 'video' && isVideoTab(tab) ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
