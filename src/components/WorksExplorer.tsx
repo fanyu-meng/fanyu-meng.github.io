@@ -31,6 +31,9 @@ const articleTabs = {
   answer: ['知乎回答', 'Zhihu answers'],
 } as const;
 type ArticleTab = keyof typeof articleTabs;
+// Video sub-tabs: my own playing, and gigs I went to watch.
+const videoTabs = { room: ['琴房', 'Practice room'], gigs: ['Gigs', 'Gigs'] } as const;
+type VideoTab = keyof typeof videoTabs;
 type WritingTab = 'writing' | 'zhihu' | 'douban';
 const doubanGroups = {
   northeast: ['东北回家过年', 'New Year in Northeast China'],
@@ -49,6 +52,7 @@ type Entry = {
   meta?: string;
   topic?: string;
   section?: 'articles' | 'writing';
+  videoTab?: 'gigs';
   format?: 'article' | 'answer';
   originality?: 'original' | 'non-original';
   featured?: boolean;
@@ -70,7 +74,7 @@ type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoCh
 type Article = { body?: string[]; html?: string };
 type Address = {
   type: Category; item: string; q: string;
-  articleTab?: ArticleTab; writingTab?: WritingTab; doubanGroup?: DoubanGroup;
+  articleTab?: ArticleTab; writingTab?: WritingTab; doubanGroup?: DoubanGroup; videoTab?: VideoTab;
 };
 
 function articleTabFor(item: Entry): ArticleTab {
@@ -87,6 +91,10 @@ const writingIds = new Set([
   'answer-1059104737', 'zhihu-17943190775',
 ]);
 const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Zhihu creations'], douban: ['豆瓣', 'Douban'] } as const;
+
+function videoTabFor(item: Entry): VideoTab {
+  return item.videoTab === 'gigs' ? 'gigs' : 'room';
+}
 
 function writingTabFor(item: Work): WritingTab {
   if (item.id.startsWith('douban-')) return 'douban';
@@ -251,6 +259,7 @@ function readAddress(): Address {
   return { type, item, q: params.get('q') || '',
     articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
     writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined,
+    videoTab: type === 'video' && (tab === 'room' || tab === 'gigs') ? tab : undefined,
     doubanGroup: tab === 'douban' && (group === 'northeast' || group === 'book-reviews') ? group : undefined };
 }
 
@@ -264,6 +273,7 @@ function hrefFor(address: Address) {
     params.set('tab', address.writingTab);
     if (address.writingTab === 'douban' && address.doubanGroup) params.set('group', address.doubanGroup);
   }
+  if (address.type === 'video' && address.videoTab) params.set('tab', address.videoTab);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
 }
@@ -444,6 +454,9 @@ export default function WorksExplorer() {
     ? articleTabFor(linkedArticle) : address.articleTab || 'article';
   const activeWritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
     ? writingTabFor(linkedArticle) : address.writingTab || 'writing';
+  // A direct link to a video opens in the sub-tab the video belongs to.
+  const linkedVideo = activeType === 'video' && entries.find(item => item.kind === 'video' && item.id === address.item);
+  const activeVideoTab: VideoTab = linkedVideo ? videoTabFor(linkedVideo) : address.videoTab || 'room';
   const browsingDouban = activeType === 'writing' && activeWritingTab === 'douban';
   const activeDoubanGroup = browsingDouban && address.doubanGroup
     ? (linkedArticle ? doubanGroupFor(linkedArticle) : address.doubanGroup) : undefined;
@@ -451,6 +464,7 @@ export default function WorksExplorer() {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
     if (browsingArticles && articleTabFor(item) !== activeArticleTab) return false;
+    if (activeType === 'video' && videoTabFor(item) !== activeVideoTab) return false;
     const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
     const group = writingTab === 'douban' ? doubanGroupFor(item) : undefined;
@@ -512,6 +526,7 @@ export default function WorksExplorer() {
       type: activeType === 'career' ? 'all' : activeType, item: '', q, doubanGroup: activeDoubanGroup,
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
       articleTab: browsingArticles ? activeArticleTab : undefined,
+      videoTab: activeType === 'video' ? activeVideoTab : undefined,
     }, replace);
   }
   function choose(item: Work) {
@@ -581,7 +596,12 @@ export default function WorksExplorer() {
         </button>)}
         <span role="status">{en ? visible.length + ' results' : '共 ' + visible.length + ' 篇'}</span>
       </div>}
-      {activeType === 'video' && <div className="ex-subfilters">
+      {activeType === 'video' && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Video categories' : '视频分类'}>
+        {(Object.keys(videoTabs) as VideoTab[]).map(tab => <button key={tab} type="button"
+          aria-pressed={activeVideoTab === tab}
+          onClick={() => navigate({ type: 'video', item: '', q: address.q, videoTab: tab })}>
+          {videoTabs[tab][Number(en)]}
+        </button>)}
         {works.data?.videoChannels?.map(link => <a key={link.url} href={webURL(link.url)} target="_blank" rel="noopener noreferrer"
           className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
         <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
@@ -599,8 +619,8 @@ export default function WorksExplorer() {
       </div>}
       {activeType === 'github' && visible.length > 0 && <ProjectGallery projects={visible} address={address} en={en} />}
       {activeType === 'video' && visible.length > 0 && <VideoGallery videos={visible} en={en} selectedId={address.item}
-        hrefForVideo={id => hrefFor({ type: 'video', q: address.q, item: id })}
-        closeDirectLink={() => navigate({ type: 'video', q: address.q, item: '' }, true)}>
+        hrefForVideo={id => hrefFor({ type: 'video', q: address.q, item: id, videoTab: activeVideoTab })}
+        closeDirectLink={() => navigate({ type: 'video', q: address.q, item: '', videoTab: activeVideoTab }, true)}>
         {reader}
       </VideoGallery>}
       {activeType !== 'video' && activeType !== 'github' && visible.length > 0 &&

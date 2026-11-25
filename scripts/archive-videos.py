@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""把网站「吉他🎸&音乐🎵」里的视频下载下来，存进自己的 guitar-media-N 仓库。
+"""把网站「吉他&音乐」里的视频下载下来，存进自己的 guitar-media-N 仓库。
 
 在自己的电脑上运行（B 站会拦截机房 IP）。需要 git、yt-dlp、ffmpeg：
 

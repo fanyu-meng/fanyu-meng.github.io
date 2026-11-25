@@ -1305,6 +1305,7 @@
     },
     {
       "id": "BV1CZCQYTEbA",
+      "videoTab": "gigs",
       "title": "Pink Floyd致敬乐队，目睹吉他手现场成仙",
       "links": [
         {
@@ -1422,6 +1423,7 @@
     },
     {
       "id": "BV19C411n7o2",
+      "videoTab": "gigs",
       "title": "Pink Floyd寂寞惊现巴塞罗那街头",
       "links": [
         {
@@ -1447,20 +1449,6 @@
       "duration": "01:05",
       "thumbnail": "content/video-covers/BV16J4m1h7Go.webp",
       "embed": "https://player.bilibili.com/player.html?isOutside=true&aid=1251605584&bvid=BV16J4m1h7Go&cid=1463669196&p=1&autoplay=0"
-    },
-    {
-      "id": "BV1ew411j7No",
-      "title": "朋友问我，听Pink Floyd是什么感觉",
-      "links": [
-        {
-          "label": "B 站",
-          "url": "https://www.bilibili.com/video/BV1ew411j7No/"
-        }
-      ],
-      "publishedAt": "2024-01-25",
-      "duration": "12:29",
-      "thumbnail": "content/video-covers/BV1ew411j7No.webp",
-      "embed": "https://player.bilibili.com/player.html?isOutside=true&aid=326730822&bvid=BV1ew411j7No&cid=1418770202&p=1&autoplay=0"
     },
     {
       "id": "BV1e5411i7wA",
