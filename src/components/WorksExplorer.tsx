@@ -34,12 +34,6 @@ type ArticleTab = keyof typeof articleTabs;
 // Video sub-tabs: my own playing, and gigs I went to watch.
 const videoTabs = { room: ['琴房', 'Practice room'], gigs: ['Gigs', 'Gigs'] } as const;
 type VideoTab = keyof typeof videoTabs;
-type WritingTab = 'writing' | 'zhihu' | 'douban';
-const doubanGroups = {
-  northeast: ['东北回家过年', 'New Year in Northeast China'],
-  'book-reviews': ['书评', 'Book reviews'],
-} as const;
-type DoubanGroup = keyof typeof doubanGroups;
 type Link = { url: string; label: string };
 type Entry = {
   id: string;
@@ -53,6 +47,7 @@ type Entry = {
   topic?: string;
   section?: 'articles' | 'writing';
   videoTab?: 'gigs';
+  theme?: string;
   format?: 'article' | 'answer';
   originality?: 'original' | 'non-original';
   featured?: boolean;
@@ -74,7 +69,7 @@ type WorksFile = Partial<Record<Exclude<Kind, 'articles'>, Entry[]>> & { videoCh
 type Article = { body?: string[]; html?: string };
 type Address = {
   type: Category; item: string; q: string;
-  articleTab?: ArticleTab; writingTab?: WritingTab; doubanGroup?: DoubanGroup; videoTab?: VideoTab;
+  articleTab?: ArticleTab; writingTab?: WritingTab; videoTab?: VideoTab;
 };
 
 function articleTabFor(item: Entry): ArticleTab {
@@ -82,33 +77,34 @@ function articleTabFor(item: Entry): ArticleTab {
   return item.originality === 'non-original' ? 'non-original' : 'article';
 }
 
-// Curated writing selection, joined by literary works first published here (topic 文学).
-// Other non-acoustics entries appear under 知乎创作.
-const writingIds = new Set([
-  'answer-499222686', 'answer-510079266', 'answer-814774540', 'answer-850209799',
-  'answer-625250053', 'answer-652610384', 'answer-883511002', 'answer-974363858',
-  'answer-962373050', 'answer-986565730', 'answer-1095657294', 'answer-1584623872',
-  'answer-1059104737', 'zhihu-17943190775',
-]);
-const writingTabs = { writing: ['写作', 'Writing'], zhihu: ['知乎创作', 'Zhihu creations'], douban: ['豆瓣', 'Douban'] } as const;
+// Writing sub-tabs. 文学 holds works first published here (topic 文学) and is hidden while empty.
+const writingTabs = {
+  literature: ['文学', 'Literature'],
+  home: ['回家过年', 'Home for the New Year'],
+  reviews: ['书评', 'Book reviews'],
+  abroad: ['留学生活', 'Life abroad'],
+  research: ['科研与技术', 'Research & tech'],
+  music: ['音乐与吉他', 'Music & guitar'],
+  misc: ['杂谈', 'Miscellany'],
+} as const;
+type WritingTab = keyof typeof writingTabs;
+const isWritingTab = (tab: unknown): tab is WritingTab =>
+  typeof tab === 'string' && Object.prototype.hasOwnProperty.call(writingTabs, tab);
 
 function videoTabFor(item: Entry): VideoTab {
   return item.videoTab === 'gigs' ? 'gigs' : 'room';
 }
 
 function writingTabFor(item: Work): WritingTab {
-  if (item.id.startsWith('douban-')) return 'douban';
-  return item.topic === '文学' || writingIds.has(item.id) ? 'writing' : 'zhihu';
-}
-
-function doubanGroupFor(item: Entry): DoubanGroup {
-  return /^东北(?:回家|老家)过年/.test(item.title) ? 'northeast' : 'book-reviews';
+  // Douban diaries are the New Year series; the rest of Douban is book reviews.
+  if (item.id.startsWith('douban-')) return /^东北(?:回家|老家)过年/.test(item.title) ? 'home' : 'reviews';
+  if (item.topic === '文学') return 'literature';
+  // Other writing carries a theme; anything new without one lands in 杂谈.
+  return isWritingTab(item.theme) && item.theme !== 'literature' ? item.theme : 'misc';
 }
 
 function writingLabel(item: Work, en: boolean) {
-  const tab = writingTabFor(item);
-  const label = writingTabs[tab][Number(en)];
-  return tab === 'douban' ? label + ' · ' + doubanGroups[doubanGroupFor(item)][Number(en)] : label;
+  return writingTabs[writingTabFor(item)][Number(en)];
 }
 
 const dataRoot = new URL(import.meta.env.BASE_URL + 'content/', window.location.origin);
@@ -256,11 +252,12 @@ function readAddress(): Address {
   const format = params.get('format');
   const tab = params.get('tab');
   const group = params.get('group');
+  // Old links: the Douban tab became the 回家过年 and 书评 tabs.
+  const writingTab = isWritingTab(tab) ? tab : tab === 'douban' ? (group === 'book-reviews' ? 'reviews' : 'home') : undefined;
   return { type, item, q: params.get('q') || '',
     articleTab: format === 'article' || format === 'non-original' || format === 'answer' ? format : undefined,
-    writingTab: tab === 'writing' || tab === 'zhihu' || tab === 'douban' ? tab : undefined,
-    videoTab: type === 'video' && (tab === 'room' || tab === 'gigs') ? tab : undefined,
-    doubanGroup: tab === 'douban' && (group === 'northeast' || group === 'book-reviews') ? group : undefined };
+    writingTab,
+    videoTab: type === 'video' && (tab === 'room' || tab === 'gigs') ? tab : undefined };
 }
 
 function hrefFor(address: Address) {
@@ -269,10 +266,7 @@ function hrefFor(address: Address) {
   if (address.item) params.set('item', address.item);
   if (address.q) params.set('q', address.q);
   if (address.type === 'articles' && address.articleTab) params.set('format', address.articleTab);
-  if (address.type === 'writing' && address.writingTab) {
-    params.set('tab', address.writingTab);
-    if (address.writingTab === 'douban' && address.doubanGroup) params.set('group', address.doubanGroup);
-  }
+  if (address.type === 'writing' && address.writingTab) params.set('tab', address.writingTab);
   if (address.type === 'video' && address.videoTab) params.set('tab', address.videoTab);
   const query = params.toString();
   return '#/works' + (query ? '?' + query : '');
@@ -452,14 +446,14 @@ export default function WorksExplorer() {
   const browsingArticles = activeType === 'articles';
   const activeArticleTab = browsingArticles && linkedArticle
     ? articleTabFor(linkedArticle) : address.articleTab || 'article';
-  const activeWritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
-    ? writingTabFor(linkedArticle) : address.writingTab || 'writing';
+  // Sub-tabs with nothing in them (文学, until a work is published) stay hidden.
+  const shownWritingTabs = (Object.keys(writingTabs) as WritingTab[]).filter(tab =>
+    entries.some(item => categoryOf(item) === 'writing' && writingTabFor(item) === tab));
+  const activeWritingTab: WritingTab = linkedArticle && categoryOf(linkedArticle) === 'writing'
+    ? writingTabFor(linkedArticle) : address.writingTab || shownWritingTabs[0] || 'home';
   // A direct link to a video opens in the sub-tab the video belongs to.
   const linkedVideo = activeType === 'video' && entries.find(item => item.kind === 'video' && item.id === address.item);
   const activeVideoTab: VideoTab = linkedVideo ? videoTabFor(linkedVideo) : address.videoTab || 'room';
-  const browsingDouban = activeType === 'writing' && activeWritingTab === 'douban';
-  const activeDoubanGroup = browsingDouban && address.doubanGroup
-    ? (linkedArticle ? doubanGroupFor(linkedArticle) : address.doubanGroup) : undefined;
   const visible = entries.filter(item => {
     const category = categoryOf(item);
     if (activeType !== 'all' && category !== activeType) return false;
@@ -467,12 +461,9 @@ export default function WorksExplorer() {
     if (activeType === 'video' && videoTabFor(item) !== activeVideoTab) return false;
     const writingTab = category === 'writing' ? writingTabFor(item) : undefined;
     if (activeType === 'writing' && writingTab !== activeWritingTab) return false;
-    const group = writingTab === 'douban' ? doubanGroupFor(item) : undefined;
-    if (activeDoubanGroup && group !== activeDoubanGroup) return false;
     const source = item.links?.map(link => link.label + ' ' + link.url).join(' ');
     const searchable = [item.id, item.title, item.bookTitle, item.alternateTitle, item.publishedAt, item.meta, item.topic, item.summary, source,
       writingTab ? writingTabs[writingTab].join(' ') : item.format === 'answer' ? '知乎回答 Zhihu answer' : '',
-      group && doubanGroups[group].join(' '),
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
@@ -501,7 +492,7 @@ export default function WorksExplorer() {
     };
   }, []);
 
-  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, activeArticleTab, address.writingTab, address.doubanGroup]);
+  useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [address.q, address.type, activeArticleTab, address.writingTab]);
   useEffect(() => {
     if (works.isPending || articles.isPending || !requestedScroll.current) return;
     requestedScroll.current = false;
@@ -523,7 +514,7 @@ export default function WorksExplorer() {
   function search(q: string, replace = false) {
     navigate({
       // The career page has nothing to search, so a search there looks through all works.
-      type: activeType === 'career' ? 'all' : activeType, item: '', q, doubanGroup: activeDoubanGroup,
+      type: activeType === 'career' ? 'all' : activeType, item: '', q,
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
       articleTab: browsingArticles ? activeArticleTab : undefined,
       videoTab: activeType === 'video' ? activeVideoTab : undefined,
@@ -571,20 +562,11 @@ export default function WorksExplorer() {
           aria-pressed={activeType === type} onClick={() => navigate({ type, item: '', q: address.q })}>
           {labels(type)}</button>)}
       </nav>
-      {activeType === 'writing' && <div className="ex-subfilters" role="group" aria-label={en ? 'Writing categories' : '写作分类'}>
-        {(Object.keys(writingTabs) as WritingTab[]).map(tab => <button key={tab} type="button"
+      {activeType === 'writing' && <div className="ex-subfilters flex-wrap" role="group" aria-label={en ? 'Writing categories' : '写作分类'}>
+        {shownWritingTabs.map(tab => <button key={tab} type="button"
           aria-pressed={activeWritingTab === tab}
           onClick={() => navigate({ type: 'writing', item: '', q: '', writingTab: tab })}>
           {writingTabs[tab][Number(en)]}
-        </button>)}
-        {!browsingDouban && writingCount}
-      </div>}
-      {browsingDouban && <div className="ex-subfilters flex-wrap border-l-2 border-border pl-3" role="group" aria-label={en ? 'Douban categories' : '豆瓣分类'}>
-        {(Object.keys(doubanGroups) as DoubanGroup[]).map(group => <button key={group} type="button"
-          aria-pressed={activeDoubanGroup === group}
-          onClick={() => navigate({ type: 'writing', writingTab: 'douban', item: '', q: '',
-            doubanGroup: group === activeDoubanGroup ? undefined : group })}>
-          {doubanGroups[group][Number(en)]}
         </button>)}
         {writingCount}
       </div>}
