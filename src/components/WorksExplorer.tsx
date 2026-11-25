@@ -8,10 +8,12 @@ import worksIndexUrl from '../../public/content/works.json?url';
 import { VideoPlayer, videoSources, withPublishedVideos, type ArchivedVideo } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
 import CreationStats from './CreationStats';
+import CareerTimeline from './CareerTimeline';
 import './works-explorer.css';
 
 const categories = {
   all: ['全部', 'All'],
+  career: ['主业', 'Career'],
   reviews: ['脱口秀', 'Stand-up'],
   podcast: ['播客', 'Podcast'],
   articles: ['声学科普', 'Acoustics'],
@@ -21,7 +23,8 @@ const categories = {
 } as const;
 
 type Category = keyof typeof categories;
-type Kind = Exclude<Category, 'all' | 'writing'> | 'club';
+// The career tab is a fixed page of its own, not an index of works.
+type Kind = Exclude<Category, 'all' | 'writing' | 'career'> | 'club';
 const articleTabs = {
   article: ['本人原创', 'My original articles'],
   'non-original': ['非本人原创', 'Guest & sourced articles'],
@@ -505,7 +508,8 @@ export default function WorksExplorer() {
   }
   function search(q: string, replace = false) {
     navigate({
-      type: activeType, item: '', q, doubanGroup: activeDoubanGroup,
+      // The career page has nothing to search, so a search there looks through all works.
+      type: activeType === 'career' ? 'all' : activeType, item: '', q, doubanGroup: activeDoubanGroup,
       writingTab: activeType === 'writing' ? activeWritingTab : undefined,
       articleTab: browsingArticles ? activeArticleTab : undefined,
     }, replace);
@@ -580,7 +584,8 @@ export default function WorksExplorer() {
           className="mr-2 text-primary underline-offset-4 hover:underline">{!en && link.label === 'Bilibili' ? 'B 站' : link.label}</a>)}
         <span role="status">{en ? visible.length + (visible.length === 1 ? ' video' : ' videos') : '共 ' + visible.length + ' 个视频'}</span>
       </div>}
-      {!browsingArticles && activeType !== 'writing' && activeType !== 'video' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
+      {!browsingArticles && activeType !== 'writing' && activeType !== 'video' && activeType !== 'career' && <p className="sr-only" aria-live="polite">{en ? visible.length + ' results' : '显示 ' + visible.length + ' 条作品'}</p>}
+      {activeType === 'career' ? <CareerTimeline en={en} /> : <>
       {failedIndexes.length > 0 && <div className="ex-status" role="status">{en ? 'Some works could not be loaded. ' : '部分作品暂未载入。'}
         <button type="button" onClick={() => failedIndexes.forEach(index => { void index.refetch(); })}>{en ? 'Retry' : '重新加载'}</button>
       </div>}
@@ -626,6 +631,7 @@ export default function WorksExplorer() {
           </div>
           {!small && current && <div id="ex-pane" className="ex-pane">{reader}</div>}
         </div>}
+      </>}
     </div>
   </section>;
 }
