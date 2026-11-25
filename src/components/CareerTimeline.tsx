@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { Briefcase, ChevronRight, GraduationCap } from 'lucide-react';
+import { Briefcase, GraduationCap } from 'lucide-react';
 
 // Drawn for the site's dark theme, straight on the page background. Figures are illustrations, not data.
 const C = {
@@ -332,50 +332,53 @@ const schools = [
   { file: 'rwth.svg', height: 28, zh: '亚琛工业大学', en: 'RWTH Aachen University' },
 ];
 
-type Job = { id: string; years: string; role: ReactNode; logo: ReactNode; body: ReactNode };
+// A row of figures that swipes sideways on a phone and sits side by side on a wide screen.
+function Strip({ slides }: { slides: ReactNode[] }) {
+  const [index, setIndex] = useState(0);
+  return <>
+    <div className="cr-strip" onScroll={e => {
+      const strip = e.currentTarget, first = strip.firstElementChild as HTMLElement | null;
+      if (first) setIndex(Math.round(strip.scrollLeft / (first.offsetWidth + 10)));
+    }}>
+      {slides.map((slide, i) => <div key={i} className="cr-slide">{slide}</div>)}
+    </div>
+    {slides.length > 1 && <div className="cr-dots" aria-hidden="true">{slides.map((_, i) => <i key={i} className={i === index ? 'on' : undefined} />)}</div>}
+  </>;
+}
+
+type Job = { id: string; years: string; role: ReactNode; place?: string; desc?: string; logo: ReactNode; slides: ReactNode[] };
 
 export default function CareerTimeline({ en }: { en: boolean }) {
-  const uid = useId().replace(/:/g, '');
-  // The current job starts open; the others open on tap, so the page stays short.
-  const [open, setOpen] = useState<Set<string>>(() => new Set(['harman']));
-  const toggle = (id: string) => setOpen(prev => { const next = new Set(prev); if (!next.delete(id)) next.add(id); return next; });
   const jobs: Job[] = [
     { id: 'harman', years: en ? '2022 – present' : '2022 – 现在', role: en ? 'Audio Algorithm Engineer' : '音频算法工程师',
-      logo: <Logo file="harman.svg" alt="HARMAN" height={22} />,
-      body: <AlgorithmFigure en={en} /> },
-    { id: 'microflown', years: '2018 – 2022', role: 'Scientist',
-      logo: <Logo file="microflown.svg" alt="Microflown Technologies" height={20} />,
-      body: <>
-        <p className="cr-desc">{en ? 'Arnhem, the Netherlands' : '荷兰阿纳姆'}</p>
-        <div className="cr-pair">
-          <div><h5>{en ? 'Acoustic material testing R&D' : '材料测试研发'}</h5><MaterialFigure en={en} /></div>
-          <div><h5>{en ? 'AI-based end-of-line quality inspection' : 'AI 产线质量检测'}</h5><QualityFigure en={en} /></div>
-        </div></> },
+      logo: <Logo file="harman.svg" alt="HARMAN" height={24} />,
+      slides: [<AlgorithmFigure en={en} />] },
+    { id: 'microflown', years: '2018 – 2022', role: 'Scientist', place: en ? 'Arnhem, the Netherlands' : '荷兰阿纳姆',
+      logo: <Logo file="microflown.svg" alt="Microflown Technologies" height={22} />,
+      slides: [
+        <><MaterialFigure en={en} /><h5>{en ? 'Acoustic material testing R&D' : '材料测试研发'}</h5></>,
+        <><QualityFigure en={en} /><h5>{en ? 'AI-based end-of-line quality inspection' : 'AI 产线质量检测'}</h5></>,
+      ] },
     { id: 'tue', years: '2017 – 2018', role: 'Lecturer',
       logo: <Logo file="tue.svg" alt="Eindhoven University of Technology (TU/e)" height={16} />,
-      body: <LectureFigure en={en} /> },
+      slides: [<LectureFigure en={en} />] },
     { id: 'rwth', years: '2013 – 2018', role: en ? 'Doctoral research' : '博士研究',
-      logo: <Logo file="rwth.svg" alt="RWTH Aachen University" height={22} />,
-      body: <>
-        <p className="cr-desc">{en
-          ? 'Modeling of moving sound sources based on microphone array measurements: recording pass-by vehicles, reconstructing the source signals, and auralizing them in virtual reality.'
-          : '运动声源建模：用麦克风阵列录下驶过的汽车，还原它的声音，再放进虚拟现实里重放。'}</p>
-        <DoctoralFigure en={en} /></> },
+      logo: <Logo file="rwth.svg" alt="RWTH Aachen University" height={24} />,
+      desc: en
+        ? 'Modeling of moving sound sources based on microphone array measurements: recording pass-by vehicles, reconstructing the source signals, and auralizing them in virtual reality.'
+        : '运动声源建模：用麦克风阵列录下驶过的汽车，还原它的声音，再放进虚拟现实里重放。',
+      slides: [<DoctoralFigure en={en} />] },
   ];
   return <div className="cr">
     <h3 className="cr-label"><Briefcase aria-hidden="true" />{en ? 'Experience' : '经历'}</h3>
     <ol className="cr-jobs">
-      {jobs.map(job => {
-        const isOpen = open.has(job.id), panel = `${uid}-${job.id}`;
-        return <li key={job.id} className={'cr-job' + (isOpen ? ' cr-open' : '')}>
-          <button type="button" className="cr-head" aria-expanded={isOpen} aria-controls={panel} onClick={() => toggle(job.id)}>
-            <span className="cr-years">{job.years}</span>
-            <span className="cr-main"><span className="cr-role">{job.role}</span>{job.logo}</span>
-            <ChevronRight className="cr-chev" aria-hidden="true" />
-          </button>
-          {isOpen && <div className="cr-body" id={panel}>{job.body}</div>}
-        </li>;
-      })}
+      {jobs.map(job => <li key={job.id} className="cr-job">
+        <div className="cr-top">{job.logo}<span className="cr-years">{job.years}</span></div>
+        <h4 className="cr-role">{job.role}</h4>
+        {job.place && <p className="cr-years">{job.place}</p>}
+        {job.desc && <p className="cr-desc">{job.desc}</p>}
+        <Strip slides={job.slides} />
+      </li>)}
     </ol>
     <h3 className="cr-label"><GraduationCap aria-hidden="true" />{en ? 'Education' : '教育'}</h3>
     <ol className="cr-rail cr-edu">
