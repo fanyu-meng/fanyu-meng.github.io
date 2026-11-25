@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { Briefcase, GraduationCap } from 'lucide-react';
+import { Briefcase, ChevronRight, GraduationCap } from 'lucide-react';
 
 // Drawn for the site's dark theme, straight on the page background. Figures are illustrations, not data.
 const C = {
@@ -332,37 +332,50 @@ const schools = [
   { file: 'rwth.svg', height: 28, zh: '亚琛工业大学', en: 'RWTH Aachen University' },
 ];
 
+type Job = { id: string; years: string; role: ReactNode; logo: ReactNode; body: ReactNode };
+
 export default function CareerTimeline({ en }: { en: boolean }) {
-  const at = <span className="cr-at" aria-hidden="true">@</span>;
-  return <div className="cr">
-    <h3 className="cr-label"><Briefcase aria-hidden="true" />{en ? 'Experience' : '经历'}</h3>
-    <ol className="cr-rail">
-      <li className="cr-node cr-now">
-        <p className="cr-years">{en ? '2022 – present' : '2022 – 现在'}</p>
-        <h4 className="cr-role">{en ? 'Audio Algorithm Engineer' : '音频算法工程师'} {at} <Logo file="harman.svg" alt="HARMAN" height={28} /></h4>
-        <AlgorithmFigure en={en} />
-      </li>
-      <li className="cr-node">
-        <p className="cr-years">{en ? '2018 – 2022 · Arnhem, the Netherlands' : '2018 – 2022 · 荷兰阿纳姆'}</p>
-        <h4 className="cr-role">Scientist {at} <Logo file="microflown.svg" alt="Microflown Technologies" height={26} /></h4>
+  const uid = useId().replace(/:/g, '');
+  // The current job starts open; the others open on tap, so the page stays short.
+  const [open, setOpen] = useState<Set<string>>(() => new Set(['harman']));
+  const toggle = (id: string) => setOpen(prev => { const next = new Set(prev); if (!next.delete(id)) next.add(id); return next; });
+  const jobs: Job[] = [
+    { id: 'harman', years: en ? '2022 – present' : '2022 – 现在', role: en ? 'Audio Algorithm Engineer' : '音频算法工程师',
+      logo: <Logo file="harman.svg" alt="HARMAN" height={22} />,
+      body: <AlgorithmFigure en={en} /> },
+    { id: 'microflown', years: '2018 – 2022', role: 'Scientist',
+      logo: <Logo file="microflown.svg" alt="Microflown Technologies" height={20} />,
+      body: <>
+        <p className="cr-desc">{en ? 'Arnhem, the Netherlands' : '荷兰阿纳姆'}</p>
         <div className="cr-pair">
           <div><h5>{en ? 'Acoustic material testing R&D' : '材料测试研发'}</h5><MaterialFigure en={en} /></div>
           <div><h5>{en ? 'AI-based end-of-line quality inspection' : 'AI 产线质量检测'}</h5><QualityFigure en={en} /></div>
-        </div>
-      </li>
-      <li className="cr-node">
-        <p className="cr-years">2017 – 2018</p>
-        <h4 className="cr-role">Lecturer {at} <Logo file="tue.svg" alt="Eindhoven University of Technology (TU/e)" height={18} /></h4>
-        <LectureFigure en={en} />
-      </li>
-      <li className="cr-node">
-        <p className="cr-years">2013 – 2018</p>
-        <h4 className="cr-role">{en ? 'Doctoral research' : '博士研究'} {at} <Logo file="rwth.svg" alt="RWTH Aachen University" height={26} /></h4>
+        </div></> },
+    { id: 'tue', years: '2017 – 2018', role: 'Lecturer',
+      logo: <Logo file="tue.svg" alt="Eindhoven University of Technology (TU/e)" height={16} />,
+      body: <LectureFigure en={en} /> },
+    { id: 'rwth', years: '2013 – 2018', role: en ? 'Doctoral research' : '博士研究',
+      logo: <Logo file="rwth.svg" alt="RWTH Aachen University" height={22} />,
+      body: <>
         <p className="cr-desc">{en
           ? 'Modeling of moving sound sources based on microphone array measurements: recording pass-by vehicles, reconstructing the source signals, and auralizing them in virtual reality.'
           : '运动声源建模：用麦克风阵列录下驶过的汽车，还原它的声音，再放进虚拟现实里重放。'}</p>
-        <DoctoralFigure en={en} />
-      </li>
+        <DoctoralFigure en={en} /></> },
+  ];
+  return <div className="cr">
+    <h3 className="cr-label"><Briefcase aria-hidden="true" />{en ? 'Experience' : '经历'}</h3>
+    <ol className="cr-jobs">
+      {jobs.map(job => {
+        const isOpen = open.has(job.id), panel = `${uid}-${job.id}`;
+        return <li key={job.id} className={'cr-job' + (isOpen ? ' cr-open' : '')}>
+          <button type="button" className="cr-head" aria-expanded={isOpen} aria-controls={panel} onClick={() => toggle(job.id)}>
+            <span className="cr-years">{job.years}</span>
+            <span className="cr-main"><span className="cr-role">{job.role}</span>{job.logo}</span>
+            <ChevronRight className="cr-chev" aria-hidden="true" />
+          </button>
+          {isOpen && <div className="cr-body" id={panel}>{job.body}</div>}
+        </li>;
+      })}
     </ol>
     <h3 className="cr-label"><GraduationCap aria-hidden="true" />{en ? 'Education' : '教育'}</h3>
     <ol className="cr-rail cr-edu">
