@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
-import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
@@ -278,6 +279,45 @@ function ReviewedBook({ title, en }: { title: string; en: boolean }) {
   return <span className="ex-reviewed-book">{en ? `Review of ${title}` : `评《${title}》`}</span>;
 }
 
+// In the phone layout long text opens as a fading excerpt, so the list stays easy to scan.
+const excerptHeight = 224;
+// Text that is only a little longer than the excerpt is shown whole.
+const excerptSlack = 112;
+
+function Excerpt({ en, children }: { en: boolean; children: React.ReactNode }) {
+  const box = useRef<HTMLDivElement>(null);
+  const [long, setLong] = useState(false);
+  const [open, setOpen] = useState(false);
+  const measure = () => { if (box.current) setLong(box.current.scrollHeight > excerptHeight + excerptSlack); };
+  // Text that arrives with a render is measured before it paints; images and rotation reflow it later.
+  useLayoutEffect(measure);
+  useEffect(() => {
+    const observer = new ResizeObserver(measure);
+    observer.observe(box.current!);
+    return () => observer.disconnect();
+  }, []);
+  const clipped = long && !open;
+  function toggle() {
+    flushSync(() => setOpen(!open));
+    // Folding from the end of a long text would otherwise leave the reader far below it.
+    if (open) (box.current!.closest('.ex-row') || box.current!).scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  }
+  // Keyboard focus or find-in-page can land in the hidden part: unroll it instead of scrolling it out of sight.
+  function reveal() {
+    flushSync(() => setOpen(true));
+    const focused = document.activeElement;
+    if (focused && box.current!.contains(focused)) focused.scrollIntoView({ block: 'nearest' });
+  }
+  return <>
+    <div ref={box} className={clipped ? 'ex-excerpt' : undefined} style={clipped ? { maxHeight: excerptHeight } : undefined}
+      onScroll={clipped ? reveal : undefined}>{children}</div>
+    {long && <button type="button" className="ex-unfold" aria-expanded={open} onClick={toggle}>
+      {open ? (en ? 'Show less' : '收起') : (en ? 'Continue reading' : '展开全文')}
+      {open ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
+    </button>}
+  </>;
+}
+
 function Reader({ item, small, children }: { item: Work; small: boolean; children?: React.ReactNode }) {
   const { language } = useLanguage();
   const en = language === 'en';
@@ -324,8 +364,7 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
             archive={item.archive} poster={item.thumbnail && import.meta.env.BASE_URL + item.thumbnail} /> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body empty:hidden">
-          {intro}
-          {rest && (small ? <details className="ex-more"><summary>{en ? 'Continue reading' : '继续阅读'}</summary>{rest}</details> : rest)}
+          {(intro || rest) && (small ? <Excerpt en={en}>{intro}{rest}</Excerpt> : <>{intro}{rest}</>)}
           {item.contentPath && article.isPending && <p role="status">{en ? 'Loading article…' : '正在加载正文…'}</p>}
           {item.contentPath && article.isError && <div className="ex-status" role="status">{en ? 'The article could not be loaded. ' : '正文暂未载入。'}<button onClick={() => article.refetch()}>{en ? 'Retry' : '重新加载'}</button></div>}
         </div>
