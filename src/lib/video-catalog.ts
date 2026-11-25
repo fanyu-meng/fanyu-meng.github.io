@@ -11,7 +11,26 @@ export type VideoEntry = {
   duration?: string;
   cover?: string;
   thumbnail?: string;
+  archive?: ArchivedVideo;
 };
+/** A copy of the video kept in one of the site's own guitar-media-N repositories. */
+export type ArchivedVideo = { src: string; type: 'mp4' | 'hls'; width?: number; height?: number };
+export type VideoMedia = {
+  repos: Record<string, string>;
+  videos: Record<string, { repo: string; path: string; type: 'mp4' | 'hls'; width?: number; height?: number }>;
+};
+
+/** Attach the archived copies listed in video-media.json; the repo table is the one place their addresses live. */
+export function withArchivedVideos<T extends { video?: VideoEntry[] }>(works: T, media: VideoMedia, origin: string): T {
+  const video = (works.video || []).map(entry => {
+    const row = media.videos?.[entry.id], base = row && media.repos?.[row.repo];
+    if (!row || !base || !['mp4', 'hls'].includes(row.type) || row.path.includes('..')) return entry;
+    const src = new URL(row.path, new URL(base, origin));
+    if (src.origin !== origin) return entry;
+    return { ...entry, archive: { src: src.href, type: row.type, width: row.width, height: row.height } };
+  });
+  return { ...works, video };
+}
 export type VideoSource = { label: string; url: string; embed: string };
 
 export function videoSources(entry: VideoEntry): VideoSource[] {

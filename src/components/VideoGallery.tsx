@@ -26,7 +26,8 @@ function VideoCard({ video, en, href, eager, rememberOpener }: {
     video.cover,
     youtubeId && 'https://i.ytimg.com/vi/' + youtubeId + '/hqdefault.jpg',
   ].find(src => src && !failedImages.includes(src));
-  const platforms = sources.map(source => en && source.label === 'B 站' ? 'Bilibili' : source.label).join(' / ');
+  const platforms = [...(video.archive ? [en ? 'This site' : '本站'] : []),
+    ...sources.map(source => en && source.label === 'B 站' ? 'Bilibili' : source.label)].join(' / ');
 
   return <a className="video-card" href={href} aria-haspopup="dialog" onClick={rememberOpener} data-video-id={video.id}>
     <div className="video-poster">

@@ -4,7 +4,7 @@ import { BookOpen, Code2, Guitar, Headphones, Mic, PenLine, Search, Ticket } fro
 import { useLanguage } from '@/contexts/LanguageContext';
 import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
-import { VideoPlayer, videoSources, withPublishedVideos } from './PublishedVideos';
+import { VideoPlayer, videoSources, withPublishedVideos, type ArchivedVideo } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
 import CreationStats from './CreationStats';
 import './works-explorer.css';
@@ -57,6 +57,8 @@ type Entry = {
   embed?: string;
   videoFile?: string;
   videoPoster?: string;
+  thumbnail?: string;
+  archive?: ArchivedVideo;
   chapters?: { seconds: number; title: string }[];
 };
 type Work = Entry & { kind: Kind };
@@ -318,7 +320,8 @@ function Reader({ item, small, children }: { item: Work; small: boolean; childre
         {meta && <p className="ex-meta">{meta}</p>}
         {audio ? <div className="ex-media"><audio controls preload="none" src={audio} /></div> :
           videoFile ? <div className="ex-media"><video title={item.title} controls playsInline preload="none" src={videoFile} poster={webURL(item.videoPoster)} /></div> :
-          sources.length > 0 ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en} /> :
+          sources.length > 0 || item.archive ? <VideoPlayer key={item.id} sources={sources} title={item.title} en={en}
+            archive={item.archive} poster={item.thumbnail && import.meta.env.BASE_URL + item.thumbnail} /> :
           embedAllowed && <div className="ex-media"><iframe title={item.title} src={player.href} allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>}
         <div className="ex-body empty:hidden">
           {intro}
