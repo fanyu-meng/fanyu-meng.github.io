@@ -38,6 +38,21 @@ jobs:
           ZHIHU_PROFILE_HANDLE: ${{ vars.ZHIHU_PROFILE_HANDLE }}
         run: npm run build
 
+      # Article videos live in the separate largeFiles repository and are published with the site at /largeFiles/.
+      - name: Add large media files
+        uses: actions/checkout@v4
+        with:
+          repository: fanyu-meng/largeFiles
+          ref: main
+          path: dist/largeFiles
+          persist-credentials: false
+
+      - name: Keep only the published media files
+        run: |
+          rm -rf dist/largeFiles/.git
+          test -d dist/largeFiles/acoustics-media
+          du -sh dist dist/largeFiles
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

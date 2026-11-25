@@ -4,7 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { creationStatsPlugin } from "./scripts/creation-stats";
 
-// Article videos live in the separate largeFiles repository, published at /largeFiles/.
+// Article videos live in the separate largeFiles repository; the deployment publishes it at /largeFiles/.
 // Local development and preview read the published copy.
 const mediaProxy = { "/largeFiles": { target: "https://fanyu-meng.github.io", changeOrigin: true } };
 

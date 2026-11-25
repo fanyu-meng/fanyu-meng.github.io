@@ -161,7 +161,7 @@ function articleMarkup(html: string, base: string) {
     if (omitTags.has(tag)) return;
     if (tag === 'audio' || tag === 'video') {
       // Players only load media from the site's own archives: audio sits with the article data,
-      // videos sit in the separate largeFiles repository that GitHub Pages serves at /largeFiles/.
+      // videos sit in the separate largeFiles repository, which the site deployment publishes at /largeFiles/.
       const root = tag === 'video' ? videoRoot : audioRoot;
       const archived = (raw: string | null) => {
         const url = webURL(raw || undefined, base);
