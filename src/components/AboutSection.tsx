@@ -22,17 +22,14 @@ export default function AboutSection() {
     const value = count(metric);
     return <li>{value ? formatted(value) : label}</li>;
   }
-  const followers = data?.followers;
   return (
     <ul className="mt-6 list-disc space-y-2 border-t border-border/60 pl-5 pt-5 text-sm leading-relaxed marker:text-primary sm:text-base">
       <li>{t('about.item.1')}</li>
       {line(data?.standupShows, zh ? '脱口秀演员' : 'Stand-up comedian', n => zh ? `脱口秀已记录上台 ${n} 次` : `Stand-up comedian · ${n} documented performances`)}
       {line(data?.podcastEpisodes, zh ? '《破壁圆桌》播客主播' : 'Host of Pobicast', n => zh ? `《破壁圆桌》已发布 ${n} 期播客` : `Host of Pobicast · ${n} published episodes`)}
       <li>{t('about.item.4')}</li>
-      {line(followers, zh ? '声学科普博主' : 'Acoustics writer',
-        n => zh ? `公众号和知乎合计 ${n} 位关注者` : `${n} followers across WeChat and Zhihu`)}
-      {!count(followers) && count(data?.zhihuFollowers) && line(data?.zhihuFollowers, '', n => zh ? `知乎关注者 ${n}` : `${n} followers on Zhihu`)}
-      {!count(followers) && count(data?.wechatFollowers) && line(data?.wechatFollowers, '', n => zh ? `公众号关注者 ${n}` : `${n} followers on WeChat`)}
+      {line(data?.followers, zh ? '声学科普博主' : 'Acoustics blogger',
+        n => zh ? `声学科普博主，${n} 位关注者` : `Acoustics blogger · ${n} followers`)}
     </ul>
   );
 }

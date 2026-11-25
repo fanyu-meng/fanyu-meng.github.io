@@ -19,7 +19,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.greeting': '你好，我是',
     'hero.name': '孟凡雨',
-    'hero.description': '工程师，脱口秀演员，播客主播，文字创作，吉他手',
+    'hero.description': '音频/声学/脱口秀/播客/吉他/AI\u00a0builder/写作',
     'hero.cta': '了解更多',
     
     // About
@@ -69,7 +69,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.greeting': "Hi, I'm",
     'hero.name': 'Fanyu Meng',
-    'hero.description': 'A nerdy audio engineer who wants to express himself',
+    // Wrap only after a slash: zero-width spaces after the slashes, a non-breaking hyphen and space inside the items.
+    'hero.description': 'Audio/\u200bAcoustics/\u200bStand\u2011up/\u200bPodcast/\u200bGuitar/\u200bAI\u00a0builder/\u200bWriting',
     'hero.cta': 'Learn More',
     
     // About
