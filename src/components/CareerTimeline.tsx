@@ -371,11 +371,10 @@ export default function CareerTimeline({ en }: { en: boolean }) {
   ];
   return <div className="cr">
     <h3 className="cr-label"><Briefcase aria-hidden="true" />{en ? 'Experience' : '经历'}</h3>
-    <ol className="cr-jobs">
-      {jobs.map(job => <li key={job.id} className="cr-job">
-        <div className="cr-top">{job.logo}<span className="cr-years">{job.years}</span></div>
-        <h4 className="cr-role">{job.role}</h4>
-        {job.place && <p className="cr-years">{job.place}</p>}
+    <ol className="cr-rail">
+      {jobs.map((job, i) => <li key={job.id} className={'cr-node' + (i === 0 ? ' cr-now' : '')}>
+        <p className="cr-years">{job.years}{job.place && ' · ' + job.place}</p>
+        <h4 className="cr-role">{job.role} {job.logo}</h4>
         {job.desc && <p className="cr-desc">{job.desc}</p>}
         <Strip slides={job.slides} />
       </li>)}
