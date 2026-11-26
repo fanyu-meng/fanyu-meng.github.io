@@ -7,7 +7,7 @@ import articleIndexUrl from '../../public/content/acoustics-index.json?url';
 import worksIndexUrl from '../../public/content/works.json?url';
 import englishIndexUrl from '../../public/content/en/acoustics-index.json?url';
 import englishWorksUrl from '../../public/content/en/works.json?url';
-import { VideoPlayer, videoSources, withPublishedVideos, type ArchivedVideo } from './PublishedVideos';
+import { VideoPlayer, videoSources, withVideoArchive, type ArchivedVideo } from './PublishedVideos';
 import VideoGallery from './VideoGallery';
 import CreationStats from './CreationStats';
 import CareerTimeline from './CareerTimeline';
@@ -480,7 +480,7 @@ export default function WorksExplorer() {
   const labels = (type: Category) => categories[type][Number(en)];
   const works = useQuery({
     queryKey: ['work-index', worksIndexUrl],
-    queryFn: async ({ signal }) => withPublishedVideos(await loadJSON<WorksFile>(worksIndexUrl, signal), dataRoot, signal),
+    queryFn: async ({ signal }) => withVideoArchive(await loadJSON<WorksFile>(worksIndexUrl, signal), dataRoot, signal),
     staleTime: Infinity,
   });
   const articles = useQuery({

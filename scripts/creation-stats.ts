@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Plugin } from 'vite';
-import { mergePublishedVideos, type PublishedVideo, type VideoEntry } from '../src/lib/video-catalog';
+import type { VideoEntry } from '../src/lib/video-catalog';
 
 type Entry = { id: string };
 type WrittenEntry = Entry & { format?: 'article' | 'answer'; sameWorkAs?: string };
@@ -11,7 +11,7 @@ function countEntries(entries: Entry[] = []) {
   return new Set(entries.map(entry => entry.id)).size;
 }
 
-export function creationCounts(articles: WrittenEntry[], works: Works, published: PublishedVideo[]) {
+export function creationCounts(articles: WrittenEntry[], works: Works) {
   const writing = new Map<string, 'article' | 'answer'>();
   for (const entry of articles) {
     const id = entry.sameWorkAs || entry.id;
@@ -21,11 +21,10 @@ export function creationCounts(articles: WrittenEntry[], works: Works, published
     }
   }
   const answers = [...writing.values()].filter(format => format === 'answer').length;
-  const catalog = mergePublishedVideos(works, published);
   const counts = {
     articles: writing.size - answers,
     answers,
-    videos: countEntries(catalog.video),
+    videos: countEntries(works.video),
     episodes: countEntries(works.podcast),
     reviews: countEntries(works.reviews),
     projects: countEntries(works.github),
@@ -40,7 +39,7 @@ export function creationStatsPlugin(): Plugin {
   let directory: string;
   function snapshot() {
     const read = (file: string) => JSON.parse(readFileSync(resolve(directory, file), 'utf8'));
-    return JSON.stringify(creationCounts(read('acoustics-index.json'), read('works.json'), read('published-videos.json')));
+    return JSON.stringify(creationCounts(read('acoustics-index.json'), read('works.json')));
   }
   return {
     name: 'creation-stats',

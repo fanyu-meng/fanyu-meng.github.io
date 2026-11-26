@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { mergePublishedVideos, withArchivedVideos, type ArchivedVideo, type PublishedVideo, type VideoEntry, type VideoMedia, type VideoSource } from '@/lib/video-catalog';
+import { orderVideos, withArchivedVideos, type ArchivedVideo, type VideoEntry, type VideoMedia, type VideoSource } from '@/lib/video-catalog';
 
 export { videoSources, type ArchivedVideo, type VideoEntry, type VideoSource } from '@/lib/video-catalog';
 
@@ -14,19 +14,8 @@ async function archivedVideos<T extends { video?: VideoEntry[] }>(works: T, root
   }
 }
 
-export async function withPublishedVideos<T extends { video?: VideoEntry[] }>(works: T, root: URL, signal?: AbortSignal): Promise<T> {
-  let rows: PublishedVideo[];
-  try {
-    const response = await fetch(new URL('published-videos.json', root), { signal });
-    if (!response.ok) return archivedVideos(works, root, signal);
-    rows = await response.json();
-    if (!Array.isArray(rows)) return archivedVideos(works, root, signal);
-  } catch (error) {
-    if (signal?.aborted) throw error;
-
-    return archivedVideos(works, root, signal);
-  }
-  return archivedVideos(mergePublishedVideos(works, rows), root, signal);
+export function withVideoArchive<T extends { video?: VideoEntry[] }>(works: T, root: URL, signal?: AbortSignal): Promise<T> {
+  return archivedVideos(orderVideos(works), root, signal);
 }
 
 /** Plays the site's own copy: MP4 directly, HLS natively in Safari or through hls.js elsewhere. */

@@ -1,4 +1,3 @@
-export type PublishedVideo = { id: string; title: string; summary: string; createdAt: string; youtube?: string; bilibili?: string; cover?: string };
 export type VideoEntry = {
   id: string;
   title: string;
@@ -66,24 +65,11 @@ export function videoSources(entry: VideoEntry): VideoSource[] {
   return [...found.values()];
 }
 
-export function mergePublishedVideos<T extends { video?: VideoEntry[] }>(works: T, rows: PublishedVideo[]): T {
-  const curated = [...(works.video || [])], fresh: VideoEntry[] = [];
-  for (const row of rows) {
-    if (!row || typeof row.id !== 'string' || typeof row.title !== 'string') continue;
-    const links: NonNullable<VideoEntry['links']> = [];
-    if (row.bilibili && /^BV[A-Za-z0-9]{10}$/.test(row.bilibili)) links.push({ label: 'B 站', url: 'https://www.bilibili.com/video/' + row.bilibili + '/' });
-    if (row.youtube && /^[\w-]{11}$/.test(row.youtube)) links.push({ label: 'YouTube', url: 'https://www.youtube.com/watch?v=' + row.youtube });
-    if (!links.length) continue;
-    const publishedAt = typeof row.createdAt === 'string' ? row.createdAt.slice(0, 10) : undefined;
-    const item = { id: row.id, title: row.title, summary: row.summary, publishedAt, cover: row.cover, links };
-    const match = curated.findIndex(old => old.id === item.id || videoSources(old).some(source => links.some(link => link.url === source.url)));
-    if (match >= 0) {
-      const old = curated[match];
-      curated[match] = { ...old, cover: old.cover || item.cover, links: [...new Map([...(old.links || []), ...links].map(link => [link.url, link])).values()] };
-    } else if (!fresh.some(old => old.id === row.id || videoSources(old).some(source => links.some(link => link.url === source.url)))) fresh.push(item);
-  }
+/** Featured videos first, then the rest newest first. */
+export function orderVideos<T extends { video?: VideoEntry[] }>(works: T): T {
+  const curated = [...(works.video || [])];
   const pinned = curated.filter(item => item.featured);
-  const archive = [...fresh, ...curated.filter(item => !item.featured)];
+  const archive = curated.filter(item => !item.featured);
   archive.sort((a, b) => (b.publishedAt || '').localeCompare(a.publishedAt || ''));
   return { ...works, video: [...pinned, ...archive] };
 }

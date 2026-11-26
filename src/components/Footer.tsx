@@ -14,8 +14,6 @@ const Footer: React.FC = () => {
             © {currentYear} {t('hero.name')}. {t('footer.rights')}.
           </p>
 
-          <a href="/studio/" className="text-sm text-muted-foreground hover:text-foreground">{language === 'zh' ? '视频发布台' : 'Video studio'}</a>
-
           {/* Back to top */}
           <a
             href="#home"
