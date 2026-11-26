@@ -91,12 +91,12 @@ function articleTabFor(item: Entry): ArticleTab {
 // Writing sub-tabs. 文学 holds works first published here (topic 文学) and is hidden while empty.
 const writingTabs = {
   literature: ['文学', 'Literature'],
-  home: ['回家过年', 'Home for Chinese New Year'],
   reviews: ['书评', 'Book reviews'],
   abroad: ['留学生活', 'Life abroad'],
   research: ['科研与技术', 'Research & tech'],
   music: ['音乐与吉他', 'Music & guitar'],
   misc: ['杂谈', 'Miscellany'],
+  home: ['回家过年', 'Home for Chinese New Year'],
 } as const;
 type WritingTab = keyof typeof writingTabs;
 const isWritingTab = (tab: unknown): tab is WritingTab =>
