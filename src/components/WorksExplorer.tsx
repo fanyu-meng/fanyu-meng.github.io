@@ -142,7 +142,7 @@ function localize(item: Work, text: EnglishText | undefined): Work {
 
 const englishLinkLabels: Record<string, string> = {
   '知乎原文': 'Original on Zhihu', '知乎原回答': 'Original answer on Zhihu', '公众号原文': 'Original on WeChat',
-  '豆瓣原文': 'Original on Douban', '小红书笔记': 'Xiaohongshu post', '小红书视频笔记': 'Xiaohongshu video',
+  '豆瓣原文': 'Original on Douban', '小红书笔记': 'Xiaohongshu post', '小红书视频笔记': 'Xiaohongshu video', '知乎视频': 'Zhihu video',
   '在公众号查看原图': 'View the images on WeChat', '在 B 站观看': 'Watch on Bilibili', 'B 站': 'Bilibili',
   '小宇宙单集': 'Listen on Xiaoyuzhou', 'GitHub 仓库': 'GitHub repository', '完整 README': 'Full README',
   '访问网站': 'Visit the website', '乐咔官网': 'LeSlam Comedy website', '演出资讯': 'Upcoming shows',
