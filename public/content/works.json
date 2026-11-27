@@ -1017,6 +1017,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1Jex86QExd/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=ujWaQPQebjc"
         }
       ],
       "publishedAt": "2026-11-01",
@@ -1087,6 +1091,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV14i3m6VEHM/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=WFL1qmGvAkk"
         }
       ],
       "publishedAt": "2026-08-01",
@@ -1101,6 +1109,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1Qh366YEDZ/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=QEQFO-NX1ak"
         }
       ],
       "publishedAt": "2026-07-28",
@@ -1115,6 +1127,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1UPgm63EcD/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=fGinp6xF3_Y"
         }
       ],
       "publishedAt": "2026-07-22",
@@ -1129,6 +1145,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1rZJN6qEWa/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=E-rPpXE1xRU"
         }
       ],
       "publishedAt": "2026-06-14",
@@ -1143,6 +1163,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1AtGp6iEAV/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=9HjlHVbeohI"
         }
       ],
       "publishedAt": "2026-05-24",
@@ -1157,6 +1181,10 @@
         {
           "label": "B 站",
           "url": "https://www.bilibili.com/video/BV1JvLa6YEgU/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/watch?v=qyQisPErACE"
         }
       ],
       "publishedAt": "2026-05-21",
