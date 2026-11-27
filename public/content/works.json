@@ -932,7 +932,17 @@
       "duration": "00:54",
       "summary": "昨天下雪了，新琴一上手，November Rain 就弹成了 November Snow。原曲《November Rain》来自 Guns N’ Roses。",
       "topic": "电吉他",
-      "thumbnail": "content/video-covers/2026-11-november-snow.webp"
+      "thumbnail": "content/video-covers/2026-11-november-snow.webp",
+      "links": [
+        {
+          "label": "B 站",
+          "url": "https://www.bilibili.com/video/BV1ie1bzrEJd/"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://youtube.com/shorts/N2PVhWNWMj0"
+        }
+      ]
     },
     {
       "id": "BV1VWe56XEd6",
