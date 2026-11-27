@@ -536,6 +536,14 @@ export default function WorksExplorer() {
       labelForWork(item, false), labelForWork(item, true)].join(' ').toLowerCase();
     return terms.every(term => searchable.includes(term));
   });
+  if (activeType === 'all' && !terms.length) {
+    const newest = visible.reduce<Work | undefined>((latest, item) =>
+      item.publishedAt && item.publishedAt > (latest?.publishedAt || '') ? item : latest, undefined);
+    if (newest) {
+      visible.splice(visible.indexOf(newest), 1);
+      visible.unshift(newest);
+    }
+  }
   if (activeType === 'reviews') {
     visible.sort((a, b) => Number(b.id === 'leslam-club') - Number(a.id === 'leslam-club'));
   }
@@ -682,7 +690,7 @@ export default function WorksExplorer() {
             {visible.map(item => {
               const active = current?.id === item.id, Icon = iconFor(item);
               const cover = item.projectCover;
-              const thumbnail = cover?.thumbnail || artwork[item.kind];
+              const thumbnail = cover?.thumbnail || (item.kind === 'video' && item.thumbnail) || artwork[item.kind];
               const category = labelForWork(item, en);
               const extra = item.kind === 'video' ? videoMetadata(item) :
                 item.kind === 'podcast' ? item.meta?.split(' · ').slice(1,3).join(' · ') :
